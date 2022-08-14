@@ -1,0 +1,38 @@
+{
+  "name": "lindesbs/minkorrekt",
+  "type": "contao-bundle",
+  "description": "minkorrekt-history Tools",
+  "license": "LGPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Stefan Lindecke",
+      "homepage": "https://github.com/lindesbs"
+    }
+  ],
+  "require": {
+    "php": ">=5.6",
+    "composer-plugin-api": "^1.0 || ^2.0"
+  },
+  "require-dev": {
+    "composer/composer": "^1.0 || ^2.0",
+    "phpunit/phpunit": "^5.7.26",
+    "contao/manager-plugin": "^2.0"
+  },
+  "conflict": {
+    "contao/manager-plugin": "<2.0 || >=3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "lindesbs\\minkorrekt\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "lindesbs\\minkorrekt\\Test\\": "tests/"
+    }
+  },
+
+  "extra": {
+    "contao-manager-plugin": "lindesbs\\minkorrekt\\ContaoManager\\Plugin"
+  }
+}
