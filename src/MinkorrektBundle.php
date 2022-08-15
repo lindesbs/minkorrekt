@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace lindesbs\Minkorrekt;
+namespace lindesbs\minkorrekt;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

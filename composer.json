@@ -31,7 +31,6 @@
       "lindesbs\\minkorrekt\\Test\\": "tests/"
     }
   },
-
   "extra": {
     "contao-manager-plugin": "lindesbs\\minkorrekt\\ContaoManager\\Plugin"
   }
