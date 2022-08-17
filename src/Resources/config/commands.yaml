@@ -1,0 +1,15 @@
+services:
+  _defaults:
+    autoconfigure: true
+
+  _instanceof:
+    Contao\CoreBundle\Framework\FrameworkAwareInterface:
+      calls:
+        - [setFramework, ['@contao.framework']]
+
+  minkorrekt.command.crawl:
+    class: lindesbs\minkorrekt\Commands\ImportRSSCommand
+    arguments:
+      - '@contao.framework'
+      - '@filesystem'
+
