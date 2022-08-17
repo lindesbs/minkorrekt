@@ -2,7 +2,6 @@
 
 namespace lindesbs\minkorrekt;
 
-use src\DependencyInjection\MinkorrektExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class MinkorrektBundle extends Bundle
