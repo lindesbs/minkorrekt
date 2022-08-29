@@ -12,4 +12,5 @@ services:
     arguments:
       - '@contao.framework'
       - '@filesystem'
+      - '@database_connection'
 
