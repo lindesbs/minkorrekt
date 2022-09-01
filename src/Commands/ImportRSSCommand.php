@@ -101,10 +101,7 @@ class ImportRSSCommand extends Command
             $objFeed->teaser = $entry->getDescription();
 
             $objFeed->published = true;
-
             $objFeed->save();
-
-            $this->connection->executeQuery("DELETE FROM tl_content WHERE pid=" . $objFeed->id);
 
             $pregMatch = preg_match_all('/<!-- wp:paragraph -->(.*?)<!-- \/wp:paragraph -->/s', $entry->getContent(), $match);
 
