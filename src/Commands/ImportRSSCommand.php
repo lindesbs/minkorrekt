@@ -4,18 +4,13 @@ namespace lindesbs\minkorrekt\Commands;
 
 use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\Database;
 use Contao\NewsArchiveModel;
-use Contao\NewsFeedModel;
-use Contao\NewsletterModel;
 use Contao\NewsModel;
 use Doctrine\DBAL\Connection;
 use DOMDocument;
 use DOMXPath;
 use Laminas\Feed\Reader\Reader;
-use Laminas\Feed\Reader\Reader as FeedReader;
-use lindesbs\minkorrekt\classes\PodcastEntry;
-use lindesbs\minkorrekt\classes\XMLEntry;
+use lindesbs\minkorrekt\Classes\PodcastEntry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -55,8 +50,8 @@ class ImportRSSCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $this->io = new SymfonyStyle($input, $output);
-        $this->io->title('Minkorrekt RSS einlesen und importieren');
+        $io = new SymfonyStyle($input, $output);
+        $io->title('Minkorrekt RSS einlesen und importieren');
 
         $this->framework->initialize();
 

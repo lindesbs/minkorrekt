@@ -2,7 +2,10 @@
 
 namespace lindesbs\minkorrekt\ContentElement;
 
-class ContentMinkorrektNewsElement extends \ContentElement
+use Contao\BackendTemplate;
+use Contao\ContentElement;
+
+class ContentMinkorrektNewsElement extends ContentElement
 {
     /**
      * @var string Template
@@ -13,7 +16,7 @@ class ContentMinkorrektNewsElement extends \ContentElement
 
     public function compile()
     {
-        $template = new \BackendTemplate('be_wildcard');
+        $template = new BackendTemplate('be_wildcard');
 
         $template->wildcard = '### '.utf8_strtoupper($GLOBALS['TL_LANG']['FMD']['helloWorld'][0]).' ###';
         $template->title = $this->headline;

@@ -2,8 +2,8 @@
 
 namespace lindesbs\minkorrekt\Classes;
 
+use DateTime;
 use DOMNode;
-use \DateTime;
 
 class PodcastEntry
 {
