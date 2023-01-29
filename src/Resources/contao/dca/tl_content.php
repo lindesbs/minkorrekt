@@ -1,29 +1,38 @@
 <?php declare(strict_types=1);
 
-use lindesbs\ContaoTools\Class\DCA;
-use lindesbs\ContaoTools\Class\DCAType;
+use lindesbs\ContaoTools\Classes\DCA;
+use lindesbs\ContaoTools\Classes\DCAType;
 
-$arrBlocks = explode(";", $GLOBALS['TL_DCA']['tl_content']['palettes']['text']);
+$arrBlocks = explode(";", (string)$GLOBALS['TL_DCA']['tl_content']['palettes']['text']);
 
 $arrNewBlocks = [];
 $arrNewBlocks[] = array_shift($arrBlocks);
 $arrNewBlocks[] = "{minkorrektLabel},minkorrekt_thema_art,minkorrekt_thema_folge,minkorrekt_thema_nummer";
 $arrNewBlocks = array_merge($arrNewBlocks, $arrBlocks);
 
+$GLOBALS['TL_DCA']['tl_content']['palettes']['minkorrekt_thema'] = implode(";", $arrNewBlocks);
 
-DCA::DCA('minkorrekt_thema_art',
+
+DCA::DCA('tl_content', true,
     DCA::Group('minkorrekt', [
-        DCA::Field('minkorrekt_thema_art', DCAType::SELECT),
+        DCA::Field('minkorrekt_thema_art', DCAType::SELECT, [
+            'THEMA',
+            'UEBERSCHRIFT',
+            'SCHWURBEL',
+            'GADGET',
+            'TIMETABLE',
+            'ANFANG',
+            'ADRESSEN',
+            'TEXT',
+            'EXPERIMENT'
+        ]),
         DCA::Field('minkorrekt_thema_folge', DCATYPE::TEXT),
         DCA::Field('minkorrekt_thema_nummer', DCAType::TEXT),
     ],
     )
 );
+
 /*
-
-$GLOBALS['TL_DCA']['tl_content']['palettes']['minkorrekt_thema'] = implode(";", $arrNewBlocks);
-
-
 $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_art'] = array
 (
     'label'                     => &$GLOBALS['TL_LANG']['tl_content']['minkorrekt_thema_folge'],

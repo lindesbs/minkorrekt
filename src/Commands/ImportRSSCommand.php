@@ -6,17 +6,13 @@ use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\NewsArchiveModel;
 use Contao\NewsModel;
-use Doctrine\DBAL\Connection;
 use DOMDocument;
 use DOMXPath;
-use Laminas\Feed\Reader\Reader;
 use lindesbs\minkorrekt\Classes\PodcastEntry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Filesystem\Filesystem;
-
 
 class ImportRSSCommand extends Command
 {
@@ -24,23 +20,13 @@ class ImportRSSCommand extends Command
     protected static $defaultDescription = 'Import RSS as Newslist';
 
     protected static $defaultURL = "https://minkorrekt.de/feed/m4a/";
-
-    private Filesystem $filesystem;
     private int $statusCode = Command::SUCCESS;
 
-    private ContaoFramework $framework;
-    private Connection $connection;
-
     public function __construct(
-        ContaoFramework $framework,
-        Filesystem      $filesystem,
-        Connection      $connection
+        private readonly ContaoFramework $framework
     )
     {
         parent::__construct();
-        $this->filesystem = $filesystem;
-        $this->framework = $framework;
-        $this->connection = $connection;
     }
 
     protected function configure(): void
@@ -103,11 +89,11 @@ class ImportRSSCommand extends Command
             $objFeed->published = true;
             $objFeed->save();
 
-            $pregMatch = preg_match_all('/<!-- wp:paragraph -->(.*?)<!-- \/wp:paragraph -->/s', $entry->getContent(), $match);
+            $pregMatch = preg_match_all('/<!-- wp:paragraph -->(.*?)<!-- \/wp:paragraph -->/s', (string)$entry->getContent(), $match);
 
             $workingData = [];
             if (!$pregMatch) {
-                $workingData = explode("\n", $entry->getContent());
+                $workingData = explode("\n", (string)$entry->getContent());
 
             } else {
                 $workingData = $match[1];
@@ -115,7 +101,7 @@ class ImportRSSCommand extends Command
 
 
             foreach ($workingData as $key => $value) {
-                if (strlen(strip_tags(trim($value))) == 0)
+                if (strlen(strip_tags(trim((string)$value))) == 0)
                     continue;
 
                 $objContent = new ContentModel();
@@ -126,7 +112,7 @@ class ImportRSSCommand extends Command
                 $objContent->type = 'minkorrekt_thema';
 
                 $objContent->minkorrekt_thema_art = "TEXT";
-                $objContent->text = trim($value);
+                $objContent->text = trim((string)$value);
 
                 $pregThema = preg_match('/Thema [0-9]/s', $objContent->text, $matchThema, PREG_OFFSET_CAPTURE);
 
