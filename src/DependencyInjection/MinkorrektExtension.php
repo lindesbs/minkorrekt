@@ -19,6 +19,7 @@ class MinkorrektExtension extends Extension
         $loader->load("services.yaml");
         $loader->load("commands.yaml");
 
+
     }
 
 }

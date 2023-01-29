@@ -1,20 +1,27 @@
 <?php declare(strict_types=1);
 
+use lindesbs\ContaoTools\Class\DCA;
+use lindesbs\ContaoTools\Class\DCAType;
+
 $arrBlocks = explode(";", $GLOBALS['TL_DCA']['tl_content']['palettes']['text']);
 
-$arrNewBlocks=[];
+$arrNewBlocks = [];
 $arrNewBlocks[] = array_shift($arrBlocks);
 $arrNewBlocks[] = "{minkorrektLabel},minkorrekt_thema_art,minkorrekt_thema_folge,minkorrekt_thema_nummer";
-$arrNewBlocks = array_merge($arrNewBlocks,$arrBlocks);
+$arrNewBlocks = array_merge($arrNewBlocks, $arrBlocks);
+
+
+DCA::DCA('minkorrekt_thema_art',
+    DCA::Group('minkorrekt', [
+        DCA::Field('minkorrekt_thema_art', DCAType::SELECT),
+        DCA::Field('minkorrekt_thema_folge', DCATYPE::TEXT),
+        DCA::Field('minkorrekt_thema_nummer', DCAType::TEXT),
+    ],
+    )
+);
+/*
 
 $GLOBALS['TL_DCA']['tl_content']['palettes']['minkorrekt_thema'] = implode(";", $arrNewBlocks);
-
-
-
-//dd($GLOBALS['TL_DCA']['tl_content']);
-/**
- * Fields
- */
 
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_art'] = array
@@ -55,4 +62,4 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_nummer'] = array
     'inputType'                 => 'text',
     'eval'                      => array('rgxp'=>'number', "tl_style"=>"w50"),
     'sql'                       => "int(10) unsigned NOT NULL default '0'"
-);
+);*/
