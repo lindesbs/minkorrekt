@@ -9,15 +9,15 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class MinkorrektExtension extends Extension
 {
-    public function load(array $mergedConfig, ContainerBuilder $container): void
+    public function load(array $mergedConfig, ContainerBuilder $containerBuilder): void
     {
-        $loader = new YamlFileLoader(
-            $container,
+        $yamlFileLoader = new YamlFileLoader(
+            $containerBuilder,
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-        $loader->load("services.yaml");
-        $loader->load("commands.yaml");
+        $yamlFileLoader->load("services.yaml");
+        $yamlFileLoader->load("commands.yaml");
 
 
     }

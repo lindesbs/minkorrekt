@@ -17,13 +17,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class ImportRSSCommand extends Command
 {
     protected static $defaultName = 'minkorrekt:importrss';
+
     protected static $defaultDescription = 'Import RSS as Newslist';
 
     protected static $defaultURL = "https://minkorrekt.de/feed/m4a/";
+
     private int $statusCode = Command::SUCCESS;
 
     public function __construct(
-        private readonly ContaoFramework $framework
+        private readonly ContaoFramework $contaoFramework
     )
     {
         parent::__construct();
@@ -36,19 +38,19 @@ class ImportRSSCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $io = new SymfonyStyle($input, $output);
-        $io->title('Minkorrekt RSS einlesen und importieren');
+        $symfonyStyle = new SymfonyStyle($input, $output);
+        $symfonyStyle->title('Minkorrekt RSS einlesen und importieren');
 
-        $this->framework->initialize();
+        $this->contaoFramework->initialize();
 
-        $feed = new DOMDocument();
+        $domDocument = new DOMDocument();
         $strData = file_get_contents(self::$defaultURL);
-        $feed->loadXML($strData);
+        $domDocument->loadXML($strData);
 
         $title = "Methodisch Inkorrekt";
 
         $objNewsArchive = NewsArchiveModel::findByTitle($title);
-        if (!$objNewsArchive) {
+        if ($objNewsArchive === null) {
             $objNewsArchive = new NewsArchiveModel();
             $objNewsArchive->tstamp = time();
 
@@ -57,14 +59,14 @@ class ImportRSSCommand extends Command
 
         $objNewsArchive->save();
 
-        $xp = new DOMXPath($feed);
+        $domxPath = new DOMXPath($domDocument);
 
 //            $xp->registerNamespace('itunes','http://www.itunes.com/dtds/podcast-1.0.dtd');
 //            $xp->registerNamespace('atom','http://www.w3.org/2005/Atom');
 
 
         /** @var \DOMNodeList $path */
-        $path = $xp->query("//channel/item");
+        $path = $domxPath->query("//channel/item");
 
         foreach ($path as $element) {
 
@@ -72,9 +74,10 @@ class ImportRSSCommand extends Command
 
             $objFeed = NewsModel::findByAlias($entry->getGuid());
 
-            if ($objFeed) {
+            if ($objFeed !== null) {
                 continue;
             }
+
             $objFeed = new NewsModel();
             $objFeed->tstamp = time();
             $objFeed->pid = $objNewsArchive->id;
@@ -89,15 +92,8 @@ class ImportRSSCommand extends Command
             $objFeed->published = true;
             $objFeed->save();
 
-            $pregMatch = preg_match_all('/<!-- wp:paragraph -->(.*?)<!-- \/wp:paragraph -->/s', (string)$entry->getContent(), $match);
-
-            $workingData = [];
-            if (!$pregMatch) {
-                $workingData = explode("\n", (string)$entry->getContent());
-
-            } else {
-                $workingData = $match[1];
-            }
+            $pregMatch = preg_match_all('#<!-- wp:paragraph -->(.*?)<!-- \/wp:paragraph -->#s', $entry->getContent(), $match);
+            $workingData = $pregMatch ? $match[1] : explode("\n", $entry->getContent());
 
 
             foreach ($workingData as $key => $value) {
@@ -113,8 +109,6 @@ class ImportRSSCommand extends Command
 
                 $objContent->minkorrekt_thema_art = "TEXT";
                 $objContent->text = trim((string)$value);
-
-                $pregThema = preg_match('/Thema [0-9]/s', $objContent->text, $matchThema, PREG_OFFSET_CAPTURE);
 
                 if (($matchThema) && ($matchThema[0][1] < 100)) {
 

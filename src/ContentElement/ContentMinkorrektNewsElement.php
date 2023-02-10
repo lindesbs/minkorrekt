@@ -13,17 +13,17 @@ class ContentMinkorrektNewsElement extends ContentElement
     protected $strTemplate = 'ce_text';
 
 
-    public function compile()
+    protected function compile()
     {
-        $template = new BackendTemplate('be_wildcard');
+        $backendTemplate = new BackendTemplate('be_wildcard');
 
-        $template->wildcard = '### ' . utf8_strtoupper($GLOBALS['TL_LANG']['FMD']['helloWorld'][0]) . ' ###';
-        $template->title = $this->headline;
-        $template->id = $this->id;
-        $template->link = $this->name;
-        $template->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
+        $backendTemplate->wildcard = '### ' . utf8_strtoupper($GLOBALS['TL_LANG']['FMD']['helloWorld'][0]) . ' ###';
+        $backendTemplate->title = $this->headline;
+        $backendTemplate->id = $this->id;
+        $backendTemplate->link = $this->name;
+        $backendTemplate->href = 'contao/main.php?do=themes&amp;table=tl_module&amp;act=edit&amp;id=' . $this->id;
 
-        return $template->parse();
+        return $backendTemplate->parse();
     }
 
 }
