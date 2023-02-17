@@ -12,7 +12,7 @@ class PodcastEntry
 
     private string $subtitle;
 
-    private string $episode;
+    private int $episode;
 
     private string $summary;
 
@@ -53,8 +53,8 @@ class PodcastEntry
         $this->setDescription($values['description']);
         $this->setLink($values['link']);
         $this->setGuid($values['guid']);
-        $this->setContent($values['content:encoded']);
-        $this->setEpisode($values['itunes:episode']);
+        $this->setContent(str_replace("<br>", "\n", $values['content:encoded']));
+        $this->setEpisode((int)$values['itunes:episode']);
         $this->setSubtitle($values['itunes:subtitle']);
         $this->setSummary($values['itunes:summary']);
         $this->setExplicit($values['itunes:explicit'] === 'yes');
@@ -62,10 +62,7 @@ class PodcastEntry
         if ((array_key_exists('itunes:keywords', $values)) && ($values['itunes:keywords']))
             $this->setKeywords(explode(',', $values['itunes:keywords']));
 
-
         $this->setAuthor($values['itunes:author']);
-
-
         if ((array_key_exists('itunes:duration', $values)) && ($values['itunes:duration']))
             $this->setDuration((int)$values['itunes:duration']);
 
@@ -112,15 +109,22 @@ class PodcastEntry
         $this->subtitle = $subtitle;
     }
 
-    public function getEpisode(): string
+    /**
+     * @return int
+     */
+    public function getEpisode(): int
     {
         return $this->episode;
     }
 
-    public function setEpisode(string $episode): void
+    /**
+     * @param int $episode
+     */
+    public function setEpisode(int $episode): void
     {
         $this->episode = $episode;
     }
+
 
     public function getSummary(): string
     {

@@ -17,7 +17,7 @@ class ContentMinkorrektNewsElement extends ContentElement
     {
         $backendTemplate = new BackendTemplate('be_wildcard');
 
-        $backendTemplate->wildcard = '### ' . utf8_strtoupper($GLOBALS['TL_LANG']['FMD']['helloWorld'][0]) . ' ###';
+        $backendTemplate->wildcard = '### Minkorrekt Folge ###';
         $backendTemplate->title = $this->headline;
         $backendTemplate->id = $this->id;
         $backendTemplate->link = $this->name;

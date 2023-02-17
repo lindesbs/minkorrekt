@@ -32,7 +32,6 @@ DCA::DCA('tl_content', true,
     )
 );
 
-/*
 $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_art'] = array
 (
     'label'                     => &$GLOBALS['TL_LANG']['tl_content']['minkorrekt_thema_folge'],
@@ -66,9 +65,11 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_folge'] = array
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_nummer'] = array
 (
-    'label'                     => &$GLOBALS['TL_LANG']['tl_content']['minkorrekt_thema_nummer'],
-    'exclude'                   => true,
-    'inputType'                 => 'text',
-    'eval'                      => array('rgxp'=>'number', "tl_style"=>"w50"),
-    'sql'                       => "int(10) unsigned NOT NULL default '0'"
-);*/
+    'label' => &$GLOBALS['TL_LANG']['tl_content']['minkorrekt_thema_nummer'],
+    'exclude' => true,
+    'inputType' => 'text',
+    'eval' => array('rgxp' => 'number', "tl_style" => "w50"),
+    'sql' => "int(10) unsigned NOT NULL default '0'"
+);
+
+
