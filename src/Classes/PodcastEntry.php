@@ -1,13 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
+/*
+ * minkorrekt-history
+ *  from lindesbs
+ */
 
 namespace lindesbs\minkorrekt\Classes;
 
-use DateTime;
-use DOMNode;
-
 class PodcastEntry
 {
-
     private string $title;
 
     private string $subtitle;
@@ -22,7 +25,6 @@ class PodcastEntry
 
     private string $content;
 
-
     private bool $explicit;
 
     private array $keywords;
@@ -33,18 +35,18 @@ class PodcastEntry
 
     private string $description;
 
-    private DateTime $dateTime;
+    private \DateTime $dateTime;
 
-
-    public function __construct(DOMNode $domNode)
+    public function __construct(\DOMNode $domNode)
     {
         $values = [];
         /** @var \DOMNodeList $nodelist */
         $nodelist = $domNode->childNodes;
-        foreach ($nodelist as $node) {
 
-            if (strlen(trim($node->nodeValue)) > 0)
+        foreach ($nodelist as $node) {
+            if ('' !== trim($node->nodeValue)) {
                 $values[$node->nodeName] = $node->nodeValue;
+            }
         }
 
         $dateTime = new \DateTime($values['pubDate']);
@@ -53,18 +55,21 @@ class PodcastEntry
         $this->setDescription($values['description']);
         $this->setLink($values['link']);
         $this->setGuid($values['guid']);
-        $this->setContent(str_replace("<br>", "\n", $values['content:encoded']));
+        $this->setContent(str_replace('<br>', "\n", $values['content:encoded']));
         $this->setEpisode((int)$values['itunes:episode']);
         $this->setSubtitle($values['itunes:subtitle']);
         $this->setSummary($values['itunes:summary']);
-        $this->setExplicit($values['itunes:explicit'] === 'yes');
+        $this->setExplicit('yes' === $values['itunes:explicit']);
 
-        if ((array_key_exists('itunes:keywords', $values)) && ($values['itunes:keywords']))
+        if (\array_key_exists('itunes:keywords', $values) && ($values['itunes:keywords'])) {
             $this->setKeywords(explode(',', $values['itunes:keywords']));
+        }
 
         $this->setAuthor($values['itunes:author']);
-        if ((array_key_exists('itunes:duration', $values)) && ($values['itunes:duration']))
+
+        if (\array_key_exists('itunes:duration', $values) && ($values['itunes:duration'])) {
             $this->setDuration((int)$values['itunes:duration']);
+        }
 
         $this->setPubDate($dateTime);
     }
@@ -89,12 +94,12 @@ class PodcastEntry
         $this->description = $description;
     }
 
-    public function getPubDate(): DateTime
+    public function getPubDate(): \DateTime
     {
         return $this->dateTime;
     }
 
-    public function setPubDate(DateTime $pubDate): void
+    public function setPubDate(\DateTime $pubDate): void
     {
         $this->dateTime = $pubDate;
     }
@@ -109,22 +114,15 @@ class PodcastEntry
         $this->subtitle = $subtitle;
     }
 
-    /**
-     * @return int
-     */
     public function getEpisode(): int
     {
         return $this->episode;
     }
 
-    /**
-     * @param int $episode
-     */
     public function setEpisode(int $episode): void
     {
         $this->episode = $episode;
     }
-
 
     public function getSummary(): string
     {
@@ -205,6 +203,4 @@ class PodcastEntry
     {
         $this->content = $content;
     }
-
-
 }

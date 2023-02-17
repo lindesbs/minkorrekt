@@ -1,4 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
+/*
+ * minkorrekt-history
+ *  from lindesbs
+ */
 
 namespace lindesbs\minkorrekt\ContentElement;
 
@@ -12,7 +19,6 @@ class ContentMinkorrektNewsElement extends ContentElement
      */
     protected $strTemplate = 'ce_text';
 
-
     protected function compile()
     {
         $backendTemplate = new BackendTemplate('be_wildcard');
@@ -25,5 +31,4 @@ class ContentMinkorrektNewsElement extends ContentElement
 
         return $backendTemplate->parse();
     }
-
 }

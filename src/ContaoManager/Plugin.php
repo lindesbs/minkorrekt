@@ -1,4 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
+/*
+ * minkorrekt-history
+ *  from lindesbs
+ */
 
 namespace lindesbs\minkorrekt\ContaoManager;
 

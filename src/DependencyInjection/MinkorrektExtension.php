@@ -1,4 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
+/*
+ * minkorrekt-history
+ *  from lindesbs
+ */
 
 namespace lindesbs\minkorrekt\DependencyInjection;
 
@@ -16,10 +23,7 @@ class MinkorrektExtension extends Extension
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-        $yamlFileLoader->load("services.yaml");
-        $yamlFileLoader->load("commands.yaml");
-
-
+        $yamlFileLoader->load('services.yaml');
+        $yamlFileLoader->load('commands.yaml');
     }
-
 }

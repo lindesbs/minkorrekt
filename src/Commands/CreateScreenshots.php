@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace lindesbs\minkorrekt\Commands;
 
@@ -21,52 +23,44 @@ class CreateScreenshots extends Command
 
     protected static $defaultDescription = 'Create screenhots of websites';
 
-    protected static $thumbnailCommand = "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,1060 ##url##";
-    protected static $fullpageCommand = "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,10600  ##url##";
-
-
-    private int $statusCode = Command::SUCCESS;
+    protected static $thumbnailCommand = '/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,1060 ##url##';
+    protected static $fullpageCommand = '/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,10600  ##url##';
 
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
-        private readonly Connection      $connection
-    )
-    {
+        private readonly Connection $connection,
+    ) {
         parent::__construct();
     }
 
     /**
-     * @param string $destPath
-     * @param array $paper
-     * @param string $captureCommand
-     * @return void
      * @throws \Exception
      */
     public function makeScreenshot(
         string $destPath,
-        array  $paper,
+        array $paper,
         string $captureCommand,
         string $destinationVar
-    ): string
-    {
-        $filename = sprintf("%s%s_%s_%s.png",
+    ): string {
+        $filename = sprintf(
+            '%s%s_%s_%s.png',
             $destPath,
-            date("Ymd"),
+            date('Ymd'),
             StringUtil::generateAlias($paper['title']),
             $destinationVar
         );
 
         $cmd = str_replace(
-            ["##outputname##", "##url##"],
+            ['##outputname##', '##url##'],
             [$filename, $paper['url']],
-            $captureCommand);
+            $captureCommand
+        );
 
-        file_put_contents("runner.sh", $cmd);
+        file_put_contents('runner.sh', $cmd);
         $process = new Process(['./runner.sh']);
         $process->run();
 
         return $filename;
-
     }
 
     protected function configure(): void
@@ -74,18 +68,21 @@ class CreateScreenshots extends Command
         $this->setDescription('Gibt einen Demotext aus.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
-        $symfonyStyle = new SymfonyStyle($input, $output);
+        new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();
 
         $filesystem = new Filesystem();
 
-        $objSQLPublisher = $this->connection->executeQuery("SELECT * FROM tl_minkorrekt_publisher WHERE url IS NOT NULL");
+        $objSQLPublisher = $this->connection->executeQuery(
+            'SELECT * FROM tl_minkorrekt_publisher WHERE url IS NOT NULL'
+        );
         $objPublisher = $objSQLPublisher->fetchAllAssociative();
 
         foreach ($objPublisher as $publisher) {
-            $destPath = sprintf("files/media/paper/%s/",
+            $destPath = sprintf(
+                'files/media/paper/%s/',
                 StringUtil::generateAlias($publisher['title'])
             );
 
@@ -94,33 +91,25 @@ class CreateScreenshots extends Command
             $filename = $this->makeScreenshot($destPath, $publisher, self::$thumbnailCommand, $destinationVar);
 
             $objDBAfsFile = Dbafs::addResource($filename);
-
-            if ($objDBAfsFile !== null) {
-                $objModel = MinkorrektPublisherModel::findByIdOrAlias($publisher['id']);
-
-                $objModel->$destinationVar = $objDBAfsFile->uuid;
-                $objModel->save();
-            }
+            $objModel = MinkorrektPublisherModel::findByIdOrAlias($publisher['id']);
+            $objModel->$destinationVar = $objDBAfsFile->uuid;
+            $objModel->save();
 
             $destinationVar = 'screenshotFullpageSRC';
             $this->makeScreenshot($destPath, $publisher, self::$fullpageCommand, $destinationVar);
 
             $objDBAfsFile = Dbafs::addResource($filename);
-
-            if ($objDBAfsFile !== null) {
-                $objModel = MinkorrektPublisherModel::findByIdOrAlias($publisher['id']);
-
-                $objModel->$destinationVar = $objDBAfsFile->uuid;
-                $objModel->save();
-            }
-
+            $objModel = MinkorrektPublisherModel::findByIdOrAlias($publisher['id']);
+            $objModel->$destinationVar = $objDBAfsFile->uuid;
+            $objModel->save();
         }
 
-        $objSQLPaper = $this->connection->executeQuery("SELECT * FROM tl_minkorrekt_paper WHERE url IS NOT NULL");
+        $objSQLPaper = $this->connection->executeQuery('SELECT * FROM tl_minkorrekt_paper WHERE url IS NOT NULL');
         $objPaper = $objSQLPaper->fetchAllAssociative();
 
         foreach ($objPaper as $paper) {
-            $destPath = sprintf("files/media/paper/%s/",
+            $destPath = sprintf(
+                'files/media/paper/%s/',
                 StringUtil::generateAlias($paper['title'])
             );
 
@@ -129,27 +118,17 @@ class CreateScreenshots extends Command
             $filename = $this->makeScreenshot($destPath, $paper, self::$thumbnailCommand, $destinationVar);
 
             $objDBAfsFile = Dbafs::addResource($filename);
-
-            if ($objDBAfsFile !== null) {
-                $objModel = MinkorrektPaperModel::findByIdOrAlias($paper['id']);
-
-                $objModel->$destinationVar = $objDBAfsFile->uuid;
-                $objModel->save();
-            }
+            $objModel = MinkorrektPaperModel::findByIdOrAlias($paper['id']);
+            $objModel->$destinationVar = $objDBAfsFile->uuid;
+            $objModel->save();
 
             $destinationVar = 'screenshotFullpageSRC';
             $filename = $this->makeScreenshot($destPath, $paper, self::$fullpageCommand, $destinationVar);
 
             $objDBAfsFile = Dbafs::addResource($filename);
-
-            if ($objDBAfsFile !== null) {
-                $objModel = MinkorrektPaperModel::findByIdOrAlias($paper['id']);
-
-                $objModel->$destinationVar = $objDBAfsFile->uuid;
-                $objModel->save();
-            }
-
-
+            $objModel = MinkorrektPaperModel::findByIdOrAlias($paper['id']);
+            $objModel->$destinationVar = $objDBAfsFile->uuid;
+            $objModel->save();
         }
 
         return Command::SUCCESS;

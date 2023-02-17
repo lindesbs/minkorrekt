@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace lindesbs\minkorrekt\Commands;
 
@@ -22,17 +24,14 @@ class DCAText extends Command
         parent::__construct();
     }
 
-
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
         new SymfonyStyle($input, $output);
 
         $dcaToolTime = new DCAToolTime();
         $treeBuilder = $dcaToolTime->getConfigTreeBuilder();
 
-
         dump($treeBuilder->buildTree());
-
 
 //
 //        $arrv = DCA::DCA('minkorrekt_thema_art', false,
@@ -49,5 +48,4 @@ class DCAText extends Command
 
         return Command::SUCCESS;
     }
-
 }
