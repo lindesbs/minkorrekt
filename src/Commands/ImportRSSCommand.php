@@ -157,6 +157,10 @@ class ImportRSSCommand extends Command
             }
         }
 
+
+        $command = $this->getApplication()->find('minkorrekt:screenshots');
+        $command->run($input, $output);
+
         return $this->statusCode;
     }
 }

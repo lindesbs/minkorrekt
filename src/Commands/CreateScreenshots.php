@@ -63,23 +63,20 @@ class CreateScreenshots extends Command
         return $filename;
     }
 
-    protected function configure(): void
-    {
-        $this->setDescription('Gibt einen Demotext aus.');
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
-        new SymfonyStyle($input, $output);
+        $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();
 
         $filesystem = new Filesystem();
 
         $objSQLPublisher = $this->connection->executeQuery(
-            'SELECT * FROM tl_minkorrekt_publisher WHERE url IS NOT NULL'
+            'SELECT * FROM tl_minkorrekt_publisher WHERE url IS NOT NULL AND screenshotSRC IS NULL'
         );
         $objPublisher = $objSQLPublisher->fetchAllAssociative();
 
+        $io->writeln("Publisher");
+        $io->progressStart(count($objPublisher));
         foreach ($objPublisher as $publisher) {
             $destPath = sprintf(
                 'files/media/paper/%s/',
@@ -102,10 +99,20 @@ class CreateScreenshots extends Command
             $objModel = MinkorrektPublisherModel::findByIdOrAlias($publisher['id']);
             $objModel->$destinationVar = $objDBAfsFile->uuid;
             $objModel->save();
+
+            $io->progressAdvance();
         }
 
-        $objSQLPaper = $this->connection->executeQuery('SELECT * FROM tl_minkorrekt_paper WHERE url IS NOT NULL');
+        $io->progressFinish();
+
+
+        $objSQLPaper = $this->connection->executeQuery(
+            'SELECT * FROM tl_minkorrekt_paper WHERE url IS NOT NULL AND screenshotSRC IS NULL'
+        );
         $objPaper = $objSQLPaper->fetchAllAssociative();
+
+        $io->writeln("Publisher");
+        $io->progressStart(count($objPaper));
 
         foreach ($objPaper as $paper) {
             $destPath = sprintf(
@@ -129,7 +136,10 @@ class CreateScreenshots extends Command
             $objModel = MinkorrektPaperModel::findByIdOrAlias($paper['id']);
             $objModel->$destinationVar = $objDBAfsFile->uuid;
             $objModel->save();
+            $io->progressAdvance();
         }
+
+        $io->progressFinish();
 
         return Command::SUCCESS;
     }
