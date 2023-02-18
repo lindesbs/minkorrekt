@@ -7,7 +7,7 @@ declare(strict_types=1);
  *  from lindesbs
  */
 
-namespace lindesbs\minkorrekt\src\Models;
+namespace lindesbs\minkorrekt\Models;
 
 use Contao\Model;
 

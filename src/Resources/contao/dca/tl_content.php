@@ -19,28 +19,6 @@ $arrNewBlocks = array_merge($arrNewBlocks, $arrBlocks);
 
 $GLOBALS['TL_DCA']['tl_content']['palettes']['minkorrekt_thema'] = implode(';', $arrNewBlocks);
 
-DCA::DCA(
-    'tl_content',
-    true,
-    DCA::Group(
-        'minkorrekt',
-        [
-            DCA::Field('minkorrekt_thema_art', DCAType::SELECT, [
-                'THEMA',
-                'UEBERSCHRIFT',
-                'SCHWURBEL',
-                'GADGET',
-                'TIMETABLE',
-                'ANFANG',
-                'ADRESSEN',
-                'TEXT',
-                'EXPERIMENT',
-            ]),
-            DCA::Field('minkorrekt_thema_folge', DCATYPE::TEXT),
-            DCA::Field('minkorrekt_thema_nummer', DCAType::TEXT),
-        ],
-    )
-);
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_art'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_content']['minkorrekt_thema_folge'],

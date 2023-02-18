@@ -6,10 +6,11 @@ namespace lindesbs\minkorrekt\Commands;
 
 use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\NewsArchiveModel;
 use Contao\NewsModel;
+use Contao\StringUtil;
 use Doctrine\DBAL\Connection;
 use lindesbs\minkorrekt\Classes\PodcastEntry;
+use lindesbs\minkorrekt\Service\DCATools;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,9 +31,11 @@ class ImportRSSCommand extends Command
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
         private readonly Connection $connection,
+        private readonly DCATools $DCATools
     ) {
         parent::__construct();
     }
+
 
     protected function configure(): void
     {
@@ -53,32 +56,12 @@ class ImportRSSCommand extends Command
 
         $this->contaoFramework->initialize();
 
-        $filesystemAdapter = new FilesystemAdapter();
         $domDocument = new \DOMDocument();
 
-        $strData = $filesystemAdapter->get(
-            'RSSFeed',
-            static function (ItemInterface $item): string|bool {
-                $item->expiresAfter(3600);
+        $strData = $this->getRSSFeed();
 
-                return file_get_contents(self::$defaultURL);
-            }
-        );
-
-        $domDocument->loadXML($strData);
-
-        $title = 'Methodisch Inkorrekt';
-
-        $objNewsArchive = NewsArchiveModel::findByTitle($title);
-
-        if (null === $objNewsArchive) {
-            $objNewsArchive = new NewsArchiveModel();
-            $objNewsArchive->tstamp = time();
-
-            $objNewsArchive->title = $title;
-        }
-
-        $objNewsArchive->save();
+        $domDocument->loadXML($strData);;
+        $objNewsArchive = $this->DCATools->getNewsArchive('Methodisch Inkorrekt');
 
         $domxPath = new \DOMXPath($domDocument);
 
@@ -103,7 +86,7 @@ class ImportRSSCommand extends Command
             $objFeed->tstamp = time();
             $objFeed->pid = $objNewsArchive->id;
 
-            $objFeed->alias = $entry->getGuid();
+            $objFeed->alias = StringUtil::generateAlias(sprintf("%s_F%s", $entry->getTitle(), $entry->getEpisode()));
 
             $objFeed->headline = $entry->getTitle();
 
@@ -157,10 +140,27 @@ class ImportRSSCommand extends Command
             }
         }
 
-
-        $command = $this->getApplication()->find('minkorrekt:screenshots');
-        $command->run($input, $output);
-
         return $this->statusCode;
     }
+
+
+    /**
+     * @return string
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public function getRSSFeed(): string
+    {
+        $filesystemAdapter = new FilesystemAdapter();
+
+        $strData = $filesystemAdapter->get(
+            'RSSFeed',
+            static function (ItemInterface $item): string|bool {
+                $item->expiresAfter(86400);
+
+                return file_get_contents(self::$defaultURL);
+            }
+        );
+        return $strData;
+    }
+
 }
