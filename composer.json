@@ -21,7 +21,6 @@
     "psr-4": {
       "lindesbs\\minkorrekt\\": "src/"
     },
-
     "classmap": [
       "src/Resources/contao"
     ],

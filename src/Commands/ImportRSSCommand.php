@@ -9,14 +9,20 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\NewsModel;
 use Contao\StringUtil;
 use Doctrine\DBAL\Connection;
+use DOMDocument;
+use DOMNodeList;
+use DOMXPath;
 use lindesbs\minkorrekt\Classes\PodcastEntry;
 use lindesbs\minkorrekt\Service\DCATools;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\Cache\ItemInterface;
+
+use function count;
 
 class ImportRSSCommand extends Command
 {
@@ -56,22 +62,22 @@ class ImportRSSCommand extends Command
 
         $this->contaoFramework->initialize();
 
-        $domDocument = new \DOMDocument();
+        $domDocument = new DOMDocument();
 
         $strData = $this->getRSSFeed();
 
-        $domDocument->loadXML($strData);;
+        $domDocument->loadXML($strData);
         $objNewsArchive = $this->DCATools->getNewsArchive('Methodisch Inkorrekt');
 
-        $domxPath = new \DOMXPath($domDocument);
+        $domxPath = new DOMXPath($domDocument);
 
 //            $xp->registerNamespace('itunes','http://www.itunes.com/dtds/podcast-1.0.dtd');
 //            $xp->registerNamespace('atom','http://www.w3.org/2005/Atom');
 
-        /** @var \DOMNodeList $path */
+        /** @var DOMNodeList $path */
         $path = $domxPath->query('//channel/item');
 
-        $symfonyStyle->writeln(\count($path) . ' Elemete');
+        $symfonyStyle->writeln(count($path) . ' Elemete');
 
         foreach ($path as $element) {
             $entry = new PodcastEntry($element);
@@ -145,8 +151,7 @@ class ImportRSSCommand extends Command
 
 
     /**
-     * @return string
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getRSSFeed(): string
     {

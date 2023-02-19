@@ -8,6 +8,7 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Dbafs;
 use Contao\StringUtil;
 use Doctrine\DBAL\Connection;
+use Exception;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
 use Symfony\Component\Console\Command\Command;
@@ -31,36 +32,6 @@ class CreateScreenshots extends Command
         private readonly Connection $connection,
     ) {
         parent::__construct();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function makeScreenshot(
-        string $destPath,
-        array $paper,
-        string $captureCommand,
-        string $destinationVar
-    ): string {
-        $filename = sprintf(
-            '%s%s_%s_%s.png',
-            $destPath,
-            date('Ymd'),
-            StringUtil::generateAlias($paper['title']),
-            $destinationVar
-        );
-
-        $cmd = str_replace(
-            ['##outputname##', '##url##'],
-            [$filename, $paper['url']],
-            $captureCommand
-        );
-
-        file_put_contents('runner.sh', $cmd);
-        $process = new Process(['./runner.sh']);
-        $process->run();
-
-        return $filename;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int|null
@@ -142,5 +113,35 @@ class CreateScreenshots extends Command
         $io->progressFinish();
 
         return Command::SUCCESS;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function makeScreenshot(
+        string $destPath,
+        array $paper,
+        string $captureCommand,
+        string $destinationVar
+    ): string {
+        $filename = sprintf(
+            '%s%s_%s_%s.png',
+            $destPath,
+            date('Ymd'),
+            StringUtil::generateAlias($paper['title']),
+            $destinationVar
+        );
+
+        $cmd = str_replace(
+            ['##outputname##', '##url##'],
+            [$filename, $paper['url']],
+            $captureCommand
+        );
+
+        file_put_contents('runner.sh', $cmd);
+        $process = new Process(['./runner.sh']);
+        $process->run();
+
+        return $filename;
     }
 }

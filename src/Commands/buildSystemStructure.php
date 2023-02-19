@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace lindesbs\minkorrekt\Commands;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
-use lindesbs\minkorrekt\Service\DCATools;
+use lindesbs\contaotoolbox\Service\DCATools;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,8 +31,12 @@ class buildSystemStructure extends Command
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();
 
+        $io->writeln("Theme");
+
         $theme = $this->DCATools->getTheme("Standard");
 
+
+        $io->writeln("Modules");
         $modMainMenu = $this->DCATools->getModule(
             'Menu :: Main Top',
             [
@@ -97,6 +101,7 @@ class buildSystemStructure extends Command
         );
 
 
+        $io->writeln("Layout");
         $layout = $this->DCATools->getLayout(
             "Standard",
             [
@@ -139,7 +144,18 @@ class buildSystemStructure extends Command
         );
 
 
-        $rootPage = $this->DCATools->getPage('Minkorrekt History', ['type' => 'root', 'fallback' => true]);
+        $io->writeln("Pages");
+        $rootPage = $this->DCATools->getPage(
+            'Minkorrekt History',
+            [
+                'type' => 'root',
+                'fallback' => true,
+                'pageTitle' => 'Minkorrekt History - privates Projekt',
+                'useSSL' => '',
+                'includeLayout' => true,
+                'layout' => $layout->id
+            ]
+        );
 
 
         if ($rootPage) {
