@@ -111,31 +111,38 @@ class buildSystemStructure extends Command
                 'modules' => [
                     [
                         'mod' => $modHeaderArticle->id,
-                        'col' => 'header'
+                        'col' => 'header',
+                        'enable' => true
                     ],
                     [
                         'mod' => $modMainMenu->id,
-                        'col' => 'header'
+                        'col' => 'header',
+                        'enable' => true
                     ],
                     [
                         'mod' => 0,
-                        'col' => 'main'
+                        'col' => 'main',
+                        'enable' => true
                     ],
                     [
                         'mod' => $modFooterHTML->id,
-                        'col' => 'footer'
+                        'col' => 'footer',
+                        'enable' => true
                     ],
                     [
                         'mod' => $modFooterImpressum->id,
-                        'col' => 'footer'
+                        'col' => 'footer',
+                        'enable' => true
                     ],
                     [
                         'mod' => $modFooterDatenschutz->id,
-                        'col' => 'footer'
+                        'col' => 'footer',
+                        'enable' => true
                     ],
                     [
                         'mod' => $modFooterKontakt->id,
-                        'col' => 'footer'
+                        'col' => 'footer',
+                        'enable' => true
                     ]
                 ],
 
@@ -144,18 +151,16 @@ class buildSystemStructure extends Command
             ]
         );
 
-
         $io->writeln("Pages");
         $rootPage = $this->DCATools->getPage(
             'Minkorrekt History',
             [
-                Page::SSLROOT,
+                Page::NOSSLROOT,
                 'pageTitle' => 'Minkorrekt History - privates Projekt',
                 'layout' => $layout->id
             ],
             0
         );
-
 
         if ($rootPage) {
             $hiddenPage = ['hide' => true];
@@ -194,7 +199,11 @@ class buildSystemStructure extends Command
             $newsPaper->jumpTo = $paperDetailPage->id;
             $newsPaper->save();
 
-            
+
+            $praeambelArticle = $this->DCATools->getArticle("Willkommen", [], $preaeambelPage);
+            $praeambelArticle01 = $this->DCATools->getArticle("Inhalte", [], $preaeambelPage);
+            $praeambelArticle02 = $this->DCATools->getArticle("Wozu der Wissenspool", [], $preaeambelPage);
+            $praeambelArticle03 = $this->DCATools->getArticle("Hostorien", [], $preaeambelPage);
         }
 
         return Command::SUCCESS;
