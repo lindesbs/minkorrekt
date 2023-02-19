@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace lindesbs\minkorrekt\Commands;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
-use lindesbs\minkorrekt\Service\DCATools;
+use lindesbs\contaotoolbox\Service\DCATools;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

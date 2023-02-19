@@ -10,7 +10,8 @@
     }
   ],
   "require": {
-    "contao/core-bundle": "^4.9"
+    "contao/core-bundle": "^4.9",
+    "lindesbs/contaotoolbox": "dev-develop"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

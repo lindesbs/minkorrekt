@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace lindesbs\minkorrekt\Commands;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
+use lindesbs\contaotoolbox\Constants\Page;
 use lindesbs\contaotoolbox\Service\DCATools;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -148,19 +149,18 @@ class buildSystemStructure extends Command
         $rootPage = $this->DCATools->getPage(
             'Minkorrekt History',
             [
-                'type' => 'root',
-                'fallback' => true,
+                Page::SSLROOT,
                 'pageTitle' => 'Minkorrekt History - privates Projekt',
-                'useSSL' => '',
-                'includeLayout' => true,
                 'layout' => $layout->id
-            ]
+            ],
+            0
         );
 
 
         if ($rootPage) {
             $hiddenPage = ['hide' => true];
 
+            $preaeambelPage = $this->DCATools->getPage("Praeambel", [], $rootPage->id);
             $sciencePage = $this->DCATools->getPage("Wissenschaft", [], $rootPage->id);
 
             $publisherPage = $this->DCATools->getPage("Verlag", [], $sciencePage->id);
@@ -172,15 +172,15 @@ class buildSystemStructure extends Command
             $statisticsPage = $this->DCATools->getPage("Statistiken", [], $sciencePage->id);
 
 
-            $this->DCATools->getPage("Folgen");
+            $this->DCATools->getPage("Folgen", [], $rootPage->id);
 
-            $this->DCATools->getPage("Minkorrekt-Pool");
-            $this->DCATools->getPage("Datenschutz");
-            $this->DCATools->getPage("Impressum");
-            $this->DCATools->getPage("Kontakt");
+            $this->DCATools->getPage("Minkorrekt-Pool", [], $rootPage->id);
+            $this->DCATools->getPage("Datenschutz", [], $rootPage->id);
+            $this->DCATools->getPage("Impressum", [], $rootPage->id);
+            $this->DCATools->getPage("Kontakt", [], $rootPage->id);
 
 
-            $hiddenPageID = $this->DCATools->getPage("HIDDEN", $hiddenPage);
+            $hiddenPageID = $this->DCATools->getPage("HIDDEN", $hiddenPage, $rootPage->id);
 
             $this->DCATools->getPage("Header", $hiddenPage, $hiddenPageID->id);
             $this->DCATools->getPage("Footer", $hiddenPage, $hiddenPageID->id);
@@ -193,6 +193,8 @@ class buildSystemStructure extends Command
             $newsPaper = $this->DCATools->getNewsArchive("Paper");
             $newsPaper->jumpTo = $paperDetailPage->id;
             $newsPaper->save();
+
+            
         }
 
         return Command::SUCCESS;
