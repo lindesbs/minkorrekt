@@ -13,6 +13,7 @@ use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
@@ -34,21 +35,41 @@ class CreateScreenshots extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this->addOption("force",
+            null,
+            InputOption::VALUE_NONE,
+            "Force halt");
+    }
+
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();
 
+        $bForce = $input->getOption("force");
+
         $filesystem = new Filesystem();
 
         $objSQLPublisher = $this->connection->executeQuery(
-            'SELECT * FROM tl_minkorrekt_publisher WHERE url IS NOT NULL AND screenshotSRC IS NULL'
+            'SELECT * FROM tl_minkorrekt_publisher WHERE url IS NOT NULL'
         );
         $objPublisher = $objSQLPublisher->fetchAllAssociative();
 
         $io->writeln("Publisher");
         $io->progressStart(count($objPublisher));
         foreach ($objPublisher as $publisher) {
+            if (isset($publisher['screenshotSRC']) && (!$bForce)) {
+                continue;
+            }
+
+            $io->writeln("+++");
             $destPath = sprintf(
                 'files/media/paper/%s/',
                 StringUtil::generateAlias($publisher['title'])
@@ -78,7 +99,7 @@ class CreateScreenshots extends Command
 
 
         $objSQLPaper = $this->connection->executeQuery(
-            'SELECT * FROM tl_minkorrekt_paper WHERE url IS NOT NULL AND screenshotSRC IS NULL'
+            'SELECT * FROM tl_minkorrekt_paper WHERE url IS NOT NULL'
         );
         $objPaper = $objSQLPaper->fetchAllAssociative();
 
@@ -86,6 +107,10 @@ class CreateScreenshots extends Command
         $io->progressStart(count($objPaper));
 
         foreach ($objPaper as $paper) {
+            if (isset($paper['screenshotSRC']) && (!$bForce)) {
+                continue;
+            }
+
             $destPath = sprintf(
                 'files/media/paper/%s/',
                 StringUtil::generateAlias($paper['title'])

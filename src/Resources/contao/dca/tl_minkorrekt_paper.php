@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 use Contao\DataContainer;
 use Contao\DC_Table;
+use src\Classes\PaperSubmit;
+use Symfony\Component\Intl\Languages;
 
 $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
     // Config
@@ -16,12 +18,18 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
         'dataContainer' => DC_Table::class,
         'enableVersioning' => true,
         'markAsCopy' => 'title',
-        'onload_callback' => [],
+        'onsubmit_callback' => [
+            [
+                PaperSubmit::class,'scrape'
+            ]
+        ],
+        'ctable' => ['tl_minkorrekt_paper_creator'],
         'sql' => [
             'keys' => [
                 'id' => 'primary',
                 'alias' => 'index',
                 'published' => 'index',
+                'pid' => 'index',
             ],
         ]
     ],
@@ -44,7 +52,11 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'rebuild' => ['href' => 'key=rebuild', 'icon' => 'su.svg'],
         ],
         'operations' => [
-            'edit' => ['href' => 'act=edit', 'icon' => 'edit.svg'],
+            'editheader' => ['href' => 'act=edit', 'icon' => 'edit.svg'],
+            'edit' => [
+                'href'                => 'table=tl_minkorrekt_paper_creator',
+                'icon'                => 'person.svg',
+            ],
             'copy' => [
                 'href' => 'act=paste&amp;mode=copy',
                 'icon' => 'copy.svg',
@@ -64,9 +76,19 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
         ]
     ],
     // Palettes
-    'palettes' => ['default' => '{title_legend},title,alias,thePublisher,published,status;url,license,receivedAt,acceptedAt,publishedAt,doiurl,subjects,screenshotSRC,screenshotFullpageSRC;tlContentId,tlNewsId'],
+    'palettes' => ['default' => '{title_legend},pid,title,citation_title,alias,url;copyright,rights,rightsAgent;'.
+        'description,thePublisher,published,status;license,onlineAt,receivedAt,size,'.
+                            'acceptedAt,publishedAt,doi,doiurl,citation_springer_api_url,subjects,screenshotSRC,screenshotFullpageSRC;tlContentId,'.
+                            'tlNewsId;price;paperType,language,twitter;citation_firstpage,citation_lastpage,citation_article_type,'.
+    'citation_pdf_url,citation_fulltext_html_url,citation_issn'],
     'fields' => [
         'id' => ['label' => ['ID'], 'sql' => 'int(10) unsigned NOT NULL auto_increment'],
+
+        'pid' => [
+            'foreignKey'              => 'tl_minkorrekt_publisher.title',
+            'sql'                     => "int(10) unsigned NOT NULL default 0",
+            'relation'                => ['type'=>'belongsTo', 'load'=>'lazy']
+        ],
         'sorting' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
         'tstamp' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
         'title' => [
@@ -74,6 +96,72 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'inputType' => 'text',
             'search' => true,
             'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255],
+            'sql' => "varchar(255) NOT NULL default ''"
+        ],
+        'citation_title' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'search' => true,
+            'eval' => ['decodeEntities' => true, 'maxlength' => 255],
+            'sql' => "varchar(255) NOT NULL default ''"
+        ],
+        'citation_pdf_url' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => [
+                'rgxp' => 'url',
+                'decodeEntities' => true,
+                'maxlength' => 255, 'tl_class' => 'w50'
+            ],
+            'sql' => "varchar(255) NOT NULL default ''"
+              ],
+        'citation_springer_api_url' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => [
+                'rgxp' => 'url',
+                'decodeEntities' => true,
+                'maxlength' => 255,
+                'tl_class' => 'w50'
+            ],
+            'sql' => "varchar(255) NOT NULL default ''"
+        ],
+        'citation_fulltext_html_url' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => [
+                'rgxp' => 'url',
+                'decodeEntities' => true,
+                'maxlength' => 2048, 'tl_class' => 'w50'
+            ],
+            'sql' => "varchar(255) NOT NULL default ''"
+        ],
+        'citation_issn' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'search' => true,
+            'eval' => [ 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''"
+        ],
+        'copyright' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'search' => true,
+            'eval' => [ 'decodeEntities' => true, 'maxlength' => 255],
+            'sql' => "varchar(255) NOT NULL default ''"
+        ],
+        'rights' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'search' => true,
+            'eval' => ['decodeEntities' => true, 'maxlength' => 255],
+            'sql' => "varchar(255) NOT NULL default ''"
+        ],
+        'rightsagent' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'search' => true,
+            'eval' => ['decodeEntities' => true, 'maxlength' => 255],
             'sql' => "varchar(255) NOT NULL default ''"
         ],
         'alias' => [
@@ -84,7 +172,6 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
                 'rgxp' => 'alias',
                 'doNotCopy' => true,
                 'maxlength' => 255,
-                'tl_class' => 'w50',
                 'readonly' => true,
             ],
             'sql' => "varchar(255) NOT NULL default ''",
@@ -97,13 +184,40 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'eval' => ['doNotCopy' => true],
             'sql' => "char(1) NOT NULL default ''",
         ],
+
+        'citation_firstpage' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'natural'],
+            'sql' => "int(3) unsigned NOT NULL default 0",
+        ],
+
+        'citation_lastpage' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'natural'],
+            'sql' => "int(3) unsigned NOT NULL default 0",
+        ],
+
+        'size' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'natural', 'tl_class' => 'w50'],
+            'sql' => "int(11) unsigned NOT NULL default 0",
+        ],
+
+
         'thePublisher' => [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
             'foreignKey' => 'tl_minkorrekt_publisher.title',
             'eval' => ['mandatory' => true, 'chosen' => true, 'tl_class' => 'clr'],
-            'sql' => "varchar(32) NOT NULL default ''",
+            'sql'                     => "int(10) unsigned NOT NULL default 0",
+            'relation'                => ['type'=>'belongsTo', 'load'=>'lazy']
         ],
         'status' => [
             'exclude' => true,
@@ -126,35 +240,70 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'options' => ['OPEN', 'CLOSED', 'UNKNOWN'],
             'sql' => "varchar(16) NOT NULL default 'UNKNOWN'",
         ],
+        'citation_article_type' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'select',
+            'options' => ['Article', 'CLOSED', 'UNKNOWN'],
+            'sql' => "varchar(16) NOT NULL default 'UNKNOWN'",
+        ],
+
+        'paperType' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'select',
+            'options' => ['OriginalPaper', 'UNKNOWN'],
+            'sql' => "varchar(64) NOT NULL default 'UNKNOWN'",
+        ],
+        'twitter' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'text',
+            'eval' => ['tl_class' => 'w50 clr'],
+            'sql' => "varchar(64) NOT NULL default 'UNKNOWN'",
+        ],
         'receivedAt' => [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'text',
-            'eval' => ['rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+            'eval' => ['rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'w50 wizard clr'],
             'sql' => "varchar(11) NOT NULL default ''",
         ],
         'acceptedAt' => [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'text',
-            'eval' => ['rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+            'eval' => ['rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'w50 wizard clr'],
             'sql' => "varchar(11) NOT NULL default ''",
         ],
         'publishedAt' => [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'text',
-            'eval' => ['rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'w50 wizard'],
+            'eval' => ['rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'w50 wizard clr'],
             'sql' => "varchar(11) NOT NULL default ''",
+        ],
+        'onlineAt' => [
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'date', 'datepicker' => true, 'tl_class' => 'w50 wizard clr'],
+            'sql' => "varchar(11) NOT NULL default ''",
+        ],
+        'doi' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['decodeEntities' => true, 'maxlength' => 2048, 'tl_class' => 'w50'],
+            'sql' => 'text NULL'
         ],
         'doiurl' => [
             'exclude' => true,
             'inputType' => 'text',
-            'eval' => ['rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 2048, 'tl_class' => 'w50 url'],
+            'eval' => ['rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 2048, 'tl_class' => 'w50 url clr'],
             'sql' => 'text NULL'
         ],
 
-        'subjects' => ['exclude' => true, 'inputType' => 'text', 'eval' => [], 'sql' => 'text NULL'],
+        'subjects' => ['exclude' => true, 'inputType' => 'text', 'eval' => [ 'tl_class' => 'ww50 wizard clr'], 'sql' => 'text NULL'],
         'screenshotSRC' => [
             'exclude' => true,
             'inputType' => 'fileTree',
@@ -180,6 +329,31 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'foreignKey' => 'tl_news.headline',
             'eval' => ['readonly' => true],
             'sql' => 'int(10) unsigned NOT NULL default 0'
-        ]
+        ],
+        'price' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'digit', 'decodeEntities' => true, 'tl_class' => 'w50 clr'],
+            'sql' => "varchar(11) NOT NULL default ''",
+        ],
+        'language' => [
+                'exclude'                 => true,
+                'search'                  => true,
+                'inputType'               => 'select',
+                'options' => Languages::getNames('de'),
+                'eval'                    =>
+                    [
+                        'chosen' => true,
+                        'decodeEntities'=>true,
+                        'tl_class' => 'w50 clr'
+                    ],
+                'sql' => "varchar(64) NOT NULL default ''"
+            ],
+        'description' => [
+            'exclude' => true,
+            'inputType' => 'textarea',
+            'eval' => ['decodeEntities' => true],
+            'sql' => "text NULL",
+        ],
     ],
 ];

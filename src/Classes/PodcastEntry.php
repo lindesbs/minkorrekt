@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace lindesbs\minkorrekt\Classes;
 
 use DateTime;
-
 use DOMNode;
 use DOMNodeList;
 

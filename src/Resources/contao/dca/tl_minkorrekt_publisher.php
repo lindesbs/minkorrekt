@@ -9,15 +9,19 @@ declare(strict_types=1);
 
 use Contao\DataContainer;
 use Contao\DC_Table;
+use Contao\FrontendUser;
+use Symfony\Component\Intl\Languages;
 
 $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
     // Config
     'config' => [
         'dataContainer' => DC_Table::class,
+        'ctable' => ['tl_minkorrekt_paper'],
         'enableVersioning' => true,
         'sql' => [
             'keys' => [
                 'id' => 'primary',
+                'journal_id' => 'index'
             ],
         ]
     ],
@@ -40,6 +44,10 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
         ],
         'operations' => [
             'editheader' => ['href' => 'act=edit', 'icon' => 'edit.svg'],
+            'edit' => [
+                'href'                => 'table=tl_minkorrekt_paper',
+                'icon'                => 'layout.svg',
+            ],
             'copy' => [
                 'href' => 'act=paste&amp;mode=copy',
                 'icon' => 'copy.svg',
@@ -59,7 +67,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
         ]
     ],
     // Palettes
-    'palettes' => ['default' => '{title_legend},title, url,screenshotSRC,screenshotFullpageSRC'],
+    'palettes' => ['default' => '{title_legend},title,journal_id,url,language,screenshotSRC,screenshotFullpageSRC;editor'],
     'fields' => [
         'id' => ['label' => ['ID'], 'search' => true, 'sql' => 'int(10) unsigned NOT NULL auto_increment'],
         'sorting' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
@@ -69,6 +77,13 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
             'inputType' => 'text',
             'search' => true,
             'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''"
+        ],
+        'journal_id' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'search' => true,
+            'eval' => ['maxlength' => 255, 'tl_class' => 'w50'],
             'sql' => "varchar(255) NOT NULL default ''"
         ],
         'url' => [
@@ -83,17 +98,48 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
             ],
             'sql' => 'text NULL'
         ],
+
+
         'screenshotSRC' => [
             'exclude' => true,
             'inputType' => 'fileTree',
-            'eval' => ['filesOnly' => true, 'fieldType' => 'radio', 'mandatory' => true, 'tl_class' => 'clr'],
+            'eval' => ['filesOnly' => true, 'fieldType' => 'radio', 'tl_class' => 'clr'],
             'sql' => 'binary(16) NULL'
         ],
         'screenshotFullpageSRC' => [
             'exclude' => true,
             'inputType' => 'fileTree',
-            'eval' => ['filesOnly' => true, 'fieldType' => 'radio', 'mandatory' => true, 'tl_class' => 'clr'],
+            'eval' => ['filesOnly' => true, 'fieldType' => 'radio', 'tl_class' => 'clr'],
             'sql' => 'binary(16) NULL'
+        ],
+        'language' =>
+        [
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'select',
+            'options' => Languages::getNames('de'),
+            'eval'                    =>
+                [
+                'chosen' => true,
+                'decodeEntities'=>true,
+                    'tl_class' => 'w50'
+                ],
+            'sql' => "varchar(64) NOT NULL default ''"
+
+        ],
+        'editor' => [
+            'default'                 => FrontendUser::getInstance()->id,
+            'exclude'                 => true,
+            'search'                  => true,
+            'filter'                  => true,
+            'sorting'                 => true,
+            'flag'                    => DataContainer::SORT_ASC,
+            'inputType'               => 'select',
+            'foreignKey'              => 'tl_member.lastname',
+            'eval'                    => ['doNotCopy'=>true, 'chosen'=>true, 'multiple' => true, 'mandatory'=>false, 'includeBlankOption'=>true, 'tl_class'=>'w50'],
+
+            'sql' => "varchar(64) NOT NULL default ''",
+            'relation'                => ['type'=>'hasOne', 'load'=>'lazy']
         ]
     ],
 ];

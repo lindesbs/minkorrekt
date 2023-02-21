@@ -1,5 +1,10 @@
 # ContaoTools
 
+Liste der Journals inkl. automatischer Screenshots  
+Liste der Paper mit dem automatischen Import der MetaTags  
+
+
+
 ## Kommandos
 
 ```contao-console minkorrekt:buildSystem```

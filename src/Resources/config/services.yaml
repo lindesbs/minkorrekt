@@ -7,3 +7,7 @@ services:
   lindesbs\minkorrekt\:
     resource: ../../
     exclude: ../../{Entity,Migrations,Model,Resources,Tests,Widget}
+
+  lindesbs.minkorrekt.websitescrape:
+    class: lindesbs\minkorrekt\Service\WebsiteScraper
+    public: true
