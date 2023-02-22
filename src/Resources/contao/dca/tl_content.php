@@ -20,6 +20,12 @@ $arrNewBlocks = array_merge($arrNewBlocks, $arrBlocks);
 $GLOBALS['TL_DCA']['tl_content']['palettes']['minkorrekt_thema'] = implode(';', $arrNewBlocks);
 
 
+
+$GLOBALS['TL_DCA']['tl_content']['fields']['alias'] = [
+    'inputType' => 'text',
+    'sql' => "varchar(255) NOT NULL default ''"
+];
+
 $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_art'] = [
     'label' => &$GLOBALS['TL_LANG']['tl_content']['minkorrekt_thema_folge'],
     'exclude' => true,

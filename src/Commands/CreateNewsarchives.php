@@ -46,7 +46,25 @@ class CreateNewsarchives extends Command
                 continue;
             }
 
-            $this->scraper->scrape($paper);
+            $arrOptions = [
+              'date' => (int) $paper->publishedAt
+            ];
+
+            $objNews = $this->DCATools->getNews(
+                $paper->title,
+                $arrOptions,
+                $newsPaper
+            );
+
+            $objContent = $this->DCATools->getContent($paper->title, [], $objNews,true);
+            $objContent->text=$paper->description;
+            $objContent->addImage=true;
+            $objContent->singleSRC = $paper->screenshotSRC;
+            $objContent->ptable = 'tl_news';
+
+            $objContent->save();
+
+//            $this->scraper->scrape($paper);
 
         }
 

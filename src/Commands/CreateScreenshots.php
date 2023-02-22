@@ -69,7 +69,7 @@ class CreateScreenshots extends Command
                 continue;
             }
 
-            $io->writeln("+++");
+
             $destPath = sprintf(
                 'files/media/paper/%s/',
                 StringUtil::generateAlias($publisher['title'])

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace src\Classes;
+namespace lindesbs\minkorrekt\Classes;
 
 use Contao\Backend;
 use Contao\DataContainer;

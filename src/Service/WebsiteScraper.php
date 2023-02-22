@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace lindesbs\minkorrekt\Service;
 
 use Contao\StringUtil;
+use DateTime;
 use lindesbs\minkorrekt\Models\MinkorrektPaperCreatorModel;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
@@ -16,7 +17,6 @@ class WebsiteScraper
 
     public function scrape(MinkorrektPaperModel $paper)
     {
-
         $filesystemAdapter = new FilesystemAdapter();
 
         $html = $filesystemAdapter->get(
@@ -71,10 +71,10 @@ class WebsiteScraper
                 continue;
             }
 
-            if (in_array($meta['name'], $arrIgnoreNames)) {
+            if (in_array($meta['name'], $arrIgnoreNames, true)) {
                 continue;
             }
-            if (in_array($meta['name'], $arrNotYetImplemented)) {
+            if (in_array($meta['name'], $arrNotYetImplemented, true)) {
                 continue;
             }
 
@@ -125,7 +125,7 @@ class WebsiteScraper
             if ($meta['name'] === 'citation_online_date') {
                 // Erstmal ignorieren
 
-                $date = \DateTime::createFromFormat("Y/d/m", $meta['content']);
+                $date = DateTime::createFromFormat("Y/d/m", $meta['content']);
                 $paper->citation_online_date = $date->getTimestamp();
                 $paper->save();
 
@@ -275,8 +275,19 @@ class WebsiteScraper
             }
 
 
-            if ($meta['name'] === 'citation_doi') {
-                $paper->doi = $meta['content'];
+            if ($meta['name'] === 'citation_publication_date') {
+                // Datums kann manchmal nur Y/m sein
+                $arrDate = explode("/", $meta['content']);
+                $srcDate = sprintf("%s/%s/%s",
+                $arrDate[0],
+                    (count($arrDate) === 3) ?
+                    $arrDate[2] : '1',
+                    $arrDate[1],
+                );
+
+                $date = DateTime::createFromFormat("Y/d/m", $srcDate);
+
+                $paper->publishedAt = $date->getTimestamp();
                 $paper->save();
                 continue;
             }

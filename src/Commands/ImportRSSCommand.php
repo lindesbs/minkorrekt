@@ -82,25 +82,36 @@ class ImportRSSCommand extends Command
         foreach ($path as $element) {
             $entry = new PodcastEntry($element);
 
-            $objFeed = NewsModel::findByAlias($entry->getGuid());
 
-            if (null !== $objFeed) {
-                continue;
-            }
+            $objFeed = $this->DCATools->getNews(
+                sprintf("%s_F%s", $entry->getTitle(), $entry->getEpisode()),
+                [
+                    'date' => $entry->getPubDate()->getTimestamp(),
+                    'teaser' => $entry->getDescription()
+                    ],
+                $objNewsArchive
+            );
 
-            $objFeed = new NewsModel();
-            $objFeed->tstamp = time();
-            $objFeed->pid = $objNewsArchive->id;
 
-            $objFeed->alias = StringUtil::generateAlias(sprintf("%s_F%s", $entry->getTitle(), $entry->getEpisode()));
-
-            $objFeed->headline = $entry->getTitle();
-
-            $objFeed->date = $entry->getPubDate()->getTimestamp();
-            $objFeed->teaser = $entry->getDescription();
-
-            $objFeed->published = true;
-            $objFeed->save();
+           // $objFeed = NewsModel::findByAlias($entry->getGuid());
+//
+//            if (null !== $objFeed) {
+//                continue;
+//            }
+//
+//            $objFeed = new NewsModel();
+//            $objFeed->tstamp = time();
+//            $objFeed->pid = $objNewsArchive->id;
+//
+//            $objFeed->alias = StringUtil::generateAlias(sprintf("%s_F%s", $entry->getTitle(), $entry->getEpisode()));
+//
+//            $objFeed->headline = $entry->getTitle();
+//
+//            $objFeed->date = $entry->getPubDate()->getTimestamp();
+//            $objFeed->teaser = $entry->getDescription();
+//
+//            $objFeed->published = true;
+//            $objFeed->save();
 
             $workingData = explode("\n", $entry->getContent());
             $workingData = array_map('trim', $workingData);

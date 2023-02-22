@@ -35,7 +35,8 @@ class buildSystemStructure extends Command
         $io->writeln("Theme");
 
         $theme = $this->DCATools->getTheme("Standard");
-
+        $newsPublisher = $this->DCATools->getNewsArchive("Publisher");
+        $newsPaper = $this->DCATools->getNewsArchive("Paper");
 
         $io->writeln("Modules");
         $modMainMenu = $this->DCATools->getModule(
@@ -100,6 +101,26 @@ class buildSystemStructure extends Command
                 ]
             ]
         );
+
+
+        $modPaperLister = $this->DCATools->getModule(
+            'News Paper :: List',
+            [
+                'type' => 'newslist',
+                'news_archives' => $newsPaper->id,
+                'pid' => $theme->id
+            ]
+        );
+        $modPaperReader = $this->DCATools->getModule(
+            'News Paper :: Reader',
+            [
+                'type' => 'newsreader',
+                'news_archives' => $newsPaper->id,
+                'pid' => $theme->id
+            ]
+        );
+
+
 
 
         $io->writeln("Layout");
