@@ -10,8 +10,6 @@ declare(strict_types=1);
 use lindesbs\minkorrekt\Classes\PaperRebuild;
 use lindesbs\minkorrekt\ContentElement\ContentMinkorrektNewsElement;
 
-$GLOBALS['TL_CTE']['minkorrekt']['minkorrekt_thema'] = ContentMinkorrektNewsElement::class;
-
 $GLOBALS['BE_MOD']['minkorrekt'] = [
     'publisher' => [
         'tables' => ['tl_minkorrekt_publisher','tl_minkorrekt_paper'],

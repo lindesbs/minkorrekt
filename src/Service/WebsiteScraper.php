@@ -277,7 +277,7 @@ class WebsiteScraper
 
             if ($meta['name'] === 'citation_publication_date') {
                 // Datums kann manchmal nur Y/m sein
-                $arrDate = explode("/", $meta['content']);
+                $arrDate = explode("/", (string) $meta['content']);
                 $srcDate = sprintf("%s/%s/%s",
                 $arrDate[0],
                     (count($arrDate) === 3) ?

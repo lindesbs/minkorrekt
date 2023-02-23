@@ -56,7 +56,7 @@ class CreateNewsarchives extends Command
                 $newsPaper
             );
 
-            $objContent = $this->DCATools->getContent($paper->title, [], $objNews,true);
+            $objContent = $this->DCATools->getContent($paper->title, [], $objNews, true);
             $objContent->text=$paper->description;
             $objContent->addImage=true;
             $objContent->singleSRC = $paper->screenshotSRC;
@@ -64,7 +64,6 @@ class CreateNewsarchives extends Command
 
             $objContent->save();
 //            $this->scraper->scrape($paper);
-
         }
 
 
