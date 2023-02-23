@@ -6,8 +6,6 @@ namespace lindesbs\minkorrekt\Commands;
 
 use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\NewsModel;
-use Contao\StringUtil;
 use Doctrine\DBAL\Connection;
 use DOMDocument;
 use DOMNodeList;
