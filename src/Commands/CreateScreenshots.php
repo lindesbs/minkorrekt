@@ -8,7 +8,7 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Dbafs;
 use Contao\StringUtil;
 use Doctrine\DBAL\Connection;
-use Exception;
+use Doctrine\DBAL\Exception;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
 use Symfony\Component\Console\Command\Command;
@@ -35,25 +35,56 @@ class CreateScreenshots extends Command
         parent::__construct();
     }
 
-    protected function configure(): void
-    {
-        $this->addOption("force",
-            null,
-            InputOption::VALUE_NONE,
-            "Force halt");
+    /**
+     * @throws \Exception
+     */
+    public function makeScreenshot(
+        string $destPath,
+        array $paper,
+        string $captureCommand,
+        string $destinationVar
+    ): string {
+        $filename = sprintf(
+            '%s%s_%s_%s.png',
+            $destPath,
+            date('Ymd'),
+            StringUtil::generateAlias($paper['title']),
+            $destinationVar
+        );
+
+        $cmd = str_replace(
+            ['##outputname##', '##url##'],
+            [$filename, $paper['url']],
+            $captureCommand
+        );
+
+        file_put_contents('runner.sh', $cmd);
+        $process = new Process(['./runner.sh']);
+        $process->run();
+
+        return $filename;
     }
 
+    protected function configure(): void
+    {
+        $this->addOption(
+            'force',
+            null,
+            InputOption::VALUE_NONE,
+            'Force halt'
+        );
+    }
 
     /**
-     * @throws \Doctrine\DBAL\Exception
      * @throws Exception
+     * @throws \Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();
 
-        $bForce = $input->getOption("force");
+        $bForce = $input->getOption('force');
 
         $filesystem = new Filesystem();
 
@@ -62,13 +93,13 @@ class CreateScreenshots extends Command
         );
         $objPublisher = $objSQLPublisher->fetchAllAssociative();
 
-        $io->writeln("Publisher");
-        $io->progressStart(count($objPublisher));
+        $io->writeln('Publisher');
+        $io->progressStart(\count($objPublisher));
+
         foreach ($objPublisher as $publisher) {
             if (isset($publisher['screenshotSRC']) && (!$bForce)) {
                 continue;
             }
-
 
             $destPath = sprintf(
                 'files/media/paper/%s/',
@@ -97,14 +128,13 @@ class CreateScreenshots extends Command
 
         $io->progressFinish();
 
-
         $objSQLPaper = $this->connection->executeQuery(
             'SELECT * FROM tl_minkorrekt_paper WHERE url IS NOT NULL'
         );
         $objPaper = $objSQLPaper->fetchAllAssociative();
 
-        $io->writeln("Publisher");
-        $io->progressStart(count($objPaper));
+        $io->writeln('Publisher');
+        $io->progressStart(\count($objPaper));
 
         foreach ($objPaper as $paper) {
             if (isset($paper['screenshotSRC']) && (!$bForce)) {
@@ -138,35 +168,5 @@ class CreateScreenshots extends Command
         $io->progressFinish();
 
         return Command::SUCCESS;
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function makeScreenshot(
-        string $destPath,
-        array $paper,
-        string $captureCommand,
-        string $destinationVar
-    ): string {
-        $filename = sprintf(
-            '%s%s_%s_%s.png',
-            $destPath,
-            date('Ymd'),
-            StringUtil::generateAlias($paper['title']),
-            $destinationVar
-        );
-
-        $cmd = str_replace(
-            ['##outputname##', '##url##'],
-            [$filename, $paper['url']],
-            $captureCommand
-        );
-
-        file_put_contents('runner.sh', $cmd);
-        $process = new Process(['./runner.sh']);
-        $process->run();
-
-        return $filename;
     }
 }

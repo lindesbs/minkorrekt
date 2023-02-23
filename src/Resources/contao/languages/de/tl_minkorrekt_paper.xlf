@@ -2,9 +2,22 @@
 <xliff version="1.1">
     <file target-language="de">
         <body>
-            <trans-unit id="tl_minkorrekt_paper.title">
-                <target>Hallo Welt</target>
+            <trans-unit id="tl_minkorrekt_paper.title.0">
+                <target>Hauptüberschrift</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.title.1">
+                <target>Wird durch dc.title gesetzt</target>
+            </trans-unit>
+
+
+            <trans-unit id="tl_minkorrekt_paper.citation_title.0">
+                <target>Literatur Überschrift</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.citation_title.1">
+                <target>Wird durch <i>citation_title</i> gesetzt
+                </target>
             </trans-unit>
         </body>
+
     </file>
 </xliff>

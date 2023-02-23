@@ -7,9 +7,6 @@ namespace lindesbs\minkorrekt\Commands;
 use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Doctrine\DBAL\Connection;
-use DOMDocument;
-use DOMNodeList;
-use DOMXPath;
 use lindesbs\contaotoolbox\Service\DCATools;
 use lindesbs\minkorrekt\Classes\PodcastEntry;
 use Psr\Cache\InvalidArgumentException;
@@ -19,8 +16,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\Cache\ItemInterface;
-
-use function count;
 
 class ImportRSSCommand extends Command
 {
@@ -35,11 +30,27 @@ class ImportRSSCommand extends Command
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
         private readonly Connection $connection,
-        private readonly DCATools $DCATools
+        private readonly DCATools $DCATools,
     ) {
         parent::__construct();
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function getRSSFeed(): string
+    {
+        $filesystemAdapter = new FilesystemAdapter();
+
+        return $filesystemAdapter->get(
+            'RSSFeed',
+            static function (ItemInterface $item): string|bool {
+                $item->expiresAfter(86400);
+
+                return file_get_contents(self::$defaultURL);
+            }
+        );
+    }
 
     protected function configure(): void
     {
@@ -50,46 +61,44 @@ class ImportRSSCommand extends Command
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
 
-    /*    if ('dev' === $_SERVER['APP_ENV']) {
-            $symfonyStyle->warning('DEV MODE');
-            $this->connection->executeQuery('TRUNCATE TABLE tl_news');
-            $this->connection->executeQuery('DELETE FROM tl_content WHERE ptable="tl_news"');
-        }*/
+        /*    if ('dev' === $_SERVER['APP_ENV']) {
+                $symfonyStyle->warning('DEV MODE');
+                $this->connection->executeQuery('TRUNCATE TABLE tl_news');
+                $this->connection->executeQuery('DELETE FROM tl_content WHERE ptable="tl_news"');
+            }*/
 
         $symfonyStyle->title('Minkorrekt RSS einlesen und importieren');
 
         $this->contaoFramework->initialize();
 
-        $domDocument = new DOMDocument();
+        $domDocument = new \DOMDocument();
 
         $strData = $this->getRSSFeed();
 
         $domDocument->loadXML($strData);
         $objNewsArchive = $this->DCATools->getNewsArchive('Methodisch Inkorrekt');
 
-        $domxPath = new DOMXPath($domDocument);
+        $domxPath = new \DOMXPath($domDocument);
 
 //            $xp->registerNamespace('itunes','http://www.itunes.com/dtds/podcast-1.0.dtd');
 //            $xp->registerNamespace('atom','http://www.w3.org/2005/Atom');
 
-        /** @var DOMNodeList $path */
+        /** @var \DOMNodeList $path */
         $path = $domxPath->query('//channel/item');
 
-        $symfonyStyle->writeln(count($path) . ' Elemete');
+        $symfonyStyle->writeln(\count($path) . ' Elemete');
 
         foreach ($path as $element) {
             $entry = new PodcastEntry($element);
 
-
             $objFeed = $this->DCATools->getNews(
-                sprintf("%s_F%s", $entry->getTitle(), $entry->getEpisode()),
+                sprintf('%s_F%s', $entry->getTitle(), $entry->getEpisode()),
                 [
                     'date' => $entry->getPubDate()->getTimestamp(),
-                    'teaser' => $entry->getDescription()
-                    ],
+                    'teaser' => $entry->getDescription(),
+                ],
                 $objNewsArchive
             );
-
 
             $workingData = explode("\n", $entry->getContent());
             $workingData = array_map('trim', $workingData);
@@ -137,24 +146,4 @@ class ImportRSSCommand extends Command
 
         return $this->statusCode;
     }
-
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    public function getRSSFeed(): string
-    {
-        $filesystemAdapter = new FilesystemAdapter();
-
-        $strData = $filesystemAdapter->get(
-            'RSSFeed',
-            static function (ItemInterface $item): string|bool {
-                $item->expiresAfter(86400);
-
-                return file_get_contents(self::$defaultURL);
-            }
-        );
-        return $strData;
-    }
-
 }

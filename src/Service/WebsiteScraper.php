@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace lindesbs\minkorrekt\Service;
 
 use Contao\StringUtil;
-use DateTime;
 use lindesbs\minkorrekt\Models\MinkorrektPaperCreatorModel;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
@@ -14,29 +14,34 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class WebsiteScraper
 {
-
-    public function scrape(MinkorrektPaperModel $paper)
+    public function scrape(MinkorrektPaperModel $paper): void
     {
         $filesystemAdapter = new FilesystemAdapter();
 
         $html = $filesystemAdapter->get(
-            'WEPAGE_'.StringUtil::generateAlias($paper->url),
+            'WEPAGE_' . StringUtil::generateAlias($paper->url),
             static function (ItemInterface $item) use ($paper): string|bool {
                 $item->expiresAfter(86400);
 
                 return file_get_contents($paper->url);
-                ;
             }
         );
 
         $crawler = new Crawler($html);
-        $metaTags = $crawler->filter('head meta')->each(fn($node) => [
+        $metaTags = $crawler->filter('head meta')->each(static fn($node) => [
             'name' => $node->attr('name'),
-            'content' => $node->attr('content')
+            'content' => $node->attr('content'),
         ]);
 
-        $arrIgnoreNames = ['applicable-device','viewport','msapplication-TileColor','msapplication-config',
-            'theme-color','application-name', 'robots', 'access',
+        $arrIgnoreNames = [
+            'applicable-device',
+            'viewport',
+            'msapplication-TileColor',
+            'msapplication-config',
+            'theme-color',
+            'application-name',
+            'robots',
+            'access',
             'dc.source',
             'dc.format',
             'dc.publisher',
@@ -47,7 +52,7 @@ class WebsiteScraper
             'twitter:card',
             'twitter:image:alt',
             'twitter:title',
-            'twitter:description'
+            'twitter:description',
         ];
 
         $arrNotYetImplemented = [
@@ -63,7 +68,8 @@ class WebsiteScraper
             'twitter:description',
             'twitter:image',
             'citation_volume',
-            'citation_issue'
+            'citation_issue',
+            'citation_fulltext_world_readable',
         ];
 
         foreach ($metaTags as $meta) {
@@ -71,180 +77,180 @@ class WebsiteScraper
                 continue;
             }
 
-            if (in_array($meta['name'], $arrIgnoreNames, true)) {
-                continue;
-            }
-            if (in_array($meta['name'], $arrNotYetImplemented, true)) {
+            if (\in_array($meta['name'], $arrIgnoreNames, true)) {
                 continue;
             }
 
-            if ($meta['name'] === 'dc.creator') {
+            if (\in_array($meta['name'], $arrNotYetImplemented, true)) {
+                continue;
+            }
+
+            if ('dc.creator' === $meta['name']) {
                 $objCreator = MinkorrektPaperCreatorModel::findBy('name', $meta['name']);
-                if (!$objCreator ) {
+
+                if (!$objCreator) {
                     $objCreator = new MinkorrektPaperCreatorModel();
                 }
 
-                $objCreator->pid=$paper->id;
+                $objCreator->pid = $paper->id;
                 $objCreator->name = $meta['name'];
                 $objCreator->alias = StringUtil::generateAlias($meta['name']);
                 $objCreator->save();
                 continue;
             }
 
-            if ($meta['name'] === 'journal_id') {
+            if ('journal_id' === $meta['name']) {
                 $objJournal = MinkorrektPublisherModel::findOneBy('journal_id', $meta['content']);
 
                 if (!$objJournal) {
                     $objJournal = new MinkorrektPublisherModel();
                     $objJournal->journal_id = $meta['content'];
-                    $objJournal->title = sprintf("--NOT YET SET -- %s", $paper->alias);
+                    $objJournal->title = sprintf('--NOT YET SET -- %s', $paper->alias);
                     $objJournal->save();
                 }
 
-                $paper->pid=$objJournal->id;
+                $paper->pid = $objJournal->id;
                 $paper->save();
 
                 continue;
             }
 
-            if ($meta['name'] === 'dc.title') {
+            if ('dc.title' === $meta['name']) {
                 $paper->title = $meta['content'];
                 $paper->save();
 
                 continue;
             }
-            if ($meta['name'] === 'citation_title') {
+
+            if ('citation_title' === $meta['name']) {
                 $paper->citation_title = $meta['content'];
                 $paper->save();
 
                 continue;
             }
 
-
-
-            if ($meta['name'] === 'citation_online_date') {
+            if ('citation_online_date' === $meta['name']) {
                 // Erstmal ignorieren
 
-                $date = DateTime::createFromFormat("Y/d/m", $meta['content']);
+                $date = \DateTime::createFromFormat('Y/d/m', $meta['content']);
                 $paper->citation_online_date = $date->getTimestamp();
                 $paper->save();
 
                 continue;
             }
 
-            if ($meta['name'] === 'dc.language') {
-                $paper->language = strtolower((string) $meta['content']);
+            if ('dc.language' === $meta['name']) {
+                $paper->language = strtolower((string)$meta['content']);
                 $paper->save();
                 continue;
             }
 
-            if ($meta['name'] === 'dc.copyright') {
-                $paper->copyright = strtolower((string) $meta['content']);
+            if ('dc.copyright' === $meta['name']) {
+                $paper->copyright = strtolower((string)$meta['content']);
                 $paper->save();
                 continue;
             }
 
-            if ($meta['name'] === 'dc.rights') {
-                $paper->rights = strtolower((string) $meta['content']);
+            if ('dc.rights' === $meta['name']) {
+                $paper->rights = strtolower((string)$meta['content']);
                 $paper->save();
                 continue;
             }
 
-            if ($meta['name'] === 'dc.rightsAgent') {
+            if ('dc.rightsAgent' === $meta['name']) {
                 $paper->rightsAgent = $meta['content'];
                 $paper->save();
                 continue;
             }
-            if (($meta['name'] === 'dc.description') && (isset($meta['content']))) {
+
+            if (('dc.description' === $meta['name']) && (isset($meta['content']))) {
                 $paper->description = $meta['content'];
                 $paper->save();
                 continue;
             }
-            if (($meta['name'] === 'description') && (isset($meta['content']))) {
+
+            if (('description' === $meta['name']) && (isset($meta['content']))) {
                 $paper->description = $meta['content'];
                 $paper->save();
                 continue;
             }
 
-
-
-            if (str_starts_with((string) $meta['name'], 'prism')) {
+            if (str_starts_with((string)$meta['name'], 'prism')) {
                 // Erstmal ignorieren
                 continue;
             }
 
-            if ($meta['name'] === 'citation_pdf_url') {
+            if ('citation_pdf_url' === $meta['name']) {
                 $paper->citation_pdf_url = $meta['content'];
                 $paper->save();
                 continue;
             }
 
-            if ($meta['name'] === 'citation_fulltext_html_url') {
+            if ('citation_fulltext_html_url' === $meta['name']) {
                 $paper->citation_fulltext_html_url = $meta['content'];
                 $paper->save();
                 continue;
             }
 
-            if ($meta['name'] === 'citation_issn') {
+            if ('citation_issn' === $meta['name']) {
                 $paper->citation_issn = $meta['content'];
                 $paper->save();
                 continue;
             }
 
-            if ($meta['name'] === 'citation_lastpage') {
-                $paper->citation_lastpage = (int) $meta['content'];
-                $paper->save();
-                continue;
-            }
-            if ($meta['name'] === 'citation_firstpage') {
-                $paper->citation_firstpage = (int) $meta['content'];
+            if ('citation_lastpage' === $meta['name']) {
+                $paper->citation_lastpage = (int)$meta['content'];
                 $paper->save();
                 continue;
             }
 
-            if ($meta['name'] === 'citation_article_type') {
+            if ('citation_firstpage' === $meta['name']) {
+                $paper->citation_firstpage = (int)$meta['content'];
+                $paper->save();
+                continue;
+            }
+
+            if ('citation_article_type' === $meta['name']) {
                 $paper->citation_article_type = $meta['content'];
                 $paper->save();
                 continue;
             }
 
-            if ($meta['name'] === 'size') {
-                $paper->size = (int) $meta['content'];
+            if ('size' === $meta['name']) {
+                $paper->size = (int)$meta['content'];
                 $paper->save();
                 continue;
             }
 
-            if ($meta['name'] === 'citation_springer_api_url') {
+            if ('citation_springer_api_url' === $meta['name']) {
                 $paper->citation_springer_api_url = $meta['content'];
                 $paper->save();
                 continue;
             }
 
-
-            if ($meta['name'] === 'citation_doi') {
+            if ('citation_doi' === $meta['name']) {
                 $paper->doi = $meta['content'];
                 $paper->save();
                 continue;
             }
 
-
-            if ($meta['name'] === 'dc.subject') {
+            if ('dc.subject' === $meta['name']) {
                 if (!isset($paper->subjects)) {
-                    $paper->subjects='';
+                    $paper->subjects = '';
                 }
 
-                $arrSubjects = explode(",", (string) $paper->subjects);
-                $arrSubjects[]= $meta['content'];
+                $arrSubjects = explode(',', (string)$paper->subjects);
+                $arrSubjects[] = $meta['content'];
 
                 $arrSubjects = array_unique($arrSubjects, SORT_REGULAR);
                 sort($arrSubjects);
-                $paper->subjects = implode(",", $arrSubjects);
+                $paper->subjects = implode(',', $arrSubjects);
 
                 $paper->save();
                 continue;
             }
 
-            if ($meta['name'] === 'citation_author') {
+            if ('citation_author' === $meta['name']) {
                 $alias = StringUtil::generateAlias($meta['content']);
                 $author = MinkorrektPaperCreatorModel::findOneBy('alias', $alias);
 
@@ -259,61 +265,54 @@ class WebsiteScraper
                 continue;
             }
 
-
-            if ($meta['name'] === 'dc.type') {
+            if ('dc.type' === $meta['name']) {
                 $paper->paperType = $meta['content'];
 
                 $paper->save();
                 continue;
             }
 
-
-            if ($meta['name'] === 'twitter:site') {
+            if ('twitter:site' === $meta['name']) {
                 $paper->twitter = $meta['content'];
                 $paper->save();
                 continue;
             }
 
-
-            if ($meta['name'] === 'citation_publication_date') {
+            if ('citation_publication_date' === $meta['name']) {
                 // Datums kann manchmal nur Y/m sein
-                $arrDate = explode("/", (string) $meta['content']);
-                $srcDate = sprintf("%s/%s/%s",
-                $arrDate[0],
-                    (count($arrDate) === 3) ?
-                    $arrDate[2] : '1',
+                $arrDate = explode('/', (string)$meta['content']);
+                $srcDate = sprintf(
+                    '%s/%s/%s',
+                    $arrDate[0],
+                    3 === \count($arrDate) ?
+                        $arrDate[2] : '1',
                     $arrDate[1],
                 );
 
-                $date = DateTime::createFromFormat("Y/d/m", $srcDate);
+                $date = \DateTime::createFromFormat('Y/d/m', $srcDate);
 
                 $paper->publishedAt = $date->getTimestamp();
                 $paper->save();
                 continue;
             }
 
-
-            if ($meta['name'] === 'citation_doi') {
+            if ('citation_doi' === $meta['name']) {
                 $paper->doi = $meta['content'];
                 $paper->save();
                 continue;
             }
 
-
-            if ($meta['name'] === 'citation_doi') {
+            if ('citation_doi' === $meta['name']) {
                 $paper->doi = $meta['content'];
                 $paper->save();
                 continue;
             }
 
-
-            if ($meta['name'] === 'citation_doi') {
+            if ('citation_doi' === $meta['name']) {
                 $paper->doi = $meta['content'];
                 $paper->save();
                 continue;
             }
-
-
 
             dd($meta);
         }
