@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace lindesbs\minkorrekt\Commands;
 
+use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use lindesbs\contaotoolbox\Constants\Page;
 use lindesbs\contaotoolbox\Service\DCATools;
@@ -27,11 +28,13 @@ class buildSystemStructure extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
+
         $publisherDetailPage = null;
         $paperDetailPage = null;
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();
 
+        Controller::loadDataContainer('tl_minkorrekt_paper');
         $io->writeln("Theme");
 
         $theme = $this->DCATools->getTheme("Standard");
@@ -218,6 +221,7 @@ class buildSystemStructure extends Command
 
             $newsPaper = $this->DCATools->getNewsArchive("Paper");
             $newsPaper->jumpTo = $paperDetailPage->id;
+
             $newsPaper->save();
 
 

@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 use Contao\DataContainer;
 use Contao\DC_Table;
-use src\Classes\PaperSubmit;
+use lindesbs\minkorrekt\Classes\PaperSubmit;
 use Symfony\Component\Intl\Languages;
 
 $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
@@ -357,3 +357,17 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
         ],
     ],
 ];
+
+
+
+/*
+ * foreach ($GLOBALS['TL_DCA']['tl_minkorrekt_paper']['fields'] as $fieldKey => $FieldValue) {
+    echo sprintf("<?php if (\$this->%s): ?>".PHP_EOL, $fieldKey);
+    echo sprintf("<?= \$this->%s ?>".PHP_EOL, $fieldKey);
+    echo "<?php endif?>".PHP_EOL;
+
+}
+
+
+die;
+*/

@@ -52,11 +52,11 @@ class ImportRSSCommand extends Command
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
 
-        if ('dev' === $_SERVER['APP_ENV']) {
+    /*    if ('dev' === $_SERVER['APP_ENV']) {
             $symfonyStyle->warning('DEV MODE');
             $this->connection->executeQuery('TRUNCATE TABLE tl_news');
             $this->connection->executeQuery('DELETE FROM tl_content WHERE ptable="tl_news"');
-        }
+        }*/
 
         $symfonyStyle->title('Minkorrekt RSS einlesen und importieren');
 
@@ -92,26 +92,6 @@ class ImportRSSCommand extends Command
                 $objNewsArchive
             );
 
-
-           // $objFeed = NewsModel::findByAlias($entry->getGuid());
-//
-//            if (null !== $objFeed) {
-//                continue;
-//            }
-//
-//            $objFeed = new NewsModel();
-//            $objFeed->tstamp = time();
-//            $objFeed->pid = $objNewsArchive->id;
-//
-//            $objFeed->alias = StringUtil::generateAlias(sprintf("%s_F%s", $entry->getTitle(), $entry->getEpisode()));
-//
-//            $objFeed->headline = $entry->getTitle();
-//
-//            $objFeed->date = $entry->getPubDate()->getTimestamp();
-//            $objFeed->teaser = $entry->getDescription();
-//
-//            $objFeed->published = true;
-//            $objFeed->save();
 
             $workingData = explode("\n", $entry->getContent());
             $workingData = array_map('trim', $workingData);
