@@ -6,6 +6,7 @@ namespace lindesbs\minkorrekt\Commands;
 
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use lindesbs\contaotoolbox\Constants\Content;
 use lindesbs\contaotoolbox\Constants\Page;
 use lindesbs\contaotoolbox\Service\DCATools;
 use Symfony\Component\Console\Command\Command;
@@ -110,7 +111,7 @@ class buildSystemStructure extends Command
             'News Paper :: List',
             [
                 'type' => 'newslist',
-                'news_archives' => $newsPaper->id,
+                'news_archives' => [$newsPaper->id],
                 'pid' => $theme->id
             ]
         );
@@ -118,8 +119,9 @@ class buildSystemStructure extends Command
             'News Paper :: Reader',
             [
                 'type' => 'newsreader',
-                'news_archives' => $newsPaper->id,
-                'pid' => $theme->id
+                'news_archives' => [$newsPaper->id],
+                'pid' => $theme->id,
+                'news_template' => 'news_paper_display'
             ]
         );
 
@@ -196,7 +198,29 @@ class buildSystemStructure extends Command
             $publisherDetailPage = $this->DCATools->getPage("Verlagsinformationen", $hiddenPage, $publisherPage->id);
 
             $paperPage = $this->DCATools->getPage("Paper", [], $sciencePage->id);
+            $paperArticle = $this->DCATools->getArticle("Listenansicht", [], $paperPage);
+            $papaerOverviewModule = $this->DCATools->getContent(
+                'Detail Liste der Paper',
+                [
+                    Content::TYPE => 'module',
+                    Content::MODULE => $modPaperLister->id
+                ],
+                $paperArticle,
+                true
+            );
+
             $paperDetailPage = $this->DCATools->getPage("Paper Details", $hiddenPage, $paperPage->id);
+            $paperDetailArticle = $this->DCATools->getArticle("Detailansicht", [], $paperDetailPage);
+            $papaerDetailModule = $this->DCATools->getContent(
+                'Detailansicht der Paper',
+                [
+                    Content::TYPE => 'module',
+                    Content::MODULE => $modPaperReader->id
+                ],
+                $paperDetailArticle,
+                true
+            );
+
 
             $statisticsPage = $this->DCATools->getPage("Statistiken", [], $sciencePage->id);
 

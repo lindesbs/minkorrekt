@@ -63,7 +63,6 @@ class CreateNewsarchives extends Command
             $objContent->ptable = 'tl_news';
 
             $objContent->save();
-
 //            $this->scraper->scrape($paper);
 
         }
