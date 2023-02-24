@@ -1,0 +1,160 @@
+
+<div class="layout_full block<?= $this->class ?>">
+
+    <h1><?= $this->newsHeadline ?></h1>
+
+    <?php if ($this->hasMetaFields): ?>
+    <p class="info"><time datetime="<?= $this->datetime ?>"><?= $this->date ?></time> <?= $this->author ?> <?= $this->commentCount ?></p>
+    <?php endif; ?>
+
+    <?php if ($this->hasSubHeadline): ?>
+    <h2><?= $this->subHeadline ?></h2>
+    <?php endif; ?>
+
+    <?php if ($this->hasText): ?>
+    <?= $this->text ?>
+    <?php else: ?>
+    <div class="ce_text block">
+        <?php if (!$this->addBefore): ?>
+        <?= $this->teaser ?>
+        <?php endif; ?>
+
+        <?php if ($this->addImage): ?>
+        <?php $this->insert('image', $this->arrData); ?>
+        <?php endif; ?>
+
+        <?php if ($this->addBefore): ?>
+        <?= $this->teaser ?>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($this->enclosure): ?>
+    <ul class="enclosure">
+        <?php foreach ($this->enclosure as $enclosure): ?>
+        <li class="download-element ext-<?= $enclosure['extension'] ?>">
+            <a href="<?= $enclosure['href'] ?>" title="<?= $enclosure['title'] ?>"><?= $enclosure['link'] ?> <span class="size">(<?= $enclosure['filesize'] ?>)</span></a>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+    <?php endif; ?>
+
+</div>
+
+<?php if ($this->id): ?>
+<?= $this->id ?>
+<?php endif?>
+<?php if ($this->pid): ?>
+<?= $this->pid ?>
+<?php endif?>
+<?php if ($this->sorting): ?>
+<?= $this->sorting ?>
+<?php endif?>
+<?php if ($this->tstamp): ?>
+<?= $this->tstamp ?>
+<?php endif?>
+<?php if ($this->title): ?>
+<?= $this->title ?>
+<?php endif?>
+<?php if ($this->citation_title): ?>
+<?= $this->citation_title ?>
+<?php endif?>
+<?php if ($this->citation_pdf_url): ?>
+<?= $this->citation_pdf_url ?>
+<?php endif?>
+<?php if ($this->citation_springer_api_url): ?>
+<?= $this->citation_springer_api_url ?>
+<?php endif?>
+<?php if ($this->citation_fulltext_html_url): ?>
+<?= $this->citation_fulltext_html_url ?>
+<?php endif?>
+<?php if ($this->citation_issn): ?>
+<?= $this->citation_issn ?>
+<?php endif?>
+<?php if ($this->copyright): ?>
+<?= $this->copyright ?>
+<?php endif?>
+<?php if ($this->rights): ?>
+<?= $this->rights ?>
+<?php endif?>
+<?php if ($this->rightsagent): ?>
+<?= $this->rightsagent ?>
+<?php endif?>
+<?php if ($this->alias): ?>
+<?= $this->alias ?>
+<?php endif?>
+<?php if ($this->published): ?>
+<?= $this->published ?>
+<?php endif?>
+<?php if ($this->citation_firstpage): ?>
+<?= $this->citation_firstpage ?>
+<?php endif?>
+<?php if ($this->citation_lastpage): ?>
+<?= $this->citation_lastpage ?>
+<?php endif?>
+<?php if ($this->size): ?>
+<?= $this->size ?>
+<?php endif?>
+<?php if ($this->thePublisher): ?>
+<?= $this->thePublisher ?>
+<?php endif?>
+<?php if ($this->status): ?>
+<?= $this->status ?>
+<?php endif?>
+<?php if ($this->url): ?>
+<?= $this->url ?>
+<?php endif?>
+<?php if ($this->license): ?>
+<?= $this->license ?>
+<?php endif?>
+<?php if ($this->citation_article_type): ?>
+<?= $this->citation_article_type ?>
+<?php endif?>
+<?php if ($this->paperType): ?>
+<?= $this->paperType ?>
+<?php endif?>
+<?php if ($this->twitter): ?>
+<?= $this->twitter ?>
+<?php endif?>
+<?php if ($this->receivedAt): ?>
+<?= $this->receivedAt ?>
+<?php endif?>
+<?php if ($this->acceptedAt): ?>
+<?= $this->acceptedAt ?>
+<?php endif?>
+<?php if ($this->publishedAt): ?>
+<?= $this->publishedAt ?>
+<?php endif?>
+<?php if ($this->onlineAt): ?>
+<?= $this->onlineAt ?>
+<?php endif?>
+<?php if ($this->doi): ?>
+<?= $this->doi ?>
+<?php endif?>
+<?php if ($this->doiurl): ?>
+<?= $this->doiurl ?>
+<?php endif?>
+<?php if ($this->subjects): ?>
+<?= $this->subjects ?>
+<?php endif?>
+<?php if ($this->screenshotSRC): ?>
+<?= $this->screenshotSRC ?>
+<?php endif?>
+<?php if ($this->screenshotFullpageSRC): ?>
+<?= $this->screenshotFullpageSRC ?>
+<?php endif?>
+<?php if ($this->tlContentId): ?>
+<?= $this->tlContentId ?>
+<?php endif?>
+<?php if ($this->tlNewsId): ?>
+<?= $this->tlNewsId ?>
+<?php endif?>
+<?php if ($this->price): ?>
+<?= $this->price ?>
+<?php endif?>
+<?php if ($this->language): ?>
+<?= $this->language ?>
+<?php endif?>
+<?php if ($this->description): ?>
+<?= $this->description ?>
+<?php endif?>

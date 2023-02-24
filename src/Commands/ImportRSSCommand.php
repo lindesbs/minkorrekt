@@ -1,122 +1,107 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace lindesbs\minkorrekt\Commands;
 
 use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\NewsArchiveModel;
-use Contao\NewsModel;
 use Doctrine\DBAL\Connection;
 use DOMDocument;
+use DOMNodeList;
 use DOMXPath;
-use Laminas\Feed\Reader\Reader;
+use lindesbs\contaotoolbox\Service\DCATools;
 use lindesbs\minkorrekt\Classes\PodcastEntry;
+use Psr\Cache\InvalidArgumentException;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Contracts\Cache\ItemInterface;
 
+use function count;
 
 class ImportRSSCommand extends Command
 {
     protected static $defaultName = 'minkorrekt:importrss';
+
     protected static $defaultDescription = 'Import RSS as Newslist';
 
-    protected static $defaultURL = "https://minkorrekt.de/feed/m4a/";
+    protected static $defaultURL = 'https://minkorrekt.de/feed/m4a/';
 
-    private Filesystem $filesystem;
     private int $statusCode = Command::SUCCESS;
 
-    private ContaoFramework $framework;
-    private Connection $connection;
-
     public function __construct(
-        ContaoFramework $framework,
-        Filesystem      $filesystem,
-        Connection      $connection
-    )
-    {
+        private readonly ContaoFramework $contaoFramework,
+        private readonly Connection $connection,
+        private readonly DCATools $DCATools
+    ) {
         parent::__construct();
-        $this->filesystem = $filesystem;
-        $this->framework = $framework;
-        $this->connection = $connection;
     }
+
 
     protected function configure(): void
     {
         $this->setDescription('Gibt einen Demotext aus.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
-        $io = new SymfonyStyle($input, $output);
-        $io->title('Minkorrekt RSS einlesen und importieren');
+        $symfonyStyle = new SymfonyStyle($input, $output);
 
-        $this->framework->initialize();
+    /*    if ('dev' === $_SERVER['APP_ENV']) {
+            $symfonyStyle->warning('DEV MODE');
+            $this->connection->executeQuery('TRUNCATE TABLE tl_news');
+            $this->connection->executeQuery('DELETE FROM tl_content WHERE ptable="tl_news"');
+        }*/
 
-        $feed = new DOMDocument();
-        $strData = file_get_contents(self::$defaultURL);
-        $feed->loadXML($strData);
+        $symfonyStyle->title('Minkorrekt RSS einlesen und importieren');
 
-        $title = "Methodisch Inkorrekt";
+        $this->contaoFramework->initialize();
 
-        $objNewsArchive = NewsArchiveModel::findByTitle($title);
-        if (!$objNewsArchive) {
-            $objNewsArchive = new NewsArchiveModel();
-            $objNewsArchive->tstamp = time();
+        $domDocument = new DOMDocument();
 
-            $objNewsArchive->title = $title;
-        }
+        $strData = $this->getRSSFeed();
 
-        $objNewsArchive->save();
+        $domDocument->loadXML($strData);
+        $objNewsArchive = $this->DCATools->getNewsArchive('Methodisch Inkorrekt');
 
-        $xp = new DOMXPath($feed);
+        $domxPath = new DOMXPath($domDocument);
 
 //            $xp->registerNamespace('itunes','http://www.itunes.com/dtds/podcast-1.0.dtd');
 //            $xp->registerNamespace('atom','http://www.w3.org/2005/Atom');
 
+        /** @var DOMNodeList $path */
+        $path = $domxPath->query('//channel/item');
 
-        /** @var \DOMNodeList $path */
-        $path = $xp->query("//channel/item");
+        $symfonyStyle->writeln(count($path) . ' Elemete');
 
         foreach ($path as $element) {
-
             $entry = new PodcastEntry($element);
 
-            $objFeed = NewsModel::findByAlias($entry->getGuid());
 
-            if ($objFeed) {
-                continue;
-            }
-            $objFeed = new NewsModel();
-            $objFeed->tstamp = time();
-            $objFeed->pid = $objNewsArchive->id;
+            $objFeed = $this->DCATools->getNews(
+                sprintf("%s_F%s", $entry->getTitle(), $entry->getEpisode()),
+                [
+                    'date' => $entry->getPubDate()->getTimestamp(),
+                    'teaser' => $entry->getDescription()
+                    ],
+                $objNewsArchive
+            );
 
-            $objFeed->alias = $entry->getGuid();
 
-            $objFeed->headline = $entry->getTitle();
-
-            $objFeed->date = $entry->getPubDate()->getTimestamp();
-            $objFeed->teaser = $entry->getDescription();
-
-            $objFeed->published = true;
-            $objFeed->save();
-
-            $pregMatch = preg_match_all('/<!-- wp:paragraph -->(.*?)<!-- \/wp:paragraph -->/s', $entry->getContent(), $match);
-
-            $workingData = [];
-            if (!$pregMatch) {
-                $workingData = explode("\n", $entry->getContent());
-
-            } else {
-                $workingData = $match[1];
-            }
-
+            $workingData = explode("\n", $entry->getContent());
+            $workingData = array_map('trim', $workingData);
 
             foreach ($workingData as $key => $value) {
-                if (strlen(strip_tags(trim($value))) == 0)
+                if ('' === strip_tags(trim($value))) {
                     continue;
+                }
+
+                if (str_starts_with($value, '<!--')) {
+                    continue;
+                }
 
                 $objContent = new ContentModel();
                 $objContent->tstamp = 1;
@@ -125,34 +110,51 @@ class ImportRSSCommand extends Command
                 $objContent->ptable = 'tl_news';
                 $objContent->type = 'minkorrekt_thema';
 
-                $objContent->minkorrekt_thema_art = "TEXT";
+                $objContent->minkorrekt_thema_art = 'TEXT';
                 $objContent->text = trim($value);
+                $objContent->minkorrekt_thema_nummer = 0;
 
-                $pregThema = preg_match('/Thema [0-9]/s', $objContent->text, $matchThema, PREG_OFFSET_CAPTURE);
+                $pattern = '/^Thema\s+(\d+)/';
 
-                if (($matchThema) && ($matchThema[0][1] < 100)) {
+                if (preg_match($pattern, trim(strip_tags($objContent->text)), $matches)) {
+                    $objContent->minkorrekt_thema_art = 'THEMA';
 
-                    $objContent->minkorrekt_thema_art = "THEMA";
-
+                    $number = $matches[1];
                     $objContent->headline = [
-                        'value' => $matchThema[0][0],
-                        'unit' => 'h3'
+                        'value' => sprintf('Thema %s', $number),
+                        'unit' => 'h3',
                     ];
 
-
+                    if (is_numeric($number)) {
+                        $objContent->minkorrekt_thema_nummer = $number;
+                    }
                 }
 
                 $objContent->minkorrekt_thema_folge = $entry->getEpisode();
-
-
                 $objContent->save();
-
             }
-
-
         }
-
 
         return $this->statusCode;
     }
+
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function getRSSFeed(): string
+    {
+        $filesystemAdapter = new FilesystemAdapter();
+
+        $strData = $filesystemAdapter->get(
+            'RSSFeed',
+            static function (ItemInterface $item): string|bool {
+                $item->expiresAfter(86400);
+
+                return file_get_contents(self::$defaultURL);
+            }
+        );
+        return $strData;
+    }
+
 }

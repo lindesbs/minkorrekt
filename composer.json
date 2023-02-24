@@ -10,7 +10,10 @@
     }
   ],
   "require": {
-    "contao/core-bundle": "^4.9"
+    "contao/core-bundle": "^4.9",
+    "ext-simplexml": "*",
+    "lindesbs/contaotoolbox": "dev-develop",
+    "twig/intl-extra": "^3.5"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
@@ -21,7 +24,6 @@
     "psr-4": {
       "lindesbs\\minkorrekt\\": "src/"
     },
-
     "classmap": [
       "src/Resources/contao"
     ],
