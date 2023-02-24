@@ -7,6 +7,7 @@ namespace lindesbs\minkorrekt\Service;
 use Contao\StringUtil;
 use lindesbs\minkorrekt\Models\MinkorrektPaperCreatorModel;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
+use lindesbs\minkorrekt\Models\MinkorrektPaperTagsModel;
 use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\DomCrawler\Crawler;
@@ -242,9 +243,19 @@ class WebsiteScraper
                 $arrSubjects = explode(',', (string)$paper->subjects);
                 $arrSubjects[] = $meta['content'];
 
-                $arrSubjects = array_unique($arrSubjects, SORT_REGULAR);
-                sort($arrSubjects);
-                $paper->subjects = implode(',', $arrSubjects);
+                foreach ($arrSubjects as $sub) {
+                    $alias = StringUtil::generateAlias($sub);
+                    $tags = MinkorrektPaperTagsModel::findOneBy('alias', $alias);
+                    if (!$tags) {
+                        $tags = new MinkorrektPaperTagsModel();
+                    }
+
+                    $tags->name = $sub;
+                    $tags->alias = $alias;
+
+                    $tags->save();
+                }
+
 
                 $paper->save();
                 continue;

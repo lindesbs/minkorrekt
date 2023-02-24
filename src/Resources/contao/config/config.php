@@ -17,4 +17,7 @@ $GLOBALS['BE_MOD']['minkorrekt'] = [
         'tables' => ['tl_minkorrekt_paper', 'tl_minkorrekt_paper_creator'],
         'rebuild' => [PaperRebuild::class, 'rebuild'],
     ],
+    'tags' => [
+        'tables' => ['tl_minkorrekt_paper_tags'],
+    ],
 ];

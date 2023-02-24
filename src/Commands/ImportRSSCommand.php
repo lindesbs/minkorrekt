@@ -86,7 +86,7 @@ class ImportRSSCommand extends Command
         /** @var \DOMNodeList $path */
         $path = $domxPath->query('//channel/item');
 
-        $symfonyStyle->writeln(\count($path) . ' Elemete');
+        $symfonyStyle->writeln(\count($path) . ' Elemente');
 
         foreach ($path as $element) {
             $entry = new PodcastEntry($element);

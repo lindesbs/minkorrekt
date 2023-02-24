@@ -24,7 +24,10 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
                 'scrape',
             ],
         ],
-        'ctable' => ['tl_minkorrekt_paper_creator'],
+        'ctable' => [
+            'tl_minkorrekt_paper_tags',
+            'tl_minkorrekt_paper_creator'
+        ],
         'sql' => [
             'keys' => [
                 'id' => 'primary',
@@ -90,7 +93,6 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
         'pid' => [
             'foreignKey' => 'tl_minkorrekt_publisher.title',
             'sql' => 'int(10) unsigned NOT NULL default 0',
-            'relation' => ['type' => 'belongsTo', 'load' => 'lazy'],
         ],
         'sorting' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
         'tstamp' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
@@ -226,9 +228,9 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
         'status' => [
             'exclude' => true,
             'filter' => true,
-            'inputType' => 'checkbox',
+            'inputType' => 'select',
             'options' => ['UNTOUCHED', 'INCHECK', 'VERIFICATION', 'VERIFIED'],
-            'eval' => ['multiple' => true],
+            'eval' => ['multiple' => true, 'includeBlankOption'=>true, 'chosen'=>true],
             'sql' => "varchar(255) NOT NULL default 'UNTOUCHED'",
         ],
         'url' => [
@@ -309,9 +311,10 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
 
         'subjects' => [
             'exclude' => true,
-            'inputType' => 'text',
-            'eval' => ['tl_class' => 'ww50 wizard clr'],
-            'sql' => 'text NULL'
+            'inputType' => 'select',
+            'foreignKeys' => 'tl_minkorrekt_paper_tags.name',
+            'eval' => ['multiple' => true, 'includeBlankOption'=>true, 'chosen'=>true, 'tl_class' => 'clr'],
+            'sql' => 'text NULL',
         ],
         'screenshotSRC' => [
             'exclude' => true,
