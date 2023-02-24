@@ -10,13 +10,12 @@ declare(strict_types=1);
 use Contao\DataContainer;
 use Contao\DC_Table;
 
-$GLOBALS['TL_DCA']['tl_minkorrekt_paper_creator'] = [
+$GLOBALS['TL_DCA']['tl_minkorrekt_paper_tags'] = [
     // Config
     'config' => [
         'dataContainer' => DC_Table::class,
         'enableVersioning' => true,
-        'ptable' => 'tl_minkorrekt_paper',
-        'markAsCopy' => 'title',
+        'markAsCopy' => 'name',
         'onload_callback' => [],
         'sql' => [
             'keys' => [
@@ -69,7 +68,6 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper_creator'] = [
         'id' => ['label' => ['ID'], 'sql' => 'int(10) unsigned NOT NULL auto_increment'],
         'sorting' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
         'tstamp' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
-
         'pid' => [
             'sorting' => true,
             'filter' => true,

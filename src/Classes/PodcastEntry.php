@@ -9,12 +9,6 @@ declare(strict_types=1);
 
 namespace lindesbs\minkorrekt\Classes;
 
-use DateTime;
-use DOMNode;
-use DOMNodeList;
-
-use function array_key_exists;
-
 class PodcastEntry
 {
     private string $title;
@@ -41,12 +35,12 @@ class PodcastEntry
 
     private string $description;
 
-    private DateTime $dateTime;
+    private \DateTime $dateTime;
 
-    public function __construct(DOMNode $domNode)
+    public function __construct(\DOMNode $domNode)
     {
         $values = [];
-        /** @var DOMNodeList $nodelist */
+        /** @var \DOMNodeList $nodelist */
         $nodelist = $domNode->childNodes;
 
         foreach ($nodelist as $node) {
@@ -55,7 +49,7 @@ class PodcastEntry
             }
         }
 
-        $dateTime = new DateTime($values['pubDate']);
+        $dateTime = new \DateTime($values['pubDate']);
 
         $this->setTitle($values['title']);
         $this->setDescription($values['description']);
@@ -67,20 +61,20 @@ class PodcastEntry
         $this->setSummary($values['itunes:summary']);
         $this->setExplicit('yes' === $values['itunes:explicit']);
 
-        if (array_key_exists('itunes:keywords', $values) && ($values['itunes:keywords'])) {
+        if (\array_key_exists('itunes:keywords', $values) && ($values['itunes:keywords'])) {
             $this->setKeywords(explode(',', $values['itunes:keywords']));
         }
 
         $this->setAuthor($values['itunes:author']);
 
-        if (array_key_exists('itunes:duration', $values) && ($values['itunes:duration'])) {
+        if (\array_key_exists('itunes:duration', $values) && ($values['itunes:duration'])) {
             $this->setDuration((int)$values['itunes:duration']);
         }
 
         $this->setPubDate($dateTime);
     }
 
-    public function setPubDate(DateTime $pubDate): void
+    public function setPubDate(\DateTime $pubDate): void
     {
         $this->dateTime = $pubDate;
     }
@@ -105,7 +99,7 @@ class PodcastEntry
         $this->description = $description;
     }
 
-    public function getPubDate(): DateTime
+    public function getPubDate(): \DateTime
     {
         return $this->dateTime;
     }

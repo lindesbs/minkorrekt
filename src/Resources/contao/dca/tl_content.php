@@ -7,9 +7,6 @@ declare(strict_types=1);
  *  from lindesbs
  */
 
-use lindesbs\ContaoTools\Classes\DCA;
-use lindesbs\ContaoTools\Classes\DCAType;
-
 $arrBlocks = explode(';', (string)$GLOBALS['TL_DCA']['tl_content']['palettes']['text']);
 
 $arrNewBlocks = [];
@@ -19,11 +16,9 @@ $arrNewBlocks = array_merge($arrNewBlocks, $arrBlocks);
 
 $GLOBALS['TL_DCA']['tl_content']['palettes']['minkorrekt_thema'] = implode(';', $arrNewBlocks);
 
-
-
 $GLOBALS['TL_DCA']['tl_content']['fields']['alias'] = [
     'inputType' => 'text',
-    'sql' => "varchar(255) NOT NULL default ''"
+    'sql' => "varchar(255) NOT NULL default ''",
 ];
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_art'] = [
@@ -42,7 +37,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_art'] = [
         'EXPERIMENT',
     ],
     'eval' => [],
-    'sql' => "varchar(32) NOT NULL default ''"
+    'sql' => "varchar(32) NOT NULL default ''",
 ];
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_folge'] = [
@@ -50,7 +45,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_folge'] = [
     'exclude' => true,
     'inputType' => 'text',
     'eval' => ['rgxp' => 'number', 'tl_style' => 'w50'],
-    'sql' => "int(10) unsigned NOT NULL default '0'"
+    'sql' => "int(10) unsigned NOT NULL default '0'",
 ];
 
 $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_nummer'] = [
@@ -58,5 +53,5 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['minkorrekt_thema_nummer'] = [
     'exclude' => true,
     'inputType' => 'text',
     'eval' => ['rgxp' => 'number', 'tl_style' => 'w50'],
-    'sql' => "int(10) unsigned NOT NULL default '0'"
+    'sql' => "int(10) unsigned NOT NULL default '0'",
 ];

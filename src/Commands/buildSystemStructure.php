@@ -22,33 +22,30 @@ class buildSystemStructure extends Command
 
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
-        private readonly DCATools $DCATools
+        private readonly DCATools $DCATools,
     ) {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
-
-        $publisherDetailPage = null;
-        $paperDetailPage = null;
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();
 
         Controller::loadDataContainer('tl_minkorrekt_paper');
-        $io->writeln("Theme");
+        $io->writeln('Theme');
 
-        $theme = $this->DCATools->getTheme("Standard");
-        $newsPublisher = $this->DCATools->getNewsArchive("Publisher");
-        $newsPaper = $this->DCATools->getNewsArchive("Paper");
+        $theme = $this->DCATools->getTheme('Standard');
+        $newsPublisher = $this->DCATools->getNewsArchive('Publisher');
+        $newsPaper = $this->DCATools->getNewsArchive('Paper');
 
-        $io->writeln("Modules");
+        $io->writeln('Modules');
         $modMainMenu = $this->DCATools->getModule(
             'Menu :: Main Top',
             [
                 'type' => 'navigation',
                 'navigationTpl' => 'nav_default_bootstrap_header',
-                'pid' => $theme->id
+                'pid' => $theme->id,
             ]
         );
 
@@ -56,14 +53,14 @@ class buildSystemStructure extends Command
             'Footer :: HTML',
             [
                 'type' => 'html',
-                'pid' => $theme->id
+                'pid' => $theme->id,
             ]
         );
         $modFooterImpressum = $this->DCATools->getModule(
             'Footer :: HTML :: Impressum',
             [
                 'type' => 'html',
-                'pid' => $theme->id
+                'pid' => $theme->id,
             ]
         );
         $modFooterDatenschutz = $this->DCATools->getModule(
@@ -71,7 +68,7 @@ class buildSystemStructure extends Command
             [
                 'type' => 'html',
                 'html' => '{{insert_article::footer-2}}',
-                'pid' => $theme->id
+                'pid' => $theme->id,
             ]
         );
 
@@ -79,7 +76,7 @@ class buildSystemStructure extends Command
             'Footer :: Kontakt',
             [
                 'type' => 'html',
-                'pid' => $theme->id
+                'pid' => $theme->id,
             ]
         );
 
@@ -88,7 +85,7 @@ class buildSystemStructure extends Command
             [
                 'type' => 'html',
                 'html' => '{{insert_article::header-2}}',
-                'pid' => $theme->id
+                'pid' => $theme->id,
             ]
         );
 
@@ -101,18 +98,17 @@ class buildSystemStructure extends Command
                 'pages' => [
                     $modFooterHTML->id,
                     $modFooterDatenschutz->id,
-                    $modFooterImpressum->id
-                ]
+                    $modFooterImpressum->id,
+                ],
             ]
         );
-
 
         $modPaperLister = $this->DCATools->getModule(
             'News Paper :: List',
             [
                 'type' => 'newslist',
                 'news_archives' => [$newsPaper->id],
-                'pid' => $theme->id
+                'pid' => $theme->id,
             ]
         );
         $modPaperReader = $this->DCATools->getModule(
@@ -121,16 +117,13 @@ class buildSystemStructure extends Command
                 'type' => 'newsreader',
                 'news_archives' => [$newsPaper->id],
                 'pid' => $theme->id,
-                'news_template' => 'news_paper_display'
+                'news_template' => 'news_paper_display',
             ]
         );
 
-
-
-
-        $io->writeln("Layout");
+        $io->writeln('Layout');
         $layout = $this->DCATools->getLayout(
-            "Standard",
+            'Standard',
             [
                 'template' => 'fe_page_bootstrap',
                 'row' => '3rw',
@@ -138,52 +131,51 @@ class buildSystemStructure extends Command
                     [
                         'mod' => $modHeaderArticle->id,
                         'col' => 'header',
-                        'enable' => true
+                        'enable' => true,
                     ],
                     [
                         'mod' => $modMainMenu->id,
                         'col' => 'header',
-                        'enable' => true
+                        'enable' => true,
                     ],
                     [
                         'mod' => 0,
                         'col' => 'main',
-                        'enable' => true
+                        'enable' => true,
                     ],
                     [
                         'mod' => $modFooterHTML->id,
                         'col' => 'footer',
-                        'enable' => true
+                        'enable' => true,
                     ],
                     [
                         'mod' => $modFooterImpressum->id,
                         'col' => 'footer',
-                        'enable' => true
+                        'enable' => true,
                     ],
                     [
                         'mod' => $modFooterDatenschutz->id,
                         'col' => 'footer',
-                        'enable' => true
+                        'enable' => true,
                     ],
                     [
                         'mod' => $modFooterKontakt->id,
                         'col' => 'footer',
-                        'enable' => true
-                    ]
+                        'enable' => true,
+                    ],
                 ],
 
-                'pid' => $theme->id
-
+                'pid' => $theme->id,
             ]
         );
 
-        $io->writeln("Pages");
+        $io->writeln('Pages');
         $rootPage = $this->DCATools->getPage(
             'Minkorrekt History',
             [
                 Page::NOSSLROOT,
                 'pageTitle' => 'Minkorrekt History - privates Projekt',
-                'layout' => $layout->id
+                'layout' => $layout->id,
             ],
             0
         );
@@ -191,68 +183,63 @@ class buildSystemStructure extends Command
         if ($rootPage) {
             $hiddenPage = ['hide' => true];
 
-            $preaeambelPage = $this->DCATools->getPage("Praeambel", [], $rootPage->id);
-            $sciencePage = $this->DCATools->getPage("Wissenschaft", [], $rootPage->id);
+            $preaeambelPage = $this->DCATools->getPage('Praeambel', [], $rootPage->id);
+            $sciencePage = $this->DCATools->getPage('Wissenschaft', [], $rootPage->id);
 
-            $publisherPage = $this->DCATools->getPage("Verlag", [], $sciencePage->id);
-            $publisherDetailPage = $this->DCATools->getPage("Verlagsinformationen", $hiddenPage, $publisherPage->id);
+            $publisherPage = $this->DCATools->getPage('Verlag', [], $sciencePage->id);
+            $publisherDetailPage = $this->DCATools->getPage('Verlagsinformationen', $hiddenPage, $publisherPage->id);
 
-            $paperPage = $this->DCATools->getPage("Paper", [], $sciencePage->id);
-            $paperArticle = $this->DCATools->getArticle("Listenansicht", [], $paperPage);
+            $paperPage = $this->DCATools->getPage('Paper', [], $sciencePage->id);
+            $paperArticle = $this->DCATools->getArticle('Listenansicht', [], $paperPage);
             $papaerOverviewModule = $this->DCATools->getContent(
                 'Detail Liste der Paper',
                 [
                     Content::TYPE => 'module',
-                    Content::MODULE => $modPaperLister->id
+                    Content::MODULE => $modPaperLister->id,
                 ],
                 $paperArticle,
                 true
             );
 
-            $paperDetailPage = $this->DCATools->getPage("Paper Details", $hiddenPage, $paperPage->id);
-            $paperDetailArticle = $this->DCATools->getArticle("Detailansicht", [], $paperDetailPage);
+            $paperDetailPage = $this->DCATools->getPage('Paper Details', $hiddenPage, $paperPage->id);
+            $paperDetailArticle = $this->DCATools->getArticle('Detailansicht', [], $paperDetailPage);
             $papaerDetailModule = $this->DCATools->getContent(
                 'Detailansicht der Paper',
                 [
                     Content::TYPE => 'module',
-                    Content::MODULE => $modPaperReader->id
+                    Content::MODULE => $modPaperReader->id,
                 ],
                 $paperDetailArticle,
                 true
             );
 
+            $statisticsPage = $this->DCATools->getPage('Statistiken', [], $sciencePage->id);
 
-            $statisticsPage = $this->DCATools->getPage("Statistiken", [], $sciencePage->id);
+            $this->DCATools->getPage('Folgen', [], $rootPage->id);
 
+            $this->DCATools->getPage('Minkorrekt-Pool', [], $rootPage->id);
+            $this->DCATools->getPage('Datenschutz', [], $rootPage->id);
+            $this->DCATools->getPage('Impressum', [], $rootPage->id);
+            $this->DCATools->getPage('Kontakt', [], $rootPage->id);
 
-            $this->DCATools->getPage("Folgen", [], $rootPage->id);
+            $hiddenPageID = $this->DCATools->getPage('HIDDEN', $hiddenPage, $rootPage->id);
 
-            $this->DCATools->getPage("Minkorrekt-Pool", [], $rootPage->id);
-            $this->DCATools->getPage("Datenschutz", [], $rootPage->id);
-            $this->DCATools->getPage("Impressum", [], $rootPage->id);
-            $this->DCATools->getPage("Kontakt", [], $rootPage->id);
+            $this->DCATools->getPage('Header', $hiddenPage, $hiddenPageID->id);
+            $this->DCATools->getPage('Footer', $hiddenPage, $hiddenPageID->id);
 
-
-            $hiddenPageID = $this->DCATools->getPage("HIDDEN", $hiddenPage, $rootPage->id);
-
-            $this->DCATools->getPage("Header", $hiddenPage, $hiddenPageID->id);
-            $this->DCATools->getPage("Footer", $hiddenPage, $hiddenPageID->id);
-
-            $newsPublisher = $this->DCATools->getNewsArchive("Publisher");
+            $newsPublisher = $this->DCATools->getNewsArchive('Publisher');
             $newsPublisher->jumpTo = $publisherDetailPage->id;
             $newsPublisher->save();
 
-
-            $newsPaper = $this->DCATools->getNewsArchive("Paper");
+            $newsPaper = $this->DCATools->getNewsArchive('Paper');
             $newsPaper->jumpTo = $paperDetailPage->id;
 
             $newsPaper->save();
 
-
-            $praeambelArticle = $this->DCATools->getArticle("Willkommen", [], $preaeambelPage);
-            $praeambelArticle01 = $this->DCATools->getArticle("Inhalte", [], $preaeambelPage);
-            $praeambelArticle02 = $this->DCATools->getArticle("Wozu der Wissenspool", [], $preaeambelPage);
-            $praeambelArticle03 = $this->DCATools->getArticle("Hostorien", [], $preaeambelPage);
+            $praeambelArticle = $this->DCATools->getArticle('Willkommen', [], $preaeambelPage);
+            $praeambelArticle01 = $this->DCATools->getArticle('Inhalte', [], $preaeambelPage);
+            $praeambelArticle02 = $this->DCATools->getArticle('Wozu der Wissenspool', [], $preaeambelPage);
+            $praeambelArticle03 = $this->DCATools->getArticle('Hostorien', [], $preaeambelPage);
         }
 
         return Command::SUCCESS;

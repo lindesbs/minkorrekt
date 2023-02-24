@@ -20,10 +20,14 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
         'markAsCopy' => 'title',
         'onsubmit_callback' => [
             [
-                PaperSubmit::class,'scrape'
-            ]
+                PaperSubmit::class,
+                'scrape',
+            ],
         ],
-        'ctable' => ['tl_minkorrekt_paper_creator'],
+        'ctable' => [
+            'tl_minkorrekt_paper_tags',
+            'tl_minkorrekt_paper_creator'
+        ],
         'sql' => [
             'keys' => [
                 'id' => 'primary',
@@ -31,7 +35,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
                 'published' => 'index',
                 'pid' => 'index',
             ],
-        ]
+        ],
     ],
     // List
     'list' => [
@@ -54,40 +58,41 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
         'operations' => [
             'editheader' => ['href' => 'act=edit', 'icon' => 'edit.svg'],
             'edit' => [
-                'href'                => 'table=tl_minkorrekt_paper_creator',
-                'icon'                => 'person.svg',
+                'href' => 'table=tl_minkorrekt_paper_creator',
+                'icon' => 'person.svg',
             ],
             'copy' => [
                 'href' => 'act=paste&amp;mode=copy',
                 'icon' => 'copy.svg',
-                'attributes' => 'onclick="Backend.getScrollOffset()"'
+                'attributes' => 'onclick="Backend.getScrollOffset()"',
             ],
             'cut' => [
                 'href' => 'act=paste&amp;mode=cut',
                 'icon' => 'cut.svg',
-                'attributes' => 'onclick="Backend.getScrollOffset()"'
+                'attributes' => 'onclick="Backend.getScrollOffset()"',
             ],
             'delete' => [
                 'href' => 'act=delete',
                 'icon' => 'delete.svg',
-                'attributes' => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"'
+                'attributes' => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
             ],
-            'show' => ['href' => 'act=show', 'icon' => 'show.svg']
-        ]
+            'show' => ['href' => 'act=show', 'icon' => 'show.svg'],
+        ],
     ],
     // Palettes
-    'palettes' => ['default' => '{title_legend},pid,title,citation_title,alias,url;copyright,rights,rightsAgent;'.
-        'description,thePublisher,published,status;license,onlineAt,receivedAt,size,'.
-                            'acceptedAt,publishedAt,doi,doiurl,citation_springer_api_url,subjects,screenshotSRC,screenshotFullpageSRC;tlContentId,'.
-                            'tlNewsId;price;paperType,language,twitter;citation_firstpage,citation_lastpage,citation_article_type,'.
-    'citation_pdf_url,citation_fulltext_html_url,citation_issn'],
+    'palettes' => [
+        'default' => '{title_legend},pid,title,citation_title,alias,url;copyright,rights,rightsAgent;' .
+            'description,thePublisher,published,status;license,onlineAt,receivedAt,size,' .
+            'acceptedAt,publishedAt,doi,doiurl,citation_springer_api_url,subjects,screenshotSRC,screenshotFullpageSRC;tlContentId,' .
+            'tlNewsId;price;paperType,language,twitter;citation_firstpage,citation_lastpage,citation_article_type,' .
+            'citation_pdf_url,citation_fulltext_html_url,citation_issn',
+    ],
     'fields' => [
         'id' => ['label' => ['ID'], 'sql' => 'int(10) unsigned NOT NULL auto_increment'],
 
         'pid' => [
-            'foreignKey'              => 'tl_minkorrekt_publisher.title',
-            'sql'                     => "int(10) unsigned NOT NULL default 0",
-            'relation'                => ['type'=>'belongsTo', 'load'=>'lazy']
+            'foreignKey' => 'tl_minkorrekt_publisher.title',
+            'sql' => 'int(10) unsigned NOT NULL default 0',
         ],
         'sorting' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
         'tstamp' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
@@ -96,14 +101,14 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'inputType' => 'text',
             'search' => true,
             'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255],
-            'sql' => "varchar(255) NOT NULL default ''"
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'citation_title' => [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
             'eval' => ['decodeEntities' => true, 'maxlength' => 255],
-            'sql' => "varchar(255) NOT NULL default ''"
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'citation_pdf_url' => [
             'exclude' => true,
@@ -111,10 +116,11 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'eval' => [
                 'rgxp' => 'url',
                 'decodeEntities' => true,
-                'maxlength' => 255, 'tl_class' => 'w50'
+                'maxlength' => 255,
+                'tl_class' => 'w50',
             ],
-            'sql' => "varchar(255) NOT NULL default ''"
-              ],
+            'sql' => "varchar(255) NOT NULL default ''",
+        ],
         'citation_springer_api_url' => [
             'exclude' => true,
             'inputType' => 'text',
@@ -122,9 +128,9 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
                 'rgxp' => 'url',
                 'decodeEntities' => true,
                 'maxlength' => 255,
-                'tl_class' => 'w50'
+                'tl_class' => 'w50',
             ],
-            'sql' => "varchar(255) NOT NULL default ''"
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'citation_fulltext_html_url' => [
             'exclude' => true,
@@ -132,37 +138,38 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'eval' => [
                 'rgxp' => 'url',
                 'decodeEntities' => true,
-                'maxlength' => 2048, 'tl_class' => 'w50'
+                'maxlength' => 2048,
+                'tl_class' => 'w50',
             ],
-            'sql' => "varchar(255) NOT NULL default ''"
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'citation_issn' => [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
-            'eval' => [ 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
-            'sql' => "varchar(255) NOT NULL default ''"
+            'eval' => ['decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'copyright' => [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
-            'eval' => [ 'decodeEntities' => true, 'maxlength' => 255],
-            'sql' => "varchar(255) NOT NULL default ''"
+            'eval' => ['decodeEntities' => true, 'maxlength' => 255],
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'rights' => [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
             'eval' => ['decodeEntities' => true, 'maxlength' => 255],
-            'sql' => "varchar(255) NOT NULL default ''"
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'rightsagent' => [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
             'eval' => ['decodeEntities' => true, 'maxlength' => 255],
-            'sql' => "varchar(255) NOT NULL default ''"
+            'sql' => "varchar(255) NOT NULL default ''",
         ],
         'alias' => [
             'exclude' => true,
@@ -190,7 +197,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'filter' => true,
             'inputType' => 'text',
             'eval' => ['rgxp' => 'natural'],
-            'sql' => "int(3) unsigned NOT NULL default 0",
+            'sql' => 'int(3) unsigned NOT NULL default 0',
         ],
 
         'citation_lastpage' => [
@@ -198,7 +205,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'filter' => true,
             'inputType' => 'text',
             'eval' => ['rgxp' => 'natural'],
-            'sql' => "int(3) unsigned NOT NULL default 0",
+            'sql' => 'int(3) unsigned NOT NULL default 0',
         ],
 
         'size' => [
@@ -206,9 +213,8 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'filter' => true,
             'inputType' => 'text',
             'eval' => ['rgxp' => 'natural', 'tl_class' => 'w50'],
-            'sql' => "int(11) unsigned NOT NULL default 0",
+            'sql' => 'int(11) unsigned NOT NULL default 0',
         ],
-
 
         'thePublisher' => [
             'exclude' => true,
@@ -216,22 +222,22 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'inputType' => 'select',
             'foreignKey' => 'tl_minkorrekt_publisher.title',
             'eval' => ['mandatory' => true, 'chosen' => true, 'tl_class' => 'clr'],
-            'sql'                     => "int(10) unsigned NOT NULL default 0",
-            'relation'                => ['type'=>'belongsTo', 'load'=>'lazy']
+            'sql' => 'int(10) unsigned NOT NULL default 0',
+            'relation' => ['type' => 'belongsTo', 'load' => 'lazy'],
         ],
         'status' => [
             'exclude' => true,
             'filter' => true,
-            'inputType' => 'checkbox',
+            'inputType' => 'select',
             'options' => ['UNTOUCHED', 'INCHECK', 'VERIFICATION', 'VERIFIED'],
-            'eval' => ['multiple' => true],
+            'eval' => ['multiple' => true, 'includeBlankOption'=>true, 'chosen'=>true],
             'sql' => "varchar(255) NOT NULL default 'UNTOUCHED'",
         ],
         'url' => [
             'exclude' => true,
             'inputType' => 'text',
             'eval' => ['mandatory' => true, 'rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 2048],
-            'sql' => 'text NULL'
+            'sql' => 'text NULL',
         ],
         'license' => [
             'exclude' => true,
@@ -294,41 +300,47 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'exclude' => true,
             'inputType' => 'text',
             'eval' => ['decodeEntities' => true, 'maxlength' => 2048, 'tl_class' => 'w50'],
-            'sql' => 'text NULL'
+            'sql' => 'text NULL',
         ],
         'doiurl' => [
             'exclude' => true,
             'inputType' => 'text',
             'eval' => ['rgxp' => 'url', 'decodeEntities' => true, 'maxlength' => 2048, 'tl_class' => 'w50 url clr'],
-            'sql' => 'text NULL'
+            'sql' => 'text NULL',
         ],
 
-        'subjects' => ['exclude' => true, 'inputType' => 'text', 'eval' => [ 'tl_class' => 'ww50 wizard clr'], 'sql' => 'text NULL'],
+        'subjects' => [
+            'exclude' => true,
+            'inputType' => 'select',
+            'foreignKeys' => 'tl_minkorrekt_paper_tags.name',
+            'eval' => ['multiple' => true, 'includeBlankOption'=>true, 'chosen'=>true, 'tl_class' => 'clr'],
+            'sql' => 'text NULL',
+        ],
         'screenshotSRC' => [
             'exclude' => true,
             'inputType' => 'fileTree',
             'eval' => ['filesOnly' => true, 'fieldType' => 'radio', 'tl_class' => 'clr'],
-            'sql' => 'binary(16) NULL'
+            'sql' => 'binary(16) NULL',
         ],
         'screenshotFullpageSRC' => [
             'exclude' => true,
             'inputType' => 'fileTree',
             'eval' => ['filesOnly' => true, 'fieldType' => 'radio', 'tl_class' => 'clr'],
-            'sql' => 'binary(16) NULL'
+            'sql' => 'binary(16) NULL',
         ],
         'tlContentId' => [
             'label' => ['Content ID'],
             'inputType' => 'select',
             'foreignKey' => 'tl_content.text',
             'eval' => ['readonly' => true],
-            'sql' => 'int(10) unsigned NOT NULL default 0'
+            'sql' => 'int(10) unsigned NOT NULL default 0',
         ],
         'tlNewsId' => [
             'label' => ['News ID'],
             'inputType' => 'select',
             'foreignKey' => 'tl_news.headline',
             'eval' => ['readonly' => true],
-            'sql' => 'int(10) unsigned NOT NULL default 0'
+            'sql' => 'int(10) unsigned NOT NULL default 0',
         ],
         'price' => [
             'exclude' => true,
@@ -337,28 +349,25 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'sql' => "varchar(11) NOT NULL default ''",
         ],
         'language' => [
-                'exclude'                 => true,
-                'search'                  => true,
-                'inputType'               => 'select',
-                'options' => Languages::getNames('de'),
-                'eval'                    =>
-                    [
-                        'chosen' => true,
-                        'decodeEntities'=>true,
-                        'tl_class' => 'w50 clr'
-                    ],
-                'sql' => "varchar(64) NOT NULL default ''"
+            'exclude' => true,
+            'search' => true,
+            'inputType' => 'select',
+            'options' => Languages::getNames('de'),
+            'eval' => [
+                'chosen' => true,
+                'decodeEntities' => true,
+                'tl_class' => 'w50 clr',
             ],
+            'sql' => "varchar(64) NOT NULL default ''",
+        ],
         'description' => [
             'exclude' => true,
             'inputType' => 'textarea',
             'eval' => ['decodeEntities' => true],
-            'sql' => "text NULL",
+            'sql' => 'text NULL',
         ],
     ],
 ];
-
-
 
 /*
  * foreach ($GLOBALS['TL_DCA']['tl_minkorrekt_paper']['fields'] as $fieldKey => $FieldValue) {
