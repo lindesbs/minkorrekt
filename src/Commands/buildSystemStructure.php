@@ -38,6 +38,7 @@ class buildSystemStructure extends Command
         $theme = $this->DCATools->getTheme('Standard');
         $newsPublisher = $this->DCATools->getNewsArchive('Publisher');
         $newsPaper = $this->DCATools->getNewsArchive('Paper');
+        $newsMinkorrekt = $this->DCATools->getNewsArchive('Methodisch Inkorrekt');
 
         $io->writeln('Modules');
         $modMainMenu = $this->DCATools->getModule(
@@ -102,6 +103,25 @@ class buildSystemStructure extends Command
                 ],
             ]
         );
+
+        $modFolgenLister = $this->DCATools->getModule(
+            'News Folgen :: List',
+            [
+                'type' => 'newslist',
+                'news_archives' => [$newsMinkorrekt->id],
+                'pid' => $theme->id,
+            ]
+        );
+        $modFolgenReader = $this->DCATools->getModule(
+            'News Folgen :: Reader',
+            [
+                'type' => 'newsreader',
+                'news_archives' => [$newsMinkorrekt->id],
+                'pid' => $theme->id,
+                'news_template' => 'news_paper_display',
+            ]
+        );
+
 
         $modPaperLister = $this->DCATools->getModule(
             'News Paper :: List',
@@ -215,7 +235,16 @@ class buildSystemStructure extends Command
 
             $statisticsPage = $this->DCATools->getPage('Statistiken', [], $sciencePage->id);
 
-            $this->DCATools->getPage('Folgen', [], $rootPage->id);
+
+            // -----------------------------------------------------------
+            // Folgen
+            $folgenPage = $this->DCATools->getPage('Folgen', [], $rootPage->id);
+            $folgenDetailPage = $this->DCATools->getPage('Inhalt der Folge', [], $folgenPage->id);
+
+            $folgenArticle = $this->DCATools->getArticle('Folgenansicht', [], $folgenPage);
+            $folgenDetailArticle = $this->DCATools->getArticle('Detailansicht der Folge', [], $folgenDetailPage);
+
+            // -----------------------------------------------------------
 
             $this->DCATools->getPage('Minkorrekt-Pool', [], $rootPage->id);
             $this->DCATools->getPage('Datenschutz', [], $rootPage->id);
