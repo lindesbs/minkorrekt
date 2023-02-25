@@ -6,9 +6,9 @@ namespace lindesbs\minkorrekt\Commands;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Doctrine\DBAL\Exception;
-use lindesbs\contaotoolbox\Service\DCATools;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 use lindesbs\minkorrekt\Service\WebsiteScraper;
+use lindesbs\toolbox\Service\DCATools;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
