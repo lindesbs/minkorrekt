@@ -61,11 +61,11 @@ class ImportRSSCommand extends Command
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
 
-        /*    if ('dev' === $_SERVER['APP_ENV']) {
+            if ('dev' === $_SERVER['APP_ENV']) {
                 $symfonyStyle->warning('DEV MODE');
                 $this->connection->executeQuery('TRUNCATE TABLE tl_news');
                 $this->connection->executeQuery('DELETE FROM tl_content WHERE ptable="tl_news"');
-            }*/
+            }
 
         $symfonyStyle->title('Minkorrekt RSS einlesen und importieren');
 
@@ -73,9 +73,11 @@ class ImportRSSCommand extends Command
 
         $domDocument = new \DOMDocument();
 
+        $symfonyStyle->writeln("Load RSS Feed");
         $strData = $this->getRSSFeed();
-
         $domDocument->loadXML($strData);
+        $symfonyStyle->writeln("done");
+
         $objNewsArchive = $this->DCATools->getNewsArchive('Methodisch Inkorrekt');
 
         $domxPath = new \DOMXPath($domDocument);
@@ -112,7 +114,13 @@ class ImportRSSCommand extends Command
                     continue;
                 }
 
-                $objContent = new ContentModel();
+                $contentAlias = md5($value);
+                $objContent = ContentModel::findByArticleAlias($contentAlias);
+
+                if (!$objContent) {
+                    $objContent = new ContentModel();
+                }
+
                 $objContent->tstamp = 1;
                 $objContent->pid = $objFeed->id;
                 $objContent->sorting = $key;

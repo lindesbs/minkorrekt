@@ -235,7 +235,16 @@ class buildSystemStructure extends Command
 
             $statisticsPage = $this->DCATools->getPage('Statistiken', [], $sciencePage->id);
 
-            $this->DCATools->getPage('Folgen', [], $rootPage->id);
+
+            // -----------------------------------------------------------
+            // Folgen
+            $folgenPage = $this->DCATools->getPage('Folgen', [], $rootPage->id);
+            $folgenDetailPage = $this->DCATools->getPage('Inhalt der Folge', [], $folgenPage->id);
+
+            $folgenArticle = $this->DCATools->getArticle('Folgenansicht', [], $folgenPage);
+            $folgenDetailArticle = $this->DCATools->getArticle('Detailansicht der Folge', [], $folgenDetailPage);
+
+            // -----------------------------------------------------------
 
             $this->DCATools->getPage('Minkorrekt-Pool', [], $rootPage->id);
             $this->DCATools->getPage('Datenschutz', [], $rootPage->id);
