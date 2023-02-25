@@ -6,9 +6,9 @@ namespace lindesbs\minkorrekt\Commands;
 
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use lindesbs\contaotoolbox\Constants\Content;
-use lindesbs\contaotoolbox\Constants\Page;
-use lindesbs\contaotoolbox\Service\DCATools;
+use lindesbs\toolbox\Constants\Content;
+use lindesbs\toolbox\Constants\Page;
+use lindesbs\toolbox\Service\DCATools;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
