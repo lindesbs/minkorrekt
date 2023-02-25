@@ -38,6 +38,7 @@ class buildSystemStructure extends Command
         $theme = $this->DCATools->getTheme('Standard');
         $newsPublisher = $this->DCATools->getNewsArchive('Publisher');
         $newsPaper = $this->DCATools->getNewsArchive('Paper');
+        $newsMinkorrekt = $this->DCATools->getNewsArchive('Methodisch Inkorrekt');
 
         $io->writeln('Modules');
         $modMainMenu = $this->DCATools->getModule(
@@ -102,6 +103,25 @@ class buildSystemStructure extends Command
                 ],
             ]
         );
+
+        $modFolgenLister = $this->DCATools->getModule(
+            'News Folgen :: List',
+            [
+                'type' => 'newslist',
+                'news_archives' => [$newsMinkorrekt->id],
+                'pid' => $theme->id,
+            ]
+        );
+        $modFolgenReader = $this->DCATools->getModule(
+            'News Folgen :: Reader',
+            [
+                'type' => 'newsreader',
+                'news_archives' => [$newsMinkorrekt->id],
+                'pid' => $theme->id,
+                'news_template' => 'news_paper_display',
+            ]
+        );
+
 
         $modPaperLister = $this->DCATools->getModule(
             'News Paper :: List',
