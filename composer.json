@@ -16,7 +16,7 @@
   "require": {
     "contao/core-bundle": "^4.9",
     "ext-simplexml": "*",
-    "lindesbs/toolbox": "^0.2",
+    "lindesbs/toolbox": "main",
     "twig/intl-extra": "^3.5"
   },
   "require-dev": {
