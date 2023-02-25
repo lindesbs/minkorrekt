@@ -2,6 +2,10 @@
   "name": "lindesbs/minkorrekt",
   "type": "contao-bundle",
   "description": "minkorrekt-history Tools",
+  "keywords": [
+    "minkorrekt",
+    "lindesbs"
+  ],
   "license": "LGPL-3.0-or-later",
   "authors": [
     {
