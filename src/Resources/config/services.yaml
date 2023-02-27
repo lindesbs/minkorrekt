@@ -4,6 +4,10 @@ services:
     autoconfigure: true
     public: false
 
+  _instanceof:
+    lindesbs\minkorrekt\Interface\WebscraperItemdecoderInterface:
+      tags: [ 'app.WebscraperItemdecoderInterface' ]
+
   lindesbs\minkorrekt\:
     resource: ../../
     exclude: ../../{Entity,Migrations,Model,Resources,Tests,Widget}
@@ -11,3 +15,9 @@ services:
   lindesbs.minkorrekt.websitescrape:
     class: lindesbs\minkorrekt\Service\WebsiteScraper
     public: true
+
+
+  lindesbs\minkorrekt\Factory\WebscraperItemdecoderFactory:
+    arguments:
+      $importer: !tagged_iterator 'app.WebscraperItemdecoderInterface'
+

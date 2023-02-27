@@ -11,6 +11,10 @@ namespace lindesbs\minkorrekt\Classes;
 
 use Contao\Backend;
 use Contao\Controller;
+use Contao\StringUtil;
+use Contao\System;
+use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
+use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
 
 class PaperRebuild extends Backend
 {
@@ -24,25 +28,58 @@ class PaperRebuild extends Backend
         $result = $this->Database->execute($sql);
 
         while ($result->next()) {
+            echo "*";
             $data = $result->row();
-            $alias = sprintf('F%sT%s', $data['minkorrekt_thema_folge'], $data['minkorrekt_thema_nummer']);
+            $aliasPaper = sprintf('F%sT%s', $data['minkorrekt_thema_folge'], $data['minkorrekt_thema_nummer']);
 
-            $sqlPaper = sprintf("SELECT id FROM tl_minkorrekt_paper WHERE alias='%s' LIMIT 0,1", $alias);
-            $objPaper = $this->Database->execute($sqlPaper);
+            $pattern = '/(https?|ftp):\/\/[^\s\/$.?#].[^\s]*/i';
+            $url = 'unknown';
 
-            if (0 === $objPaper->numRows) {
-                $arrData = [
-                    'tstamp' => time(),
-                    'alias' => $alias,
-                    'published' => false,
-                    'tlContentId' => $data['id'],
-                    'tlNewsId' => $data['pid'],
-                ];
+            if (preg_match($pattern, $data['text'], $matches)) {
+                $url = $matches[0];
 
-                $sqlInsert = 'INSERT INTO tl_minkorrekt_paper %s';
-                $this->Database->prepare($sqlInsert)->set($arrData)->execute();
+                $decodedUrl = parse_url($url);
+                $alias = StringUtil::generateAlias($decodedUrl['host']);
+                $publisher = MinkorrektPublisherModel::findByIdOrAlias($alias);
+
+                if (!$publisher) {
+                    $publisher = new MinkorrektPublisherModel();
+
+                    $publisher->tstamp = time();
+                    $publisher->alias = $alias;
+
+                    $publisher->url = sprintf("%s://%s/", $decodedUrl['scheme'], $decodedUrl['host']);
+                    $publisher->title = $decodedUrl['host'];
+
+                    $publisher->save();
+                }
             }
+
+
+            $objPaper = MinkorrektPaperModel::findByIdOrAlias($aliasPaper);
+
+            if (!$objPaper) {
+                $objPaper = new MinkorrektPaperModel();
+
+                $objPaper->tstamp = time();
+                $objPaper->alias = $aliasPaper;
+            }
+            $objPaper->published = false;
+            $objPaper->tlContentId = $data['id'];
+            $objPaper->tlNewsId = $data['pid'];
+            $objPaper->url = trim($url, "'\"");
+
+
+            if ($objPaper->url) {
+                $objPaper->title = $aliasPaper;
+                System::getContainer()->get('lindesbs.minkorrekt.websitescrape')->scrape($objPaper);
+            }
+
+
+            $objPaper->save();
         }
+
+
         Controller::redirect('contao?do=paper');
     }
 }

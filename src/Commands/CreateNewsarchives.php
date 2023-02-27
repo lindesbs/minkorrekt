@@ -46,6 +46,7 @@ class CreateNewsarchives extends Command
                 continue;
             }
 
+
             $arrOptions = [
                 'date' => (int)$paper->publishedAt,
             ];

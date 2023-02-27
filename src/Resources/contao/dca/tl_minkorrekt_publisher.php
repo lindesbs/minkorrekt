@@ -79,6 +79,10 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
             'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
+        'alias' => [
+            'inputType' => 'text',
+            'sql' => "varchar(255) NOT NULL default ''",
+        ],
         'journal_id' => [
             'exclude' => true,
             'inputType' => 'text',

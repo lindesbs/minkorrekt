@@ -10,6 +10,7 @@ declare(strict_types=1);
 use Contao\DataContainer;
 use Contao\DC_Table;
 use lindesbs\minkorrekt\Classes\PaperSubmit;
+use lindesbs\toolbox\DataContainer\DCTablePlus;
 use Symfony\Component\Intl\Languages;
 
 $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
@@ -41,7 +42,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
     'list' => [
         'sorting' => [
             'mode' => DataContainer::MODE_UNSORTED,
-            'panelLayout' => 'filter;search',
+            'panelLayout' => 'filter;search,limit',
         ],
         'label' => [
             'fields' => ['status', 'alias', 'thePublisher', 'title'],
@@ -100,7 +101,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
-            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255],
+            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'col1 width4'],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'citation_title' => [
@@ -258,7 +259,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options' => ['OriginalPaper', 'UNKNOWN'],
+            'options' => ['OriginalPaper', 'Text', 'UNKNOWN'],
             'sql' => "varchar(64) NOT NULL default 'UNKNOWN'",
         ],
         'twitter' => [
