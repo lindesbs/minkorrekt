@@ -64,6 +64,7 @@ class GlobalDecoder implements WebscraperItemdecoderInterface
             return true;
         }
 
-        return false;;
+        return false;
+        ;
     }
 }

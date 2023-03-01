@@ -61,11 +61,11 @@ class ImportRSSCommand extends Command
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
 
-            if ('dev' === $_SERVER['APP_ENV']) {
-                $symfonyStyle->warning('DEV MODE');
-                $this->connection->executeQuery('TRUNCATE TABLE tl_news');
-                $this->connection->executeQuery('DELETE FROM tl_content WHERE ptable="tl_news"');
-            }
+        if ('dev' === $_SERVER['APP_ENV']) {
+            $symfonyStyle->warning('DEV MODE');
+            $this->connection->executeQuery('TRUNCATE TABLE tl_news');
+            $this->connection->executeQuery('DELETE FROM tl_content WHERE ptable="tl_news"');
+        }
 
         $symfonyStyle->title('Minkorrekt RSS einlesen und importieren');
 

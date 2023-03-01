@@ -8,11 +8,8 @@ use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 
 class WebscraperItemdecoderFactory
 {
-    private iterable $importer;
-
-    public function __construct(iterable $importer)
+    public function __construct(private readonly iterable $importer)
     {
-        $this->importer = $importer;
     }
 
     public function walkThroughDecoder(string $strKey, $strContent, MinkorrektPaperModel $paperModel): bool
