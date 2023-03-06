@@ -6,6 +6,7 @@ namespace lindesbs\minkorrekt\Commands;
 
 use Contao\Controller;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Exception;
 use lindesbs\toolbox\Constants\Content;
 use lindesbs\toolbox\Constants\Page;
 use lindesbs\toolbox\Service\DCATools;
@@ -31,6 +32,8 @@ class buildSystemStructure extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();
+
+        throw new Exception("Erstmal nicht mehr");
 
         Controller::loadDataContainer('tl_minkorrekt_paper');
         $io->writeln('Theme');

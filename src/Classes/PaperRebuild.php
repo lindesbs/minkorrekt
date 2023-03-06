@@ -34,7 +34,7 @@ class PaperRebuild extends Backend
             $pattern = '/(https?|ftp):\/\/[^\s\/$.?#].[^\s]*/i';
             $url = 'unknown';
 
-            if (preg_match($pattern, (string) $data['text'], $matches)) {
+            if (preg_match($pattern, (string)$data['text'], $matches)) {
                 $url = $matches[0];
 
                 $decodedUrl = parse_url($url);

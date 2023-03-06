@@ -230,7 +230,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'filter' => true,
             'inputType' => 'select',
             'options' => ['UNTOUCHED', 'INCHECK', 'VERIFICATION', 'VERIFIED'],
-            'eval' => ['multiple' => true, 'includeBlankOption'=>true, 'chosen'=>true],
+            'eval' => ['multiple' => true, 'includeBlankOption' => true, 'chosen' => true],
             'sql' => "varchar(255) NOT NULL default 'UNTOUCHED'",
         ],
         'url' => [
@@ -312,7 +312,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'exclude' => true,
             'inputType' => 'select',
             'foreignKeys' => 'tl_minkorrekt_paper_tags.name',
-            'eval' => ['multiple' => true, 'includeBlankOption'=>true, 'chosen'=>true, 'tl_class' => 'clr'],
+            'eval' => ['multiple' => true, 'includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'clr'],
             'sql' => 'text NULL',
         ],
         'screenshotSRC' => [
