@@ -41,30 +41,37 @@ class CreateNewsarchives extends Command
 
         $objPapera = MinkorrektPaperModel::findAll();
 
-        foreach ($objPapera as $paper) {
-            if (!isset($paper->url)) {
-                continue;
+        if ($objPapera) {
+            $prog = $io->createProgressBar($objPapera->count());
+            $prog->start();
+            foreach ($objPapera as $paper) {
+                if (!isset($paper->url)) {
+                    continue;
+                }
+
+                $arrOptions = [
+                    'date' => (int)$paper->publishedAt,
+                ];
+
+                $objNews = $this->DCATools->getNews(
+                    $paper->title,
+                    $arrOptions,
+                    $newsPaper
+                );
+
+                $objContent = $this->DCATools->getContent($paper->title, [], $objNews, true);
+                $objContent->text = $paper->description;
+                $objContent->addImage = true;
+                $objContent->singleSRC = $paper->screenshotSRC;
+                $objContent->ptable = 'tl_news';
+
+                $objContent->save();
+
+                $prog->advance();
+//            $this->scraper->scrape($paper);
             }
 
-
-            $arrOptions = [
-                'date' => (int)$paper->publishedAt,
-            ];
-
-            $objNews = $this->DCATools->getNews(
-                $paper->title,
-                $arrOptions,
-                $newsPaper
-            );
-
-            $objContent = $this->DCATools->getContent($paper->title, [], $objNews, true);
-            $objContent->text = $paper->description;
-            $objContent->addImage = true;
-            $objContent->singleSRC = $paper->screenshotSRC;
-            $objContent->ptable = 'tl_news';
-
-            $objContent->save();
-//            $this->scraper->scrape($paper);
+            $prog->finish();
         }
 
         return Command::SUCCESS;

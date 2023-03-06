@@ -68,7 +68,7 @@ class WebsiteScraper
 
         if (count($arrMeta) > 0) {
             ksort($arrMeta);
-            dd($arrMeta);
+            //dd($arrMeta);
         }
     }
 

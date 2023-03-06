@@ -35,7 +35,7 @@ class buildSystemStructure extends Command
         Controller::loadDataContainer('tl_minkorrekt_paper');
         $io->writeln('Theme');
 
-        $theme = $this->DCATools->getTheme('Standard');
+        $theme = $this->DCATools->getTheme('Minkorrekt');
         $newsPublisher = $this->DCATools->getNewsArchive('Publisher');
         $newsPaper = $this->DCATools->getNewsArchive('Paper');
         $newsMinkorrekt = $this->DCATools->getNewsArchive('Methodisch Inkorrekt');
@@ -109,7 +109,7 @@ class buildSystemStructure extends Command
             [
                 'type' => 'newslist',
                 'news_archives' => [$newsMinkorrekt->id],
-                'pid' => $theme->id,
+                'pid' => $theme->id
             ]
         );
         $modFolgenReader = $this->DCATools->getModule(
@@ -136,6 +136,24 @@ class buildSystemStructure extends Command
             [
                 'type' => 'newsreader',
                 'news_archives' => [$newsPaper->id],
+                'pid' => $theme->id,
+                'news_template' => 'news_paper_display',
+            ]
+        );
+
+        $modPublisherLister = $this->DCATools->getModule(
+            'News Publisher :: List',
+            [
+                'type' => 'newslist',
+                'news_archives' => [$newsPublisher->id],
+                'pid' => $theme->id,
+            ]
+        );
+        $modPublisherReader = $this->DCATools->getModule(
+            'News Publisher :: Reader',
+            [
+                'type' => 'newsreader',
+                'news_archives' => [$newsPublisher->id],
                 'pid' => $theme->id,
                 'news_template' => 'news_paper_display',
             ]
@@ -209,6 +227,29 @@ class buildSystemStructure extends Command
             $publisherPage = $this->DCATools->getPage('Verlag', [], $sciencePage->id);
             $publisherDetailPage = $this->DCATools->getPage('Verlagsinformationen', $hiddenPage, $publisherPage->id);
 
+            $publisherArticle = $this->DCATools->getArticle('Listenansicht der Verlage', [], $publisherPage);
+            $publisherOverviewModule = $this->DCATools->getContent(
+                'Detail Liste der Verlage',
+                [
+                    Content::TYPE => 'module',
+                    Content::MODULE => $modPublisherLister->id,
+                ],
+                $publisherArticle,
+                true
+            );
+
+            $publisherDetailPage = $this->DCATools->getPage('Publisher Details', $hiddenPage, $publisherPage->id);
+            $publisherDetailArticle = $this->DCATools->getArticle('Detailansicht Publisher', [], $publisherDetailPage);
+            $papaerDetailModule = $this->DCATools->getContent(
+                'Detailansicht der Publisher',
+                [
+                    Content::TYPE => 'module',
+                    Content::MODULE => $modPublisherReader->id,
+                ],
+                $publisherDetailArticle,
+                true
+            );
+
             $paperPage = $this->DCATools->getPage('Paper', [], $sciencePage->id);
             $paperArticle = $this->DCATools->getArticle('Listenansicht', [], $paperPage);
             $papaerOverviewModule = $this->DCATools->getContent(
@@ -243,6 +284,26 @@ class buildSystemStructure extends Command
 
             $folgenArticle = $this->DCATools->getArticle('Folgenansicht', [], $folgenPage);
             $folgenDetailArticle = $this->DCATools->getArticle('Detailansicht der Folge', [], $folgenDetailPage);
+
+            $folgenOverviewModule = $this->DCATools->getContent(
+                'Folgenliste',
+                [
+                    Content::TYPE => 'module',
+                    Content::MODULE => $modFolgenLister->id,
+                    'redirectUrl' => $folgenDetailPage->id
+                ],
+                $folgenArticle,
+                true
+            );
+            $folgenDetailModule = $this->DCATools->getContent(
+                'Folge im Detail',
+                [
+                    Content::TYPE => 'module',
+                    Content::MODULE => $modFolgenReader->id,
+                ],
+                $folgenDetailPage,
+                true
+            );
 
             // -----------------------------------------------------------
 

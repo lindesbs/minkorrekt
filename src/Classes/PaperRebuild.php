@@ -28,7 +28,6 @@ class PaperRebuild extends Backend
         $result = $this->Database->execute($sql);
 
         while ($result->next()) {
-            echo "*";
             $data = $result->row();
             $aliasPaper = sprintf('F%sT%s', $data['minkorrekt_thema_folge'], $data['minkorrekt_thema_nummer']);
 
@@ -55,7 +54,6 @@ class PaperRebuild extends Backend
                 }
             }
 
-
             $objPaper = MinkorrektPaperModel::findByIdOrAlias($aliasPaper);
 
             if (!$objPaper) {
@@ -68,7 +66,6 @@ class PaperRebuild extends Backend
             $objPaper->tlContentId = $data['id'];
             $objPaper->tlNewsId = $data['pid'];
             $objPaper->url = trim($url, "'\"");
-
 
             if ($objPaper->url) {
                 $objPaper->title = $aliasPaper;

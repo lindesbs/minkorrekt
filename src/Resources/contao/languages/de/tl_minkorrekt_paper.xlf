@@ -9,7 +9,6 @@
                 <target>Wird durch dc.title gesetzt</target>
             </trans-unit>
 
-
             <trans-unit id="tl_minkorrekt_paper.citation_title.0">
                 <target>Literatur Überschrift</target>
             </trans-unit>
@@ -17,6 +16,280 @@
                 <target>Wird durch <i>citation_title</i> gesetzt
                 </target>
             </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.id.0">
+                <target>id</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.id.1">
+                <target>id</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.pid.0">
+                <target>pid</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.pid.1">
+                <target>pid</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.sorting.0">
+                <target>sorting</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.sorting.1">
+                <target>sorting</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.tstamp.0">
+                <target>tstamp</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.tstamp.1">
+                <target>tstamp</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.title.0">
+                <target>title</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.title.1">
+                <target>title</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.citation_title.0">
+                <target>citation_title</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.citation_title.1">
+                <target>citation_title</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.citation_pdf_url.0">
+                <target>citation_pdf_url</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.citation_pdf_url.1">
+                <target>citation_pdf_url</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.citation_springer_api_url.0">
+                <target>citation_springer_api_url</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.citation_springer_api_url.1">
+                <target>citation_springer_api_url</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.citation_fulltext_html_url.0">
+                <target>citation_fulltext_html_url</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.citation_fulltext_html_url.1">
+                <target>citation_fulltext_html_url</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.citation_issn.0">
+                <target>citation_issn</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.citation_issn.1">
+                <target>citation_issn</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.copyright.0">
+                <target>copyright</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.copyright.1">
+                <target>copyright</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.rights.0">
+                <target>rights</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.rights.1">
+                <target>rights</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.rightsagent.0">
+                <target>rightsagent</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.rightsagent.1">
+                <target>rightsagent</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.alias.0">
+                <target>alias</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.alias.1">
+                <target>alias</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.published.0">
+                <target>published</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.published.1">
+                <target>published</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.citation_firstpage.0">
+                <target>citation_firstpage</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.citation_firstpage.1">
+                <target>citation_firstpage</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.citation_lastpage.0">
+                <target>citation_lastpage</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.citation_lastpage.1">
+                <target>citation_lastpage</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.size.0">
+                <target>size</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.size.1">
+                <target>size</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.thePublisher.0">
+                <target>thePublisher</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.thePublisher.1">
+                <target>thePublisher</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.status.0">
+                <target>status</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.status.1">
+                <target>status</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.url.0">
+                <target>url</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.url.1">
+                <target>url</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.license.0">
+                <target>license</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.license.1">
+                <target>license</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.citation_article_type.0">
+                <target>citation_article_type</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.citation_article_type.1">
+                <target>citation_article_type</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.paperType.0">
+                <target>paperType</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.paperType.1">
+                <target>paperType</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.twitter.0">
+                <target>twitter</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.twitter.1">
+                <target>twitter</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.receivedAt.0">
+                <target>receivedAt</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.receivedAt.1">
+                <target>receivedAt</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.acceptedAt.0">
+                <target>acceptedAt</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.acceptedAt.1">
+                <target>acceptedAt</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.publishedAt.0">
+                <target>publishedAt</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.publishedAt.1">
+                <target>publishedAt</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.onlineAt.0">
+                <target>onlineAt</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.onlineAt.1">
+                <target>onlineAt</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.doi.0">
+                <target>doi</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.doi.1">
+                <target>doi</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.doiurl.0">
+                <target>doiurl</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.doiurl.1">
+                <target>doiurl</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.subjects.0">
+                <target>subjects</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.subjects.1">
+                <target>subjects</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.screenshotSRC.0">
+                <target>screenshotSRC</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.screenshotSRC.1">
+                <target>screenshotSRC</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.screenshotFullpageSRC.0">
+                <target>screenshotFullpageSRC</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.screenshotFullpageSRC.1">
+                <target>screenshotFullpageSRC</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.tlContentId.0">
+                <target>tlContentId</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.tlContentId.1">
+                <target>tlContentId</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.tlNewsId.0">
+                <target>tlNewsId</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.tlNewsId.1">
+                <target>tlNewsId</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.price.0">
+                <target>price</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.price.1">
+                <target>price</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.language.0">
+                <target>language</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.language.1">
+                <target>language</target>
+            </trans-unit>
+
+            <trans-unit id="tl_minkorrekt_paper.description.0">
+                <target>description</target>
+            </trans-unit>
+            <trans-unit id="tl_minkorrekt_paper.description.1">
+                <target>description</target>
+            </trans-unit>
+
         </body>
 
     </file>

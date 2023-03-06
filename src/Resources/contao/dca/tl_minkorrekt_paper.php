@@ -10,7 +10,6 @@ declare(strict_types=1);
 use Contao\DataContainer;
 use Contao\DC_Table;
 use lindesbs\minkorrekt\Classes\PaperSubmit;
-use lindesbs\toolbox\DataContainer\DCTablePlus;
 use Symfony\Component\Intl\Languages;
 
 $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
@@ -123,6 +122,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'citation_springer_api_url' => [
+
             'exclude' => true,
             'inputType' => 'text',
             'eval' => [
@@ -211,7 +211,6 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
 
         'size' => [
             'exclude' => true,
-            'filter' => true,
             'inputType' => 'text',
             'eval' => ['rgxp' => 'natural', 'tl_class' => 'w50'],
             'sql' => 'int(11) unsigned NOT NULL default 0',
@@ -251,7 +250,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options' => ['Article', 'CLOSED', 'UNKNOWN'],
+            'options' => ['Article', 'CLOSED', 'OriginalPaper', 'Text', 'research-article', 'UNKNOWN'],
             'sql' => "varchar(16) NOT NULL default 'UNKNOWN'",
         ],
 
@@ -259,12 +258,11 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options' => ['OriginalPaper', 'Text', 'UNKNOWN'],
+            'options' => ['OriginalPaper', 'Text', 'research-article', 'UNKNOWN'],
             'sql' => "varchar(64) NOT NULL default 'UNKNOWN'",
         ],
         'twitter' => [
             'exclude' => true,
-            'filter' => true,
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50 clr'],
             'sql' => "varchar(64) NOT NULL default 'UNKNOWN'",
@@ -370,14 +368,15 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
     ],
 ];
 
-/*
- * foreach ($GLOBALS['TL_DCA']['tl_minkorrekt_paper']['fields'] as $fieldKey => $FieldValue) {
-    echo sprintf("<?php if (\$this->%s): ?>".PHP_EOL, $fieldKey);
-    echo sprintf("<?= \$this->%s ?>".PHP_EOL, $fieldKey);
-    echo "<?php endif?>".PHP_EOL;
-
-}
-
-
-die;
-*/
+//
+//foreach ($GLOBALS['TL_DCA']['tl_minkorrekt_paper']['fields'] as $fieldKey => $FieldValue) {
+//    echo sprintf('
+//    <trans-unit id="tl_minkorrekt_paper.%1$s.0">
+//                <target>%1$s</target>
+//            </trans-unit>
+//            <trans-unit id="tl_minkorrekt_paper.%1$s.1">
+//                <target>%1$s</target>
+//            </trans-unit>
+//            ', $fieldKey);
+//}
+//
