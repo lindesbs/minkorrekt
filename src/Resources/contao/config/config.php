@@ -11,6 +11,9 @@ use lindesbs\minkorrekt\Classes\PaperRebuild;
 use lindesbs\minkorrekt\ContentElement\ContentMinkorrektNewsElement;
 
 $GLOBALS['BE_MOD']['minkorrekt'] = [
+    'folgen' => [
+        'tables' => ['tl_minkorrekt_folgen'],
+    ],
     'publisher' => [
         'tables' => ['tl_minkorrekt_publisher', 'tl_minkorrekt_paper'],
     ],

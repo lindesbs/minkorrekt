@@ -6,8 +6,12 @@ namespace lindesbs\minkorrekt\Commands;
 
 use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Doctrine\DBAL\Connection;
+use Contao\StringUtil;
+use DOMDocument;
+use DOMNodeList;
+use DOMXPath;
 use lindesbs\minkorrekt\Classes\PodcastEntry;
+use lindesbs\minkorrekt\Models\MinkorrektFolgenModel;
 use lindesbs\toolbox\Service\DCATools;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -16,6 +20,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\Cache\ItemInterface;
+
+use function count;
 
 class ImportRSSCommand extends Command
 {
@@ -29,27 +35,9 @@ class ImportRSSCommand extends Command
 
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
-        private readonly Connection $connection,
         private readonly DCATools $DCATools,
     ) {
         parent::__construct();
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    public function getRSSFeed(): string
-    {
-        $filesystemAdapter = new FilesystemAdapter();
-
-        return $filesystemAdapter->get(
-            'RSSFeed',
-            static function (ItemInterface $item): string|bool {
-                $item->expiresAfter(86400);
-
-                return file_get_contents(self::$defaultURL);
-            }
-        );
     }
 
     protected function configure(): void
@@ -57,41 +45,55 @@ class ImportRSSCommand extends Command
         $this->setDescription('Gibt einen Demotext aus.');
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
-        $symfonyStyle = new SymfonyStyle($input, $output);
+        $io = new SymfonyStyle($input, $output);
 
-        if ('dev' === $_SERVER['APP_ENV']) {
-            $symfonyStyle->warning('DEV MODE');
-            $this->connection->executeQuery('TRUNCATE TABLE tl_news');
-            $this->connection->executeQuery('DELETE FROM tl_content WHERE ptable="tl_news"');
-        }
-
-        $symfonyStyle->title('Minkorrekt RSS einlesen und importieren');
+        $io->title('Minkorrekt RSS einlesen und importieren');
 
         $this->contaoFramework->initialize();
 
-        $domDocument = new \DOMDocument();
+        $domDocument = new DOMDocument();
 
-        $symfonyStyle->writeln("Load RSS Feed");
+        $io->writeln("Load RSS Feed");
         $strData = $this->getRSSFeed();
         $domDocument->loadXML($strData);
-        $symfonyStyle->writeln("done");
+        $io->writeln("done");
 
         $objNewsArchive = $this->DCATools->getNewsArchive('Methodisch Inkorrekt');
 
-        $domxPath = new \DOMXPath($domDocument);
+        $domxPath = new DOMXPath($domDocument);
 
 //            $xp->registerNamespace('itunes','http://www.itunes.com/dtds/podcast-1.0.dtd');
 //            $xp->registerNamespace('atom','http://www.w3.org/2005/Atom');
 
-        /** @var \DOMNodeList $path */
+        /** @var DOMNodeList $path */
         $path = $domxPath->query('//channel/item');
 
-        $symfonyStyle->writeln(\count($path) . ' Elemente');
+        $io->writeln(count($path) . ' Elemente');
 
         foreach ($path as $element) {
             $entry = new PodcastEntry($element);
+
+            $alias = StringUtil::generateAlias(sprintf('%s_F%s', $entry->getTitle(), $entry->getEpisode()));
+
+            $objFolge = MinkorrektFolgenModel::findByIdOrAlias($alias);
+
+            if (!$objFolge) {
+                $objFolge = new MinkorrektFolgenModel();
+                $objFolge->tstamp = time();
+                $objFolge->alias = $alias;
+            }
+
+            $objFolge->title = $entry->getTitle();
+            $objFolge->content = $entry->getContent();
+            $objFolge->episode = $entry->getEpisode();
+
+            // News generieren
+
 
             $objFeed = $this->DCATools->getNews(
                 sprintf('%s_F%s', $entry->getTitle(), $entry->getEpisode()),
@@ -103,6 +105,7 @@ class ImportRSSCommand extends Command
             );
 
             $workingData = explode("\n", $entry->getContent());
+
             $workingData = array_map('trim', $workingData);
 
             foreach ($workingData as $key => $value) {
@@ -150,8 +153,28 @@ class ImportRSSCommand extends Command
                 $objContent->minkorrekt_thema_folge = $entry->getEpisode();
                 $objContent->save();
             }
+
+            $objFolge->newsId = $objFeed->id;
+            $objFolge->save();
         }
 
         return $this->statusCode;
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function getRSSFeed(): string
+    {
+        $filesystemAdapter = new FilesystemAdapter();
+
+        return $filesystemAdapter->get(
+            'RSSFeed',
+            static function (ItemInterface $item): string|bool {
+                $item->expiresAfter(86400);
+
+                return file_get_contents(self::$defaultURL);
+            }
+        );
     }
 }
