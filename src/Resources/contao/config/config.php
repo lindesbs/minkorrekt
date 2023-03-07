@@ -7,7 +7,6 @@ declare(strict_types=1);
  *  from lindesbs
  */
 
-use lindesbs\minkorrekt\Classes\PaperRebuild;
 use lindesbs\minkorrekt\ContentElement\ContentMinkorrektNewsElement;
 
 $GLOBALS['BE_MOD']['minkorrekt'] = [
@@ -18,8 +17,7 @@ $GLOBALS['BE_MOD']['minkorrekt'] = [
         'tables' => ['tl_minkorrekt_publisher', 'tl_minkorrekt_paper'],
     ],
     'paper' => [
-        'tables' => ['tl_minkorrekt_paper', 'tl_minkorrekt_paper_creator'],
-        'rebuild' => [PaperRebuild::class, 'rebuild'],
+        'tables' => ['tl_minkorrekt_paper', 'tl_minkorrekt_paper_creator']
     ],
     'tags' => [
         'tables' => ['tl_minkorrekt_paper_tags'],

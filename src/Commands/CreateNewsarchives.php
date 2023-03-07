@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace lindesbs\minkorrekt\Commands;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\StringUtil;
+use Contao\System;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
+use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
 use lindesbs\minkorrekt\Service\WebsiteScraper;
 use lindesbs\toolbox\Service\DCATools;
 use Symfony\Component\Console\Command\Command;
@@ -22,6 +26,7 @@ class CreateNewsarchives extends Command
 
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
+        private readonly Connection $connection,
         private readonly DCATools $DCATools,
         private readonly WebsiteScraper $scraper,
     ) {
@@ -35,6 +40,9 @@ class CreateNewsarchives extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();
+
+        $this->rebuild($io);
+        die;
 
         $newsPublisher = $this->DCATools->getNewsArchive('Publisher');
         $newsPaper = $this->DCATools->getNewsArchive('Paper');
@@ -74,6 +82,74 @@ class CreateNewsarchives extends Command
             $prog->finish();
         }
 
+        $this->rebuild($io);
+
         return Command::SUCCESS;
+    }
+
+    public function rebuild(SymfonyStyle $io): void
+    {
+//        if ($_SERVER['APP_ENV'] === 'dev') {
+//            $this->Database->execute("TRUNCATE TABLE tl_minkorrekt_paper");
+//        }
+
+        $sql = "SELECT * FROM tl_content WHERE ptable='tl_news' AND minkorrekt_thema_art='THEMA'";
+        $result = $this->connection->executeQuery($sql)->fetchAllAssociative();
+
+        $io->writeln("Create Paper & Publisher entries");
+
+
+        $prog = $io->createProgressBar();
+        $prog->start(count($result));
+
+        foreach ($result as $data) {
+            $aliasPaper = sprintf('F%sT%s', $data['minkorrekt_thema_folge'], $data['minkorrekt_thema_nummer']);
+
+            $pattern = '/(https?|ftp):\/\/[^\s\/$.?#].[^\s]*/i';
+            $url = 'unknown';
+            if (preg_match('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $data['text'], $result)) {
+                $url = array_shift($result);
+
+                $decodedUrl = parse_url((string)$url);
+
+                $alias = StringUtil::generateAlias($decodedUrl['host']);
+                $publisher = MinkorrektPublisherModel::findByIdOrAlias($alias);
+
+                if (!$publisher) {
+                    $publisher = new MinkorrektPublisherModel();
+
+                    $publisher->tstamp = time();
+                    $publisher->alias = $alias;
+
+                    $publisher->url = sprintf("%s://%s/", $decodedUrl['scheme'], $decodedUrl['host']);
+                    $publisher->title = $decodedUrl['host'];
+
+                    $publisher->save();
+                }
+            }
+
+            $objPaper = MinkorrektPaperModel::findByIdOrAlias($aliasPaper);
+
+            if (!$objPaper) {
+                $objPaper = new MinkorrektPaperModel();
+
+                $objPaper->tstamp = time();
+                $objPaper->alias = $aliasPaper;
+            }
+            $objPaper->published = false;
+            $objPaper->tlContentId = $data['id'];
+            $objPaper->tlNewsId = $data['pid'];
+            $objPaper->url = trim($url, "'\"");
+
+            if ($objPaper->url) {
+                System::getContainer()->get('lindesbs.minkorrekt.websitescrape')->scrape($objPaper);
+            }
+
+            $prog->advance();
+
+            $objPaper->save();
+        }
+
+        $prog->finish();
     }
 }

@@ -6,6 +6,9 @@ namespace lindesbs\minkorrekt\Commands;
 
 use Contao\ContentModel;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\Model;
+use Contao\Model\Collection;
+use Contao\NewsModel;
 use Contao\StringUtil;
 use DOMDocument;
 use DOMNodeList;
@@ -75,25 +78,14 @@ class ImportRSSCommand extends Command
 
         $io->writeln(count($path) . ' Elemente');
 
+        $prog = $io->createProgressBar();
+        $prog->start(count($path));
         foreach ($path as $element) {
             $entry = new PodcastEntry($element);
 
             $alias = StringUtil::generateAlias(sprintf('%s_F%s', $entry->getTitle(), $entry->getEpisode()));
 
-            $objFolge = MinkorrektFolgenModel::findByIdOrAlias($alias);
-
-            if (!$objFolge) {
-                $objFolge = new MinkorrektFolgenModel();
-                $objFolge->tstamp = time();
-                $objFolge->alias = $alias;
-            }
-
-            $objFolge->title = $entry->getTitle();
-            $objFolge->content = $entry->getContent();
-            $objFolge->episode = $entry->getEpisode();
-
-            // News generieren
-
+            $objFolge = $this->getFolge($alias, $entry);
 
             $objFeed = $this->DCATools->getNews(
                 sprintf('%s_F%s', $entry->getTitle(), $entry->getEpisode()),
@@ -105,7 +97,6 @@ class ImportRSSCommand extends Command
             );
 
             $workingData = explode("\n", $entry->getContent());
-
             $workingData = array_map('trim', $workingData);
 
             foreach ($workingData as $key => $value) {
@@ -117,46 +108,16 @@ class ImportRSSCommand extends Command
                     continue;
                 }
 
-                $contentAlias = md5($value);
-                $objContent = ContentModel::findByArticleAlias($contentAlias);
-
-                if (!$objContent) {
-                    $objContent = new ContentModel();
-                }
-
-                $objContent->tstamp = 1;
-                $objContent->pid = $objFeed->id;
-                $objContent->sorting = $key;
-                $objContent->ptable = 'tl_news';
-                $objContent->type = 'minkorrekt_thema';
-
-                $objContent->minkorrekt_thema_art = 'TEXT';
-                $objContent->text = trim($value);
-                $objContent->minkorrekt_thema_nummer = 0;
-
-                $pattern = '/^Thema\s+(\d+)/';
-
-                if (preg_match($pattern, trim(strip_tags($objContent->text)), $matches)) {
-                    $objContent->minkorrekt_thema_art = 'THEMA';
-
-                    $number = $matches[1];
-                    $objContent->headline = [
-                        'value' => sprintf('Thema %s', $number),
-                        'unit' => 'h3',
-                    ];
-
-                    if (is_numeric($number)) {
-                        $objContent->minkorrekt_thema_nummer = $number;
-                    }
-                }
-
-                $objContent->minkorrekt_thema_folge = $entry->getEpisode();
-                $objContent->save();
+                $this->createNewsContent($objFeed, $key, $value, $entry);
             }
 
             $objFolge->newsId = $objFeed->id;
             $objFolge->save();
+
+            $prog->advance();
         }
+
+        $prog->finish();
 
         return $this->statusCode;
     }
@@ -176,5 +137,83 @@ class ImportRSSCommand extends Command
                 return file_get_contents(self::$defaultURL);
             }
         );
+    }
+
+    /**
+     * @param string $alias
+     * @param PodcastEntry $entry
+     * @return Model|Model[]|Collection|MinkorrektFolgenModel|null
+     */
+    public function getFolge(
+        string $alias,
+        PodcastEntry $entry
+    ): MinkorrektFolgenModel|array|Model|null|Collection {
+        $objFolge = MinkorrektFolgenModel::findByIdOrAlias($alias);
+
+        if (!$objFolge) {
+            $objFolge = new MinkorrektFolgenModel();
+            $objFolge->tstamp = time();
+            $objFolge->alias = $alias;
+        }
+
+        $objFolge->title = $entry->getTitle();
+        $objFolge->content = $entry->getContent();
+        $objFolge->episode = $entry->getEpisode();
+        return $objFolge;
+    }
+
+    /**
+     * @param string $contentAlias
+     * @param NewsModel $objFeed
+     * @param int|string $key
+     * @param mixed $feedLine
+     * @param PodcastEntry $entry
+     * @return mixed
+     */
+    public function createNewsContent(
+        NewsModel $objFeed,
+        int|string $key,
+        mixed $feedLine,
+        PodcastEntry $entry
+    ) {
+        $contentAlias = sprintf("%s_%s", $entry->getEpisode(), $key);
+
+        $objContent = ContentModel::findByIdOrAlias($contentAlias);
+
+        if (!$objContent) {
+            $objContent = new ContentModel();
+        }
+
+        $objContent->alias = $contentAlias;
+        $objContent->tstamp = 1;
+        $objContent->pid = $objFeed->id;
+        $objContent->sorting = $key;
+        $objContent->ptable = 'tl_news';
+        $objContent->type = 'minkorrekt_thema';
+
+        $objContent->minkorrekt_thema_art = 'TEXT';
+        $objContent->text = trim($feedLine);
+        $objContent->minkorrekt_thema_nummer = 0;
+
+        $pattern = '/^Thema\s+(\d+)/';
+
+        if (preg_match($pattern, trim(strip_tags($objContent->text)), $matches)) {
+            $objContent->minkorrekt_thema_art = 'THEMA';
+
+            $number = $matches[1];
+            $objContent->headline = [
+                'value' => sprintf('Thema %s', $number),
+                'unit' => 'h3',
+            ];
+
+            if (is_numeric($number)) {
+                $objContent->minkorrekt_thema_nummer = $number;
+            }
+        }
+
+        $objContent->minkorrekt_thema_folge = $entry->getEpisode();
+        $objContent->save();
+
+        return $objContent->id;
     }
 }

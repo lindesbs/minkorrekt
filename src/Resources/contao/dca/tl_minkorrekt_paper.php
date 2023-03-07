@@ -52,8 +52,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
                 'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
-            ],
-            'rebuild' => ['href' => 'key=rebuild', 'icon' => 'su.svg'],
+            ]
         ],
         'operations' => [
             'editheader' => ['href' => 'act=edit', 'icon' => 'edit.svg'],

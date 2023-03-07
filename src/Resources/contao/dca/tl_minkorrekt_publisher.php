@@ -21,6 +21,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
         'sql' => [
             'keys' => [
                 'id' => 'primary',
+                'alias' => 'index',
                 'journal_id' => 'index',
             ],
         ],

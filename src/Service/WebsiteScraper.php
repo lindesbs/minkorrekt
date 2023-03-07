@@ -22,28 +22,33 @@ class WebsiteScraper
 
     public function scrape(MinkorrektPaperModel $paper): void
     {
-        $filesystemAdapter = new FilesystemAdapter('minkorrekt');
+        $cacheClient = new FilesystemAdapter(
+            'minkorrekt',
+            86400,
+            'var/cache/minkorrekt'
+        );
+
         $cacheKey = 'WEPAGE_' . StringUtil::generateAlias($paper->url);
 
-        $cacheItem = $filesystemAdapter->getItem($cacheKey);
+        $cacheItem = $cacheClient->getItem($cacheKey);
 
         if (!$cacheItem->isHit()) {
             $browser = new HttpBrowser(HttpClient::create());
             $crawler = $browser->request("GET", $paper->url);
 
-            $cacheItem->set($crawler);
-            $cacheItem->expiresAfter(86400);
+            $metaTags = $crawler->filter('head meta')->each(static fn($node) => [
+                'name' => $node->attr('name'),
+                'content' => $node->attr('content'),
+            ]);
 
-            $filesystemAdapter->save($cacheItem);
+            $cacheItem->set($metaTags);
+
+            $cacheClient->save($cacheItem);
+            $cacheClient->commit();
         } else {
-            $crawler = $cacheItem->get();
+            $metaTags = $cacheItem->get();
         }
 
-
-        $metaTags = $crawler->filter('head meta')->each(static fn($node) => [
-            'name' => $node->attr('name'),
-            'content' => $node->attr('content'),
-        ]);
 
         $arrMeta = [];
 
