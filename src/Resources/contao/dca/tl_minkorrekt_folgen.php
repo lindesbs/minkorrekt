@@ -117,5 +117,17 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
             'eval' => ['rgxp' => 'natural'],
             'sql' => 'int(11) unsigned NOT NULL default 0',
         ],
+        'pubdate' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'natural'],
+            'sql' => 'int(11) unsigned NOT NULL default 0',
+        ],
+        'duration' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'natural'],
+            'sql' => 'int(11) unsigned NOT NULL default 0',
+        ],
     ],
 ];

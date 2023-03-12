@@ -16,6 +16,10 @@ services:
     class: lindesbs\minkorrekt\Service\WebsiteScraper
     public: true
 
+  lindesbs.minkorrekt.generatestatistics:
+    class: lindesbs\minkorrekt\Service\GenerateStatistics
+    public: true
+    tags:
 
   lindesbs\minkorrekt\Factory\WebscraperItemdecoderFactory:
     arguments:

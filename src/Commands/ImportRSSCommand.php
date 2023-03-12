@@ -69,9 +69,6 @@ class ImportRSSCommand extends Command
 
         $domxPath = new DOMXPath($domDocument);
 
-//            $xp->registerNamespace('itunes','http://www.itunes.com/dtds/podcast-1.0.dtd');
-//            $xp->registerNamespace('atom','http://www.w3.org/2005/Atom');
-
         /** @var DOMNodeList $path */
         $path = $domxPath->query('//channel/item');
 
@@ -89,7 +86,7 @@ class ImportRSSCommand extends Command
             $objFeed = $this->DCATools->getNews(
                 sprintf('%s_F%s', $entry->getTitle(), $entry->getEpisode()),
                 [
-                    'date' => $entry->getPubDate()->getTimestamp(),
+                    'date' => $entry->getPubDate(),
                     'teaser' => $entry->getDescription(),
                 ],
                 $objNewsArchive
@@ -111,7 +108,18 @@ class ImportRSSCommand extends Command
             }
 
             $objFolge->newsId = $objFeed->id;
-            $objFolge->save();
+
+            $objFolge->duration = $entry->getDuration();
+            $objFolge->pubdate = $entry->getPubDate();
+
+            if ($entry->isEnclosure()) {
+                $objFolge->save();
+            }
+            else
+            {
+                $objFolge->delete();
+            }
+
 
             $prog->advance();
         }
@@ -133,7 +141,10 @@ class ImportRSSCommand extends Command
             static function (ItemInterface $item): string|bool {
                 $item->expiresAfter(86400);
 
-                return file_get_contents(self::$defaultURL);
+                $rssFeed = file_get_contents(self::$defaultURL);
+
+                file_put_contents("rss_feed.txt", $rssFeed);
+                return $rssFeed;
             }
         );
     }
