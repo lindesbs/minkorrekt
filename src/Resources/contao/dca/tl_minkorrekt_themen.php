@@ -52,6 +52,10 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_themen'] = [
                 'icon' => 'cut.svg',
                 'attributes' => 'onclick="Backend.getScrollOffset()"',
             ],
+            'abgenommen' => [
+                'href'                => 'act=toggle&amp;field=abgenommen',
+                'icon'                => 'visible.svg',
+            ],
             'delete' => [
                 'href' => 'act=delete',
                 'icon' => 'delete.svg',
@@ -89,6 +93,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_themen'] = [
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'abgenommen' => [
+            'toggle' => true,
             'exclude' => true,
             'inputType' => 'checkbox',
             'eval' => ['rgxp' => 'url'],

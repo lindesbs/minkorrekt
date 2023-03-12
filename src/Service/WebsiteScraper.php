@@ -20,7 +20,7 @@ class WebsiteScraper
     ) {
     }
 
-    public function scrape(MinkorrektPaperModel $paper): void
+    public function scrape(MinkorrektPaperModel $paper): MinkorrektPaperModel
     {
         $cacheClient = new FilesystemAdapter(
             'minkorrekt',
@@ -75,6 +75,8 @@ class WebsiteScraper
             ksort($arrMeta);
             //dd($arrMeta);
         }
+
+        return $paper;
     }
 
 }

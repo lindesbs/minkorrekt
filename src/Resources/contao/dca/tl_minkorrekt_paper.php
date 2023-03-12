@@ -70,6 +70,10 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
                 'icon' => 'cut.svg',
                 'attributes' => 'onclick="Backend.getScrollOffset()"',
             ],
+            'published' => [
+                'href'                => 'act=toggle&amp;field=published',
+                'icon'                => 'visible.svg',
+            ],
             'delete' => [
                 'href' => 'act=delete',
                 'icon' => 'delete.svg',
@@ -184,6 +188,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'published' => [
+            'toggle' => true,
             'exclude' => true,
             'toggle' => true,
             'filter' => true,

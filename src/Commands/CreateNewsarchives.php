@@ -11,6 +11,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
+use lindesbs\minkorrekt\Models\MinkorrektThemenModel;
 use lindesbs\minkorrekt\Service\WebsiteScraper;
 use lindesbs\toolbox\Service\DCATools;
 use Symfony\Component\Console\Command\Command;
@@ -41,25 +42,34 @@ class CreateNewsarchives extends Command
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();
 
-        $this->rebuild($io);
-
         $newsPublisher = $this->DCATools->getNewsArchive('Publisher');
         $newsPaper = $this->DCATools->getNewsArchive('Paper');
 
-        $objPapera = MinkorrektPaperModel::findAll();
+        $objThemen = MinkorrektThemenModel::findAll();
 
-        if ($objPapera) {
-            $prog = $io->createProgressBar($objPapera->count());
+        if ($objThemen) {
+            $prog = $io->createProgressBar($objThemen->count());
             $prog->start();
-            foreach ($objPapera as $paper) {
-                if (!isset($paper->url)) {
+            foreach ($objThemen as $thema) {
+                if (!($thema->abgenommen) || (!isset($thema->link))) {
                     continue;
                 }
 
+                $objPaper = MinkorrektPaperModel::findByIdOrAlias($thema->alias);
+                if (!$objPaper)
+                {
+                    $objPaper = new MinkorrektPaperModel();
+                    $objPaper->alias = $thema->alias;
+                    $objPaper->tstamp = time();
+                }
+
+                $objPaper->url = $thema->link;
+
+                $paper = $this->scraper->scrape($objPaper);
+/*
                 $arrOptions = [
                     'date' => (int)$paper->publishedAt,
                 ];
-
                 $objNews = $this->DCATools->getNews(
                     $paper->title,
                     $arrOptions,
@@ -72,83 +82,16 @@ class CreateNewsarchives extends Command
                 $objContent->singleSRC = $paper->screenshotSRC;
                 $objContent->ptable = 'tl_news';
 
-                $objContent->save();
+                $objContent->save();*/
 
                 $prog->advance();
-//            $this->scraper->scrape($paper);
+
             }
 
             $prog->finish();
         }
 
-        $this->rebuild($io);
-
         return Command::SUCCESS;
     }
 
-    public function rebuild(SymfonyStyle $io): void
-    {
-//        if ($_SERVER['APP_ENV'] === 'dev') {
-//            $this->Database->execute("TRUNCATE TABLE tl_minkorrekt_paper");
-//        }
-
-        $sql = "SELECT * FROM tl_content WHERE ptable='tl_news' AND minkorrekt_thema_art='THEMA'";
-        $result = $this->connection->executeQuery($sql)->fetchAllAssociative();
-
-        $io->writeln("Create Paper & Publisher entries");
-
-
-        $prog = $io->createProgressBar();
-        $prog->start(count($result));
-
-        foreach ($result as $data) {
-            $aliasPaper = sprintf('F%sT%s', $data['minkorrekt_thema_folge'], $data['minkorrekt_thema_nummer']);
-
-            $pattern = '/(https?|ftp):\/\/[^\s\/$.?#].[^\s]*/i';
-            $url = 'unknown';
-            if (preg_match('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $data['text'], $result)) {
-                $url = array_shift($result);
-
-                $decodedUrl = parse_url((string)$url);
-
-                $alias = StringUtil::generateAlias($decodedUrl['host']);
-                $publisher = MinkorrektPublisherModel::findByIdOrAlias($alias);
-
-                if (!$publisher) {
-                    $publisher = new MinkorrektPublisherModel();
-
-                    $publisher->tstamp = time();
-                    $publisher->alias = $alias;
-
-                    $publisher->url = sprintf("%s://%s/", $decodedUrl['scheme'], $decodedUrl['host']);
-                    $publisher->title = $decodedUrl['host'];
-
-                    $publisher->save();
-                }
-            }
-
-            $objPaper = MinkorrektPaperModel::findByIdOrAlias($aliasPaper);
-
-            if (!$objPaper) {
-                $objPaper = new MinkorrektPaperModel();
-
-                $objPaper->tstamp = time();
-                $objPaper->alias = $aliasPaper;
-            }
-            $objPaper->published = false;
-            $objPaper->tlContentId = $data['id'];
-            $objPaper->tlNewsId = $data['pid'];
-            $objPaper->url = trim($url, "'\"");
-
-            if ($objPaper->url) {
-                System::getContainer()->get('lindesbs.minkorrekt.websitescrape')->scrape($objPaper);
-            }
-
-            $prog->advance();
-
-            $objPaper->save();
-        }
-
-        $prog->finish();
-    }
 }
