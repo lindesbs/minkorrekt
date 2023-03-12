@@ -24,3 +24,6 @@ Insgesamt <?= $this->gesamtLaengeDateDiff->days ?> Tage
 
 
 <?php endif; ?>
+
+
+<div class="ribbon ribbon-top-right"><span>kuratiert</span></div>
