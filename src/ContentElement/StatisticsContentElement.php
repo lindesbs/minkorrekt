@@ -36,7 +36,9 @@ class StatisticsContentElement extends ContentElement
 
         $objStats = \System::getContainer()->get('lindesbs.minkorrekt.generatestatistics');
 
-        /** @var GenerateStatistics $stats */
+        /**
+ * @var GenerateStatistics $stats 
+*/
         $objStats->render();
 
         $this->Template->folgenAnzahl = $objStats->getCountEpisoden();

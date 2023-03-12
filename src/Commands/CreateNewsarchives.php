@@ -56,8 +56,7 @@ class CreateNewsarchives extends Command
                 }
 
                 $objPaper = MinkorrektPaperModel::findByIdOrAlias($thema->alias);
-                if (!$objPaper)
-                {
+                if (!$objPaper) {
                     $objPaper = new MinkorrektPaperModel();
                     $objPaper->alias = $thema->alias;
                     $objPaper->tstamp = time();
@@ -66,7 +65,7 @@ class CreateNewsarchives extends Command
                 $objPaper->url = $thema->link;
 
                 $paper = $this->scraper->scrape($objPaper);
-/*
+                /*
                 $arrOptions = [
                     'date' => (int)$paper->publishedAt,
                 ];

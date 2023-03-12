@@ -70,7 +70,9 @@ class ImportRSSCommand extends Command
 
         $domxPath = new DOMXPath($domDocument);
 
-        /** @var DOMNodeList $path */
+        /**
+ * @var DOMNodeList $path 
+*/
         $path = $domxPath->query('//channel/item');
 
         $io->writeln(count($path) . ' Elemente');
@@ -121,7 +123,6 @@ class ImportRSSCommand extends Command
                 $objFolge->delete();
             }
 
-
             $prog->advance();
         }
 
@@ -151,8 +152,8 @@ class ImportRSSCommand extends Command
     }
 
     /**
-     * @param string $alias
-     * @param PodcastEntry $entry
+     * @param  string       $alias
+     * @param  PodcastEntry $entry
      * @return Model|Model[]|Collection|MinkorrektFolgenModel|null
      */
     public function getFolge(
@@ -174,11 +175,11 @@ class ImportRSSCommand extends Command
     }
 
     /**
-     * @param string $contentAlias
-     * @param NewsModel $objFeed
-     * @param int|string $key
-     * @param mixed $feedLine
-     * @param PodcastEntry $entry
+     * @param  string       $contentAlias
+     * @param  NewsModel    $objFeed
+     * @param  int|string   $key
+     * @param  mixed        $feedLine
+     * @param  PodcastEntry $entry
      * @return mixed
      */
     public function createNewsContent(
@@ -237,8 +238,9 @@ class ImportRSSCommand extends Command
 
             $url = 'unknown';
             if (preg_match(
-                $pattern,$objContent->text,$result))
-            {
+                $pattern, $objContent->text, $result
+            )
+            ) {
                 $url = array_shift($result);
                 $objThema->link = $url;
             }

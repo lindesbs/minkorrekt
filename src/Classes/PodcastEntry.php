@@ -42,7 +42,9 @@ class PodcastEntry
     public function __construct(\DOMNode $domNode)
     {
         $values = [];
-        /** @var \DOMNodeList $nodelist */
+        /**
+ * @var \DOMNodeList $nodelist 
+*/
         $nodelist = $domNode->childNodes;
 
         foreach ($nodelist as $node) {

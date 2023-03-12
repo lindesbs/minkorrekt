@@ -232,9 +232,9 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
         'status' => [
             'exclude' => true,
             'filter' => true,
-            'inputType' => 'select',
+            'inputType' => 'radio',
             'options' => ['UNTOUCHED', 'INCHECK', 'VERIFICATION', 'VERIFIED'],
-            'eval' => ['multiple' => true, 'includeBlankOption' => true, 'chosen' => true],
+            'eval' => ['multiple' => false, 'includeBlankOption' => true, 'chosen' => true],
             'sql' => "varchar(255) NOT NULL default 'UNTOUCHED'",
         ],
         'url' => [

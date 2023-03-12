@@ -95,6 +95,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_themen'] = [
         'abgenommen' => [
             'toggle' => true,
             'exclude' => true,
+            'filter' => true,
             'inputType' => 'checkbox',
             'eval' => ['rgxp' => 'url'],
             'sql' => "varchar(1) NOT NULL default ''",

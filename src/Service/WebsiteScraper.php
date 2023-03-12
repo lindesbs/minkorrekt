@@ -36,10 +36,12 @@ class WebsiteScraper
             $browser = new HttpBrowser(HttpClient::create());
             $crawler = $browser->request("GET", $paper->url);
 
-            $metaTags = $crawler->filter('head meta')->each(static fn($node) => [
+            $metaTags = $crawler->filter('head meta')->each(
+                static fn($node) => [
                 'name' => $node->attr('name'),
                 'content' => $node->attr('content'),
-            ]);
+                ]
+            );
 
             $cacheItem->set($metaTags);
 
