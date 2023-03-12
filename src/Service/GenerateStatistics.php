@@ -9,8 +9,8 @@ class GenerateStatistics
 {
 
     private int $countEpisoden;
-    private int $ersteFolge;
-    private int $letzteFolge;
+    private int $ersteFolge=1;
+    private int $letzteFolge=2;
 
     private int $gesamtLaenge;
 

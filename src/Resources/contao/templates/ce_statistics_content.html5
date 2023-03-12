@@ -2,11 +2,6 @@
 <?php
 
 $gesamt = $this->letzteFolge-$this->ersteFolge;
-$dtErste = new DateTime('@' . $this->ersteFolge);
-$dtLetzte = new DateTime('@' . $this->letzteFolge);
-
-
-//dd($dtLetzte->diff($dtErste));
 ?>
 
 
@@ -20,9 +15,12 @@ Letzte Folge war am <?= date("d.m.Y",$this->letzteFolge) ?><br>
 <?= $gesamt/(60*60*24) ?> Tage<br>
 
 <hr>
+<?php if ($this->gesamtLaengeDateDiff): ?>
 Insgesamt <?= $this->gesamtLaengeDateDiff->days ?> Tage
 <?= $this->gesamtLaengeDateDiff->h ?> Stunden
 <?= $this->gesamtLaengeDateDiff->i ?> Minuten
 <br>
 <?= $this->gesamtLaenge/(60*60) ?> Stunden
 
+
+<?php endif; ?>

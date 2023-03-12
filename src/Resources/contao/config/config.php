@@ -12,7 +12,10 @@ use lindesbs\minkorrekt\ContentElement\StatisticsContentElement;
 
 $GLOBALS['BE_MOD']['minkorrekt'] = [
     'folgen' => [
-        'tables' => ['tl_minkorrekt_folgen'],
+        'tables' => ['tl_minkorrekt_folgen']
+    ],
+    'themen' => [
+        'tables' => ['tl_minkorrekt_themen']
     ],
     'publisher' => [
         'tables' => ['tl_minkorrekt_publisher', 'tl_minkorrekt_paper'],

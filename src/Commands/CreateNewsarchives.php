@@ -42,7 +42,6 @@ class CreateNewsarchives extends Command
         $this->contaoFramework->initialize();
 
         $this->rebuild($io);
-        die;
 
         $newsPublisher = $this->DCATools->getNewsArchive('Publisher');
         $newsPaper = $this->DCATools->getNewsArchive('Paper');

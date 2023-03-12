@@ -15,6 +15,7 @@ use DOMNodeList;
 use DOMXPath;
 use lindesbs\minkorrekt\Classes\PodcastEntry;
 use lindesbs\minkorrekt\Models\MinkorrektFolgenModel;
+use lindesbs\minkorrekt\Models\MinkorrektThemenModel;
 use lindesbs\toolbox\Service\DCATools;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -219,6 +220,29 @@ class ImportRSSCommand extends Command
             if (is_numeric($number)) {
                 $objContent->minkorrekt_thema_nummer = $number;
             }
+
+            $aliasThema = sprintf("F%sT%s", $entry->getEpisode(), $number);
+            $objThema = MinkorrektThemenModel::findByIdOrAlias($aliasThema);
+            if (!$objThema) {
+                $objThema = new MinkorrektThemenModel();
+                $objThema->alias = $aliasThema;
+                $objThema->abgenommen = false;
+                $objThema->tstamp=time();
+            }
+
+            $objThema->title = $entry->getTitle();
+
+            $objThema->tstamp=time();
+            $pattern = '@((https?://)?([-\\w]+\\.[-\\w\\.]+)+\\w(:\\d+)?(/([-\\w/_\\.]*(\\?\\S+)?)?)*)@';
+
+            $url = 'unknown';
+            if (preg_match(
+                $pattern,$objContent->text,$result))
+            {
+                $url = array_shift($result);
+                $objThema->link = $url;
+            }
+            $objThema->save();
         }
 
         $objContent->minkorrekt_thema_folge = $entry->getEpisode();
