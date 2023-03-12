@@ -23,7 +23,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\Cache\ItemInterface;
-
 use function count;
 
 class ImportRSSCommand extends Command

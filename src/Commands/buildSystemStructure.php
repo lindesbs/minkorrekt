@@ -167,7 +167,8 @@ class buildSystemStructure extends Command
             'Standard',
             [
                 'template' => 'fe_page_bootstrap',
-                'row' => '3rw',
+                'rows' => '3rw',
+                'cols' => '1cl',
                 'modules' => [
                     [
                         'mod' => $modHeaderArticle->id,
