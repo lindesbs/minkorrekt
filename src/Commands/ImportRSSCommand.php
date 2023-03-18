@@ -38,8 +38,9 @@ class ImportRSSCommand extends Command
 
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
-        private readonly DCATools $DCATools,
-    ) {
+        private readonly DCATools        $DCATools,
+    )
+    {
         parent::__construct();
     }
 
@@ -71,8 +72,8 @@ class ImportRSSCommand extends Command
         $domxPath = new DOMXPath($domDocument);
 
         /**
- * @var DOMNodeList $path 
-*/
+         * @var DOMNodeList $path
+         */
         $path = $domxPath->query('//channel/item');
 
         $io->writeln(count($path) . ' Elemente');
@@ -117,9 +118,7 @@ class ImportRSSCommand extends Command
 
             if ($entry->isEnclosure()) {
                 $objFolge->save();
-            }
-            else
-            {
+            } else {
                 $objFolge->delete();
             }
 
@@ -152,14 +151,15 @@ class ImportRSSCommand extends Command
     }
 
     /**
-     * @param  string       $alias
-     * @param  PodcastEntry $entry
+     * @param string $alias
+     * @param PodcastEntry $entry
      * @return Model|Model[]|Collection|MinkorrektFolgenModel|null
      */
     public function getFolge(
-        string $alias,
+        string       $alias,
         PodcastEntry $entry
-    ): MinkorrektFolgenModel|array|Model|null|Collection {
+    ): MinkorrektFolgenModel|array|Model|null|Collection
+    {
         $objFolge = MinkorrektFolgenModel::findByIdOrAlias($alias);
 
         if (!$objFolge) {
@@ -175,19 +175,20 @@ class ImportRSSCommand extends Command
     }
 
     /**
-     * @param  string       $contentAlias
-     * @param  NewsModel    $objFeed
-     * @param  int|string   $key
-     * @param  mixed        $feedLine
-     * @param  PodcastEntry $entry
+     * @param string $contentAlias
+     * @param NewsModel $objFeed
+     * @param int|string $key
+     * @param mixed $feedLine
+     * @param PodcastEntry $entry
      * @return mixed
      */
     public function createNewsContent(
-        NewsModel $objFeed,
-        int|string $key,
-        mixed $feedLine,
+        NewsModel    $objFeed,
+        int|string   $key,
+        mixed        $feedLine,
         PodcastEntry $entry
-    ) {
+    )
+    {
         $contentAlias = sprintf("%s_%s", $entry->getEpisode(), $key);
 
         $objContent = ContentModel::findByIdOrAlias($contentAlias);
@@ -227,13 +228,13 @@ class ImportRSSCommand extends Command
             if (!$objThema) {
                 $objThema = new MinkorrektThemenModel();
                 $objThema->alias = $aliasThema;
-                $objThema->abgenommen = false;
-                $objThema->tstamp=time();
+                $objThema->abgenommen = true;
+                $objThema->tstamp = time();
             }
 
             $objThema->title = $entry->getTitle();
 
-            $objThema->tstamp=time();
+            $objThema->tstamp = time();
             $pattern = '@((https?://)?([-\\w]+\\.[-\\w\\.]+)+\\w(:\\d+)?(/([-\\w/_\\.]*(\\?\\S+)?)?)*)@';
 
             $url = 'unknown';

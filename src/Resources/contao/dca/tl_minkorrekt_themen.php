@@ -25,12 +25,12 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_themen'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => DataContainer::MODE_UNSORTED,
-            'panelLayout' => 'filter;search,limit',
+            'mode' => DataContainer::MODE_SORTABLE,
+            'panelLayout' => 'filter;search,limit;sort',
         ],
         'label' => [
-            'fields' => ['alias', 'title','link'],
-            'format' => '%s :: %s -> %s',
+            'fields' => ['alias', 'title','link','alias'],
+            'format' => '%s :: %s -> %s (%s)',
         ],
         'global_operations' => [
             'all' => [
@@ -77,6 +77,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_themen'] = [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
+            'sorting' => true,
             'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'col1 width4'],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
@@ -84,6 +85,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_themen'] = [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
+            'sorting' => true,
             'eval' => [
                 'rgxp' => 'alias',
                 'doNotCopy' => true,

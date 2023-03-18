@@ -28,8 +28,8 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => DataContainer::MODE_UNSORTED,
-            'panelLayout' => 'filter;search,limit',
+            'mode' => DataContainer::MODE_SORTABLE,
+            'panelLayout' => 'filter;search,limit,sort',
         ],
         'label' => [
             'fields' => ['episode', 'title'],
@@ -76,6 +76,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
+            'sorting' => true,
             'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'col1 width4'],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
@@ -83,6 +84,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
+            'sorting' => true,
             'eval' => [
                 'rgxp' => 'alias',
                 'doNotCopy' => true,
@@ -94,6 +96,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
         'episode' => [
             'exclude' => true,
             'inputType' => 'text',
+            'sorting' => true,
             'eval' => ['rgxp' => 'natural'],
             'sql' => 'int(11) unsigned NOT NULL default 0',
         ],
@@ -120,6 +123,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
         'pubdate' => [
             'exclude' => true,
             'inputType' => 'text',
+            'sorting' => true,
             'eval' => ['rgxp' => 'natural'],
             'sql' => 'int(11) unsigned NOT NULL default 0',
         ],

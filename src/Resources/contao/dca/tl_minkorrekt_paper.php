@@ -40,8 +40,8 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => DataContainer::MODE_UNSORTED,
-            'panelLayout' => 'filter;search,limit',
+            'mode' => DataContainer::MODE_SORTABLE,
+            'panelLayout' => 'filter;search,limit;sort',
         ],
         'label' => [
             'fields' => ['status', 'alias', 'thePublisher', 'title'],

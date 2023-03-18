@@ -7,35 +7,34 @@ use lindesbs\minkorrekt\Models\MinkorrektFolgenModel;
 
 class GenerateStatistics
 {
-
     private int $countEpisoden;
-    private int $ersteFolge=1;
-    private int $letzteFolge=2;
+    private int $ersteFolge = 1;
+    private int $letzteFolge = 2;
 
     private int $gesamtLaenge;
 
     public function __construct(
         private readonly ContaoFramework $contaoFramework
-    ) {
+    )
+    {
     }
 
     public function render()
     {
         $this->contaoFramework->initialize();
 
-        $objFolgen= MinkorrektFolgenModel::findAll();
+        $objFolgen = MinkorrektFolgenModel::findAll();
 
         $this->setCountEpisoden(count($objFolgen));
 
-        $ersteFolge=time();
-        $letzteFolge=0;
+        $ersteFolge = time();
+        $letzteFolge = 0;
         $gesamtLaenge = 0;
 
-        foreach ($objFolgen as $folge)
-        {
+        foreach ($objFolgen as $folge) {
             $ersteFolge = min($ersteFolge, $folge->pubdate);
             $letzteFolge = max($letzteFolge, $folge->pubdate);
-            $gesamtLaenge+=$folge->duration;
+            $gesamtLaenge += $folge->duration;
         }
 
         $this->setErsteFolge($ersteFolge);
