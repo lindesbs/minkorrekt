@@ -12,15 +12,15 @@ Seit dem <?= date("d.m.Y",$this->ersteFolge) ?> sind <?= $this->folgenAnzahl ?> 
 Letzte Folge war am <?= date("d.m.Y",$this->letzteFolge) ?><br>
 
 
-<?= $gesamt/(60*60*24) ?> Tage<br>
+Seit: <?= floor($gesamt/(60*60*24)) ?> Tage online<br>
 
 <hr>
 <?php if ($this->gesamtLaengeDateDiff): ?>
-Insgesamt <?= $this->gesamtLaengeDateDiff->days ?> Tage
+Hörgenuss für insgesamt <?= $this->gesamtLaengeDateDiff->days ?> Tage
 <?= $this->gesamtLaengeDateDiff->h ?> Stunden
 <?= $this->gesamtLaengeDateDiff->i ?> Minuten
 <br>
-<?= $this->gesamtLaenge/(60*60) ?> Stunden
+Insgesamt <?= sprintf("%.2f",$this->gesamtLaenge/(60*60)) ?> Stunden
 
 
 <?php endif; ?>
