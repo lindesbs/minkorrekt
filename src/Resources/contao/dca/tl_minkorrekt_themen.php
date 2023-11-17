@@ -106,7 +106,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_themen'] = [
             'exclude' => true,
             'inputType' => 'text',
             'eval' => ['rgxp' => 'url'],
-            'sql' => "varchar(255) NOT NULL default ''",
+            'sql' => "varchar(512) NOT NULL default ''",
         ]
     ],
 ];

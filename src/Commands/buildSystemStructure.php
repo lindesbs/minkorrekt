@@ -24,8 +24,7 @@ class buildSystemStructure extends Command
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
         private readonly DCATools        $DCATools,
-    )
-    {
+    ) {
         parent::__construct();
     }
 

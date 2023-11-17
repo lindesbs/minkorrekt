@@ -15,8 +15,7 @@ class GenerateStatistics
 
     public function __construct(
         private readonly ContaoFramework $contaoFramework
-    )
-    {
+    ) {
     }
 
     public function render()

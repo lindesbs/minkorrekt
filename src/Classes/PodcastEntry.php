@@ -43,7 +43,7 @@ class PodcastEntry
     {
         $values = [];
         /**
- * @var \DOMNodeList $nodelist 
+ * @var \DOMNodeList $nodelist
 */
         $nodelist = $domNode->childNodes;
 

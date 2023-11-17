@@ -31,3 +31,5 @@ $GLOBALS['BE_MOD']['minkorrekt'] = [
 
 $GLOBALS['TL_CTE']['minkorrekt']['minkorrekt_thema'] = ContentMinkorrektNewsElement::class;
 $GLOBALS['TL_CTE']['minkorrekt']['minkorrekt_statistics'] = StatisticsContentElement::class;
+
+

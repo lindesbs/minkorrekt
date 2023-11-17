@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.1">
+    <file target-language="de">
+        <body>
+            <trans-unit id="tl_content.minkorrektLabel">
+                <target>Minkorrekt</target>
+            </trans-unit>
+
+            <trans-unit id="tl_content.minkorrekt_thema_art.0">
+                <target>Abschnittsart</target>
+            </trans-unit>
+
+            <trans-unit id="tl_content.minkorrekt_thema_art.1">
+                <target>Art der Folge</target>
+            </trans-unit>
+
+        </body>
+
+
+
+    </file>
+</xliff>

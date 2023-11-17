@@ -14,6 +14,8 @@ use DOMDocument;
 use DOMNodeList;
 use DOMXPath;
 use lindesbs\minkorrekt\Classes\PodcastEntry;
+use lindesbs\minkorrekt\Constants\BearbeitungsStatus;
+use lindesbs\minkorrekt\Constants\ThemenArt;
 use lindesbs\minkorrekt\Models\MinkorrektFolgenModel;
 use lindesbs\minkorrekt\Models\MinkorrektThemenModel;
 use lindesbs\toolbox\Service\DCATools;
@@ -86,7 +88,6 @@ class ImportRSSCommand extends Command
             $alias = StringUtil::generateAlias(sprintf('%s_F%s', $entry->getTitle(), $entry->getEpisode()));
 
             $objFolge = $this->getFolge($alias, $entry);
-
             $objFeed = $this->DCATools->getNews(
                 sprintf('%s_F%s', $entry->getTitle(), $entry->getEpisode()),
                 [
@@ -96,8 +97,23 @@ class ImportRSSCommand extends Command
                 $objNewsArchive
             );
 
+            if (empty($objFeed->minkorrekt_wip)) {
+                $objFeed->minkorrekt_wip = BearbeitungsStatus::UNBEARBEITET;
+            }
+
+            if ($objFeed->minkorrekt_wip == BearbeitungsStatus::IN_BEARBEITEUNG) {
+                continue;
+            }
+
+            if ($objFeed->minkorrekt_wip == BearbeitungsStatus::ABGENOMMEN) {
+                continue;
+            }
+
+
             $workingData = explode("\n", $entry->getContent());
             $workingData = array_map('trim', $workingData);
+
+            $firstContent = true;
 
             foreach ($workingData as $key => $value) {
                 if ('' === strip_tags(trim($value))) {
@@ -108,7 +124,14 @@ class ImportRSSCommand extends Command
                     continue;
                 }
 
-                $this->createNewsContent($objFeed, $key, $value, $entry);
+                $objContent = $this->createNewsContent($objFeed, $key, $value, $entry);
+
+                if ($firstContent)
+                {
+                    $objContent->minkorrekt_thema_art = ThemenArt::BEGRUESSUNG;
+                    $objContent->save();
+                    $firstContent=false;
+                }
             }
 
             $objFolge->newsId = $objFeed->id;
@@ -187,7 +210,7 @@ class ImportRSSCommand extends Command
         int|string   $key,
         mixed        $feedLine,
         PodcastEntry $entry
-    )
+    ): ContentModel
     {
         $contentAlias = sprintf("%s_%s", $entry->getEpisode(), $key);
 
@@ -205,13 +228,13 @@ class ImportRSSCommand extends Command
         $objContent->type = 'minkorrekt_thema';
 
         $objContent->minkorrekt_thema_art = 'TEXT';
-        $objContent->text = trim($feedLine);
+        $objContent->text = trim(strip_tags($feedLine, '<a>'));
         $objContent->minkorrekt_thema_nummer = 0;
 
         $pattern = '/^Thema\s+(\d+)/';
 
         if (preg_match($pattern, trim(strip_tags($objContent->text)), $matches)) {
-            $objContent->minkorrekt_thema_art = 'THEMA';
+            $objContent->minkorrekt_thema_art = ThemenArt::THEMA;
 
             $number = $matches[1];
             $objContent->headline = [
@@ -228,7 +251,7 @@ class ImportRSSCommand extends Command
             if (!$objThema) {
                 $objThema = new MinkorrektThemenModel();
                 $objThema->alias = $aliasThema;
-                $objThema->abgenommen = true;
+                $objThema->abgenommen = false;
                 $objThema->tstamp = time();
             }
 
@@ -248,9 +271,45 @@ class ImportRSSCommand extends Command
             $objThema->save();
         }
 
+        $suchstring = trim(strip_tags($objContent->text));
+
+        $patternTimetable = '/^\d{2}:\d{2}:\d{2}/';
+        if (preg_match($patternTimetable, $suchstring, $matches)) {
+            $objContent->minkorrekt_thema_art = ThemenArt::TIMETABLE;
+        }
+        else {
+            $this->setThemenArt('Snackable Science', ThemenArt::SNACKABLESCIENCE, $objContent);
+            $this->setThemenArt('Kommentar', ThemenArt::KOMMENTAR, $objContent);
+            $this->setThemenArt('Schwurbel', ThemenArt::SCHWURBEL, $objContent);
+            $this->setThemenArt('Hausmeisterei', ThemenArt::HAUSMEISTEREI, $objContent);
+            $this->setThemenArt('Gadget', ThemenArt::GADGET, $objContent);
+            $this->setThemenArt('Experiment', ThemenArt::EXPERIMENT, $objContent);
+
+        }
+
         $objContent->minkorrekt_thema_folge = $entry->getEpisode();
         $objContent->save();
 
-        return $objContent->id;
+        return $objContent;
     }
+
+    /**
+     * @param string $suchstring
+     * @param array $matches
+     * @param ContentModel|null $objContent
+     * @return array
+     */
+    public function setThemenArt(string $strText, $themenArt, ?ContentModel $objContent): void
+    {
+        $suchstring = trim(strip_tags($objContent->text));
+
+        $pattern= '/'.$strText.'/';
+
+        $substring = substr($suchstring, 0, 30);
+        if (preg_match($pattern, $substring, $matches)) {
+            $objContent->minkorrekt_thema_art = $themenArt;
+        }
+
+    }
+
 }

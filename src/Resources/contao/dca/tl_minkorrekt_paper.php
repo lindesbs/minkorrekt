@@ -190,7 +190,6 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
         'published' => [
             'toggle' => true,
             'exclude' => true,
-            'toggle' => true,
             'filter' => true,
             'inputType' => 'checkbox',
             'eval' => ['doNotCopy' => true],

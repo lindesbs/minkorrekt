@@ -84,7 +84,6 @@ class CreateNewsarchives extends Command
                 $objContent->save();*/
 
                 $prog->advance();
-
             }
 
             $prog->finish();
