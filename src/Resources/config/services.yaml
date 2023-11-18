@@ -5,15 +5,22 @@ services:
     public: false
 
   _instanceof:
-    lindesbs\minkorrekt\Interface\WebscraperItemdecoderInterface:
-      tags: [ 'app.WebscraperItemdecoderInterface' ]
+    lindesbs\minkorrekt\Interface\WebscraperPaperDecoderInterface:
+      tags: [ 'app.WebscraperPaperDecoderInterface' ]
+
+    lindesbs\minkorrekt\Interface\WebscraperPublisherDecoderInterface:
+      tags: [ 'app.WebscraperPublisherDecoderInterface' ]
 
   lindesbs\minkorrekt\:
     resource: ../../
     exclude: ../../{Entity,Migrations,Model,Resources,Tests,Widget}
 
-  lindesbs.minkorrekt.websitescrape:
-    class: lindesbs\minkorrekt\Service\WebsiteScraper
+  lindesbs.minkorrekt.websitescraperpaper:
+    class: lindesbs\minkorrekt\Service\WebsiteScraperPaper
+    public: true
+
+  lindesbs.minkorrekt.websitescraperpublisher:
+    class: lindesbs\minkorrekt\Service\WebsiteScraperPublisher
     public: true
 
   lindesbs.minkorrekt.generatestatistics:
@@ -21,7 +28,11 @@ services:
     public: true
     tags:
 
-  lindesbs\minkorrekt\Factory\WebscraperItemdecoderFactory:
+  lindesbs\minkorrekt\Factory\WebscraperPaperDecoderFactory:
     arguments:
-      $importer: !tagged_iterator 'app.WebscraperItemdecoderInterface'
+      $importer: !tagged_iterator 'app.WebscraperPaperDecoderInterface'
+
+  lindesbs\minkorrekt\Factory\WebscraperPublisherDecoderFactory:
+    arguments:
+      $importer: !tagged_iterator 'app.WebscraperPublisherDecoderInterface'
 

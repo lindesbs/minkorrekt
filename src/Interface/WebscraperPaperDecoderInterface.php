@@ -4,7 +4,7 @@ namespace lindesbs\minkorrekt\Interface;
 
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 
-interface WebscraperItemdecoderInterface
+interface WebscraperPaperDecoderInterface
 {
 
     public function decode(string $strKey, string $strContent, MinkorrektPaperModel $paperModel): bool;

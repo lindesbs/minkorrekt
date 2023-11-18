@@ -166,7 +166,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'inputType' => 'text',
             'search' => true,
             'eval' => ['decodeEntities' => true, 'maxlength' => 255],
-            'sql' => "varchar(255) NOT NULL default ''",
+            'sql' => "text NULL",
         ],
         'rightsagent' => [
             'exclude' => true,
@@ -253,8 +253,24 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options' => ['Article', 'CLOSED', 'OriginalPaper', 'Text', 'research-article', 'UNKNOWN'],
-            'sql' => "varchar(16) NOT NULL default 'UNKNOWN'",
+            'options' => [
+                'Analysis',
+                'Article',
+                'Articles',
+                'Brief Communication',
+                'Brief Report',
+                'Comment',
+                'Letter',
+                'Original Article',
+                'Other',
+                'proceedings',
+                'Protocol',
+                'Regular Article',
+                'Research',
+                'Research Article',
+                'UNKNOWN'
+            ],
+            'sql' => "varchar(255) NOT NULL default 'UNKNOWN'",
         ],
 
         'paperType' => [

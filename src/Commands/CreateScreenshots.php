@@ -26,8 +26,8 @@ class CreateScreenshots extends Command
 
     protected static $defaultDescription = 'Create screenhots of websites';
 
-    protected static $thumbnailCommand = '/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,1060 ##url##';
-    protected static $fullpageCommand = '/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,10600  ##url##';
+    protected static $thumbnailCommand = '/usr/bin/chromium --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,1060 http://##url##';
+    protected static $fullpageCommand = '/usr/bin/chromium --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,10600  http://##url##';
 
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
@@ -57,6 +57,9 @@ class CreateScreenshots extends Command
 
         $bForce = $input->getOption('force');
 
+        $io->warning("Funktioniert nicht mehr richtig. Die Webseiten haben Checks.");
+        die;
+
         $filesystem = new Filesystem();
 
         $objSQLPublisher = $this->connection->executeQuery(
@@ -68,16 +71,13 @@ class CreateScreenshots extends Command
         $io->progressStart(count($objPublisher));
 
         foreach ($objPublisher as $publisher) {
-            if (isset($publisher['screenshotSRC']) && (!$bForce)) {
-                continue;
-            }
-
             $destPath = sprintf(
-                'files/media/paper/%s/',
-                StringUtil::generateAlias($publisher['title'])
+                'files/media/publisher/%s/',
+                StringUtil::generateAlias($publisher['url'])
             );
 
             $filesystem->mkdir($destPath);
+
             $destinationVar = 'screenshotSRC';
             $filename = $this->makeScreenshot($destPath, $publisher, self::$thumbnailCommand, $destinationVar);
 
@@ -99,12 +99,14 @@ class CreateScreenshots extends Command
 
         $io->progressFinish();
 
+
+        die;
         $objSQLPaper = $this->connection->executeQuery(
             'SELECT * FROM tl_minkorrekt_paper WHERE url IS NOT NULL'
         );
         $objPaper = $objSQLPaper->fetchAllAssociative();
 
-        $io->writeln('Publisher');
+        $io->writeln('Paper');
         $io->progressStart(count($objPaper));
 
         foreach ($objPaper as $paper) {
@@ -159,19 +161,22 @@ class CreateScreenshots extends Command
             '%s%s_%s_%s.png',
             $destPath,
             date('Ymd'),
-            StringUtil::generateAlias($paper['title']),
+            StringUtil::generateAlias($paper['url']),
             $destinationVar
         );
 
-        $cmd = str_replace(
-            ['##outputname##', '##url##'],
-            [$filename, $paper['url']],
-            $captureCommand
-        );
 
-        file_put_contents('runner.sh', $cmd);
-        $process = new Process(['./runner.sh']);
-        $process->run();
+        if (!file_exists(TL_ROOT.'/'.$filename)) {
+            $cmd = str_replace(
+                ['##outputname##', '##url##'],
+                [$filename, $paper['url']],
+                $captureCommand
+            );
+
+            file_put_contents('runner.sh', $cmd);
+            $process = new Process(['./runner.sh']);
+            $process->run();
+        }
 
         return $filename;
     }

@@ -85,7 +85,7 @@ class ImportRSSCommand extends Command
         foreach ($path as $element) {
             $entry = new PodcastEntry($element);
 
-            $alias = StringUtil::generateAlias(sprintf('%s_F%s', $entry->getTitle(), $entry->getEpisode()));
+            $alias = StringUtil::generateAlias(sprintf('Episode%s', $entry->getEpisode()));
 
             $objFolge = $this->getFolge($alias, $entry);
             $objFeed = $this->DCATools->getNews(

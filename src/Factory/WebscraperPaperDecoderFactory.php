@@ -4,7 +4,7 @@ namespace lindesbs\minkorrekt\Factory;
 
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 
-class WebscraperItemdecoderFactory
+class WebscraperPaperDecoderFactory
 {
     /**
      * @param iterable $importer

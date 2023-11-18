@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace lindesbs\minkorrekt\WebscrapeDecoder;
 
-use lindesbs\minkorrekt\Interface\WebscraperItemdecoderInterface;
+use lindesbs\minkorrekt\Interface\WebscraperPaperDecoderInterface;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 
-class PrismDecoder implements WebscraperItemdecoderInterface
+class PrismDecoder implements WebscraperPaperDecoderInterface
 {
 
     public function decode(string $strKey, string $strContent, MinkorrektPaperModel $paperModel): bool
