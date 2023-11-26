@@ -16,9 +16,9 @@ use DOMXPath;
 use lindesbs\minkorrekt\Classes\PodcastEntry;
 use lindesbs\minkorrekt\Constants\BearbeitungsStatus;
 use lindesbs\minkorrekt\Constants\ThemenArt;
+use lindesbs\minkorrekt\Models\LoginIMAPModel;
 use lindesbs\minkorrekt\Models\MinkorrektFolgenModel;
 use lindesbs\minkorrekt\Models\MinkorrektThemenModel;
-use lindesbs\toolbox\Service\DCATools;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
@@ -27,28 +27,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\Cache\ItemInterface;
 use function count;
-
+#[\Symfony\Component\Console\Attribute\AsCommand('minkorrekt:importrss', 'Import RSS as Newslist')]
 class ImportRSSCommand extends Command
 {
-    protected static $defaultName = 'minkorrekt:importrss';
-
-    protected static $defaultDescription = 'Import RSS as Newslist';
-
+    protected static $defaultDescription = 'Aus dem Minkorrekt RSS Feed an notwendigen Infos herausziehen';
     protected static $defaultURL = 'https://minkorrekt.de/feed/m4a/';
 
     private int $statusCode = Command::SUCCESS;
 
+
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
-        private readonly DCATools        $DCATools,
-    )
-    {
+    ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->setDescription('Gibt einen Demotext aus.');
     }
 
     /**
@@ -56,11 +51,10 @@ class ImportRSSCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
+        $this->contaoFramework->initialize();
         $io = new SymfonyStyle($input, $output);
 
         $io->title('Minkorrekt RSS einlesen und importieren');
-
-        $this->contaoFramework->initialize();
 
         $domDocument = new DOMDocument();
 
@@ -68,8 +62,6 @@ class ImportRSSCommand extends Command
         $strData = $this->getRSSFeed();
         $domDocument->loadXML($strData);
         $io->writeln("done");
-
-        $objNewsArchive = $this->DCATools->getNewsArchive('Methodisch Inkorrekt');
 
         $domxPath = new DOMXPath($domDocument);
 
@@ -84,28 +76,19 @@ class ImportRSSCommand extends Command
         $prog->start(count($path));
         foreach ($path as $element) {
             $entry = new PodcastEntry($element);
-
             $alias = StringUtil::generateAlias(sprintf('Episode%s', $entry->getEpisode()));
 
             $objFolge = $this->getFolge($alias, $entry);
-            $objFeed = $this->DCATools->getNews(
-                sprintf('%s_F%s', $entry->getTitle(), $entry->getEpisode()),
-                [
-                    'date' => $entry->getPubDate(),
-                    'teaser' => $entry->getDescription(),
-                ],
-                $objNewsArchive
-            );
 
-            if (empty($objFeed->minkorrekt_wip)) {
-                $objFeed->minkorrekt_wip = BearbeitungsStatus::UNBEARBEITET;
+            if (empty($objFolge->getWip())) {
+                $objFolge->setWip(BearbeitungsStatus::UNBEARBEITET);
             }
 
-            if ($objFeed->minkorrekt_wip == BearbeitungsStatus::IN_BEARBEITEUNG) {
+            if ($objFolge->getWip() == BearbeitungsStatus::IN_BEARBEITEUNG) {
                 continue;
             }
 
-            if ($objFeed->minkorrekt_wip == BearbeitungsStatus::ABGENOMMEN) {
+            if ($objFolge->getWip() == BearbeitungsStatus::ABGENOMMEN) {
                 continue;
             }
 
@@ -124,17 +107,14 @@ class ImportRSSCommand extends Command
                     continue;
                 }
 
-                $objContent = $this->createNewsContent($objFeed, $key, $value, $entry);
+                $objContent = $this->createNewsContent($objFolge, $key, $value, $entry);
 
-                if ($firstContent)
-                {
-                    $objContent->minkorrekt_thema_art = ThemenArt::BEGRUESSUNG;
+                if ($firstContent) {
+                    $objContent->thema_art = ThemenArt::BEGRUESSUNG;
                     $objContent->save();
                     $firstContent=false;
                 }
             }
-
-            $objFolge->newsId = $objFeed->id;
 
             $objFolge->duration = $entry->getDuration();
             $objFolge->pubdate = $entry->getPubDate();
@@ -174,90 +154,61 @@ class ImportRSSCommand extends Command
     }
 
     /**
-     * @param string $alias
-     * @param PodcastEntry $entry
      * @return Model|Model[]|Collection|MinkorrektFolgenModel|null
      */
     public function getFolge(
         string       $alias,
         PodcastEntry $entry
-    ): MinkorrektFolgenModel|array|Model|null|Collection
-    {
+    ): MinkorrektFolgenModel|array|Model|null|Collection {
         $objFolge = MinkorrektFolgenModel::findByIdOrAlias($alias);
 
         if (!$objFolge) {
             $objFolge = new MinkorrektFolgenModel();
-            $objFolge->tstamp = time();
             $objFolge->alias = $alias;
+            $objFolge->save();
+            $objFolge = MinkorrektFolgenModel::findByIdOrAlias($alias);
         }
 
         $objFolge->title = $entry->getTitle();
         $objFolge->content = $entry->getContent();
         $objFolge->episode = $entry->getEpisode();
+        $objFolge->tstamp = $entry->getEpisode();
         return $objFolge;
     }
 
     /**
      * @param string $contentAlias
-     * @param NewsModel $objFeed
-     * @param int|string $key
-     * @param mixed $feedLine
-     * @param PodcastEntry $entry
      * @return mixed
      */
     public function createNewsContent(
-        NewsModel    $objFeed,
+        MinkorrektFolgenModel   $objFolge,
         int|string   $key,
         mixed        $feedLine,
         PodcastEntry $entry
-    ): ContentModel
-    {
+    ): LoginIMAPModel {
         $contentAlias = sprintf("%s_%s", $entry->getEpisode(), $key);
 
-        $objContent = ContentModel::findByIdOrAlias($contentAlias);
+        $objContent = LoginIMAPModel::findByIdOrAlias($contentAlias);
 
         if (!$objContent) {
-            $objContent = new ContentModel();
+            $objContent = new LoginIMAPModel();
         }
 
         $objContent->alias = $contentAlias;
-        $objContent->tstamp = 1;
-        $objContent->pid = $objFeed->id;
         $objContent->sorting = $key;
-        $objContent->ptable = 'tl_news';
-        $objContent->type = 'minkorrekt_thema';
+        $objContent->pid = $objFolge->id;
 
-        $objContent->minkorrekt_thema_art = 'TEXT';
-        $objContent->text = trim(strip_tags($feedLine, '<a>'));
-        $objContent->minkorrekt_thema_nummer = 0;
+
+        $objContent->thema_art = ThemenArt::TEXT;
+        $objContent->text = trim(strip_tags((string) $feedLine, '<a>'));
 
         $pattern = '/^Thema\s+(\d+)/';
 
         if (preg_match($pattern, trim(strip_tags($objContent->text)), $matches)) {
-            $objContent->minkorrekt_thema_art = ThemenArt::THEMA;
-
+            $objContent->thema_art = ThemenArt::THEMA;
             $number = $matches[1];
-            $objContent->headline = [
-                'value' => sprintf('Thema %s', $number),
-                'unit' => 'h3',
-            ];
+            $objContent->thema_nr = $number;
 
-            if (is_numeric($number)) {
-                $objContent->minkorrekt_thema_nummer = $number;
-            }
-
-            $aliasThema = sprintf("F%sT%s", $entry->getEpisode(), $number);
-            $objThema = MinkorrektThemenModel::findByIdOrAlias($aliasThema);
-            if (!$objThema) {
-                $objThema = new MinkorrektThemenModel();
-                $objThema->alias = $aliasThema;
-                $objThema->abgenommen = false;
-                $objThema->tstamp = time();
-            }
-
-            $objThema->title = $entry->getTitle();
-
-            $objThema->tstamp = time();
             $pattern = '@((https?://)?([-\\w]+\\.[-\\w\\.]+)+\\w(:\\d+)?(/([-\\w/_\\.]*(\\?\\S+)?)?)*)@';
 
             $url = 'unknown';
@@ -266,25 +217,22 @@ class ImportRSSCommand extends Command
             )
             ) {
                 $url = array_shift($result);
-                $objThema->link = $url;
+                $objContent->link = $url;
             }
-            $objThema->save();
         }
 
         $suchstring = trim(strip_tags($objContent->text));
 
         $patternTimetable = '/^\d{2}:\d{2}:\d{2}/';
         if (preg_match($patternTimetable, $suchstring, $matches)) {
-            $objContent->minkorrekt_thema_art = ThemenArt::TIMETABLE;
-        }
-        else {
+            $objContent->thema_art = ThemenArt::TIMETABLE;
+        } else {
             $this->setThemenArt('Snackable Science', ThemenArt::SNACKABLESCIENCE, $objContent);
             $this->setThemenArt('Kommentar', ThemenArt::KOMMENTAR, $objContent);
             $this->setThemenArt('Schwurbel', ThemenArt::SCHWURBEL, $objContent);
             $this->setThemenArt('Hausmeisterei', ThemenArt::HAUSMEISTEREI, $objContent);
             $this->setThemenArt('Gadget', ThemenArt::GADGET, $objContent);
             $this->setThemenArt('Experiment', ThemenArt::EXPERIMENT, $objContent);
-
         }
 
         $objContent->minkorrekt_thema_folge = $entry->getEpisode();
@@ -296,10 +244,9 @@ class ImportRSSCommand extends Command
     /**
      * @param string $suchstring
      * @param array $matches
-     * @param ContentModel|null $objContent
      * @return array
      */
-    public function setThemenArt(string $strText, $themenArt, ?ContentModel $objContent): void
+    public function setThemenArt(string $strText, $themenArt, LoginIMAPModel $objContent): void
     {
         $suchstring = trim(strip_tags($objContent->text));
 
@@ -307,7 +254,7 @@ class ImportRSSCommand extends Command
 
         $substring = substr($suchstring, 0, 30);
         if (preg_match($pattern, $substring, $matches)) {
-            $objContent->minkorrekt_thema_art = $themenArt;
+            $objContent->thema_art = $themenArt;
         }
 
     }

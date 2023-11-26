@@ -18,23 +18,16 @@ use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
 use lindesbs\minkorrekt\Models\MinkorrektThemenModel;
 use lindesbs\minkorrekt\Service\WebsiteScraperPaper;
 use lindesbs\minkorrekt\Service\WebsiteScraperPublisher;
-use lindesbs\toolbox\Service\DCATools;
 use Nette\Utils\Json;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('minkorrekt:newsarchives', 'Fetch websites and crawl them')]
 class CreateNewsarchives extends Command
 {
-    protected static $defaultName = 'minkorrekt:newsarchives';
-
-    protected static $defaultDescription = 'Fetch websites and crawl them';
-
     public function __construct(
-        private readonly ContaoFramework     $contaoFramework,
-        private readonly Connection          $connection,
-        private readonly DCATools            $DCATools,
         private readonly WebsiteScraperPaper $paperScraper,
         private readonly WebsiteScraperPublisher $publisherScraper,
     ) {
@@ -47,10 +40,6 @@ class CreateNewsarchives extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
         $io = new SymfonyStyle($input, $output);
-        $this->contaoFramework->initialize();
-
-        $newsPublisher = $this->DCATools->getNewsArchive('Publisher');
-
         $arrPublisher=[];
         $objThemen = MinkorrektThemenModel::findAll();
 
@@ -74,10 +63,9 @@ class CreateNewsarchives extends Command
                 $paper = $this->paperScraper->scrape($objPaper);
                 $objPaper->save();
 
-                if ($paper->url)
-                {
-                    $theUrl = parse_url($paper->url);
-                    if (array_key_exists('host',$theUrl)) {
+                if ($paper->url) {
+                    $theUrl = parse_url((string) $paper->url);
+                    if (array_key_exists('host', $theUrl)) {
                         $publisher = $this->getPublisher(StringUtil::generateAlias($theUrl['host']));
 
                         $publisher->url = $theUrl['host'];
@@ -103,8 +91,7 @@ class CreateNewsarchives extends Command
 
     public function getPublisher(
         string       $alias
-    ): MinkorrektPublisherModel|array|Model|null|Collection
-    {
+    ): MinkorrektPublisherModel|array|Model|null|Collection {
         $Publisher = MinkorrektPublisherModel::findByIdOrAlias($alias);
 
         if (!$Publisher) {

@@ -16,9 +16,8 @@ class WebsiteScraperPublisher
 {
     public function __construct(
         private readonly WebscraperPublisherDecoderFactory $webscraperPublisherDecoderFactory,
-        private array                                  $unknownMeta=[]
-    )
-    {
+        private array                                  $unknownMeta = []
+    ) {
     }
 
     public function getUnknownMeta(): array
@@ -41,9 +40,7 @@ class WebsiteScraperPublisher
 
             $cacheItem = $cacheClient->getItem($cacheKey);
 
-            if (!$cacheItem->isHit())
-            {
-
+            if (!$cacheItem->isHit()) {
                 $browser = new HttpBrowser(HttpClient::create());
                 $crawler = $browser->request("GET", 'http://'.$publisher->url, [
                     'timeout' => 45
@@ -60,7 +57,6 @@ class WebsiteScraperPublisher
 
                 $cacheClient->save($cacheItem);
                 $cacheClient->commit();
-
             } else {
                 $metaTags = $cacheItem->get();
             }
@@ -84,7 +80,7 @@ class WebsiteScraperPublisher
 
                 if (!$bFound) {
                     if ($meta['content']) {
-                        $arrMeta[$meta['name']][substr(md5($meta['content']), 0, 8)] = $meta['content'];
+                        $arrMeta[$meta['name']][substr(md5((string) $meta['content']), 0, 8)] = $meta['content'];
                     }
                 }
             }
@@ -92,7 +88,6 @@ class WebsiteScraperPublisher
             if (count($arrMeta) > 0) {
                 $this->unknownMeta = array_merge($arrMeta, $this->unknownMeta);
                 ksort($this->unknownMeta);
-
             }
         } catch (\Exception $ex) {
             dd($ex);

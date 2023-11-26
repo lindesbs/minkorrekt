@@ -9,12 +9,15 @@ declare(strict_types=1);
 
 use Contao\DataContainer;
 use Contao\DC_Table;
+use lindesbs\minkorrekt\Constants\BearbeitungsStatus;
 
 $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
     // Config
     'config' => [
         'dataContainer' => DC_Table::class,
         'enableVersioning' => true,
+        'ctable' => ['tl_minkorrekt_folgen_inhalt'],
+        'switchToEdit'                => true,
         'markAsCopy' => 'title',
         'onsubmit_callback' => [],
 
@@ -32,8 +35,8 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
             'panelLayout' => 'filter;search,limit,sort',
         ],
         'label' => [
-            'fields' => ['episode', 'title'],
-            'format' => '%s :: %s',
+            'fields' => ['wip','episode', 'title'],
+            'format' => '%s :: %s :: %s',
         ],
         'global_operations' => [
             'all' => [
@@ -43,43 +46,28 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
             ]
         ],
         'operations' => [
-            'edit' => ['href' => 'act=edit', 'icon' => 'edit.svg'],
-
-            'copy' => [
-                'href' => 'act=paste&amp;mode=copy',
-                'icon' => 'copy.svg',
-                'attributes' => 'onclick="Backend.getScrollOffset()"',
-            ],
-            'cut' => [
-                'href' => 'act=paste&amp;mode=cut',
-                'icon' => 'cut.svg',
-                'attributes' => 'onclick="Backend.getScrollOffset()"',
-            ],
-            'delete' => [
-                'href' => 'act=delete',
-                'icon' => 'delete.svg',
-                'attributes' => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
-            ],
-            'show' => ['href' => 'act=show', 'icon' => 'show.svg'],
+            'edit',
+            'children',
+            'delete',
         ],
     ],
     // Palettes
     'palettes' => [
-        'default' => '{title_legend},title,newsId,episode,content',
+        'default' => '{title_legend},title,published,episode,wip',
     ],
     'fields' => [
         'id' => ['label' => ['ID'], 'sql' => 'int(10) unsigned NOT NULL auto_increment'],
-
-        'sorting' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
         'tstamp' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
         'title' => [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
             'sorting' => true,
-            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'col1 width4'],
+            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => ''],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
+
+        'published' => ['toggle' => true, 'filter' => true, 'inputType' => 'checkbox', 'eval' => ['doNotCopy' => true], 'sql' => ['type' => 'boolean', 'default' => false]],
         'alias' => [
             'exclude' => true,
             'inputType' => 'text',
@@ -107,19 +95,6 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
             'eval' => ['decodeEntities' => true],
             'sql' => "text NULL'",
         ],
-        'newsId' => [
-            'exclude' => true,
-            'inputType' => 'select',
-            'eval' => ['rgxp' => 'natural'],
-            'sql' => 'int(11) unsigned NOT NULL default 0',
-            'foreignKey' => 'tl_news.headline',
-        ],
-        'experimentId' => [
-            'exclude' => true,
-            'inputType' => 'text',
-            'eval' => ['rgxp' => 'natural'],
-            'sql' => 'int(11) unsigned NOT NULL default 0',
-        ],
         'pubdate' => [
             'exclude' => true,
             'inputType' => 'text',
@@ -133,5 +108,22 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
             'eval' => ['rgxp' => 'natural'],
             'sql' => 'int(11) unsigned NOT NULL default 0',
         ],
+        'wip' => [
+            'label' => &$GLOBALS['TL_LANG']['tl_news']['minkorrekt_wip'],
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'radio',
+            'options' => [
+                BearbeitungsStatus::UNBEARBEITET,
+                BearbeitungsStatus::IN_BEARBEITEUNG,
+                BearbeitungsStatus::ABGENOMMEN,
+
+            ],
+            'eval' => ['tl_class'=>'w50'],
+            'sql' => sprintf("varchar(16) NOT NULL default '%s'", BearbeitungsStatus::UNBEARBEITET)
+        ]
+
+
+
     ],
 ];

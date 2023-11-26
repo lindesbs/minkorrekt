@@ -7,18 +7,13 @@ use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
 
 class WebscraperPublisherDecoderFactory
 {
-    /**
-     * @param iterable $importer
-     */
     public function __construct(private readonly iterable $importer)
     {
     }
 
     /**
-     * @param string $strKey
      * @param $strContent
      * @param MinkorrektPaperModel $publisherModel
-     * @return bool
      */
     public function walkThroughDecoder(string $strKey, $strContent, MinkorrektPublisherModel $publisherModel): bool
     {

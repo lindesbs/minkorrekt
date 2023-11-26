@@ -12,7 +12,7 @@ use lindesbs\minkorrekt\ContentElement\StatisticsContentElement;
 
 $GLOBALS['BE_MOD']['minkorrekt'] = [
     'folgen' => [
-        'tables' => ['tl_minkorrekt_folgen']
+        'tables' => ['tl_minkorrekt_folgen','tl_minkorrekt_folgen_inhalt']
     ],
     'themen' => [
         'tables' => ['tl_minkorrekt_themen']
@@ -33,3 +33,10 @@ $GLOBALS['TL_CTE']['minkorrekt']['minkorrekt_thema'] = ContentMinkorrektNewsElem
 $GLOBALS['TL_CTE']['minkorrekt']['minkorrekt_statistics'] = StatisticsContentElement::class;
 
 
+$GLOBALS['TL_MODELS']['tl_minkorrekt_folgen'] = \lindesbs\minkorrekt\Models\MinkorrektFolgenModel::class;
+$GLOBALS['TL_MODELS']['tl_minkorrekt_folgen_inhalt'] = \lindesbs\minkorrekt\Models\LoginIMAPModel::class;
+$GLOBALS['TL_MODELS']['tl_minkorrekt_paper_creator'] = \lindesbs\minkorrekt\Models\MinkorrektPaperCreatorModel::class;
+$GLOBALS['TL_MODELS']['tl_minkorrekt_paper'] = \lindesbs\minkorrekt\Models\MinkorrektPaperModel::class;
+$GLOBALS['TL_MODELS']['tl_minkorrekt_paper_tags'] = \lindesbs\minkorrekt\Models\MinkorrektPaperTagsModel::class;
+$GLOBALS['TL_MODELS']['tl_minkorrekt_publisher'] = \lindesbs\minkorrekt\Models\MinkorrektPublisherModel::class;
+$GLOBALS['TL_MODELS']['tl_minkorrekt_themen'] = \lindesbs\minkorrekt\Models\MinkorrektThemenModel::class;

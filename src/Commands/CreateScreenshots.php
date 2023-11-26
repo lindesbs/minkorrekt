@@ -20,12 +20,9 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use function count;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('minkorrekt:screenshots', 'Create screenhots of websites')]
 class CreateScreenshots extends Command
 {
-    protected static $defaultName = 'minkorrekt:screenshots';
-
-    protected static $defaultDescription = 'Create screenhots of websites';
-
     protected static $thumbnailCommand = '/usr/bin/chromium --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,1060 http://##url##';
     protected static $fullpageCommand = '/usr/bin/chromium --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,10600  http://##url##';
 
@@ -68,7 +65,7 @@ class CreateScreenshots extends Command
         $objPublisher = $objSQLPublisher->fetchAllAssociative();
 
         $io->writeln('Publisher');
-        $io->progressStart(count($objPublisher));
+        $io->progressStart(is_countable($objPublisher) ? count($objPublisher) : 0);
 
         foreach ($objPublisher as $publisher) {
             $destPath = sprintf(
@@ -107,7 +104,7 @@ class CreateScreenshots extends Command
         $objPaper = $objSQLPaper->fetchAllAssociative();
 
         $io->writeln('Paper');
-        $io->progressStart(count($objPaper));
+        $io->progressStart(is_countable($objPaper) ? count($objPaper) : 0);
 
         foreach ($objPaper as $paper) {
             if (isset($paper['screenshotSRC']) && (!$bForce)) {

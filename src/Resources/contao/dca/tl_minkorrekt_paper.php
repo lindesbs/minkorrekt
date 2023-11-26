@@ -19,10 +19,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
         'enableVersioning' => true,
         'markAsCopy' => 'title',
         'onsubmit_callback' => [
-            [
-                PaperSubmit::class,
-                'scrape',
-            ],
+            (new PaperSubmit())->scrape(...),
         ],
         'ctable' => [
             'tl_minkorrekt_paper_tags',

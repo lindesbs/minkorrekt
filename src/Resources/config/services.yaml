@@ -26,7 +26,6 @@ services:
   lindesbs.minkorrekt.generatestatistics:
     class: lindesbs\minkorrekt\Service\GenerateStatistics
     public: true
-    tags:
 
   lindesbs\minkorrekt\Factory\WebscraperPaperDecoderFactory:
     arguments:
@@ -36,3 +35,5 @@ services:
     arguments:
       $importer: !tagged_iterator 'app.WebscraperPublisherDecoderInterface'
 
+
+  lindesbs\minkorrekt\Controller\APIController: ~

@@ -24,7 +24,7 @@ class GenerateStatistics
 
         $objFolgen = MinkorrektFolgenModel::findAll();
 
-        $this->setCountEpisoden(count($objFolgen));
+        $this->setCountEpisoden($objFolgen === null ? 0 : count($objFolgen));
 
         $ersteFolge = time();
         $letzteFolge = 0;
@@ -42,65 +42,41 @@ class GenerateStatistics
         $this->setGesamtLaenge($gesamtLaenge);
     }
 
-    /**
-     * @return int
-     */
     public function getCountEpisoden(): int
     {
         return $this->countEpisoden;
     }
 
-    /**
-     * @param int $countEpisoden
-     */
     public function setCountEpisoden(int $countEpisoden): void
     {
         $this->countEpisoden = $countEpisoden;
     }
 
-    /**
-     * @return int
-     */
     public function getErsteFolge(): int
     {
         return $this->ersteFolge;
     }
 
-    /**
-     * @param int $ersteFolge
-     */
     public function setErsteFolge(int $ersteFolge): void
     {
         $this->ersteFolge = $ersteFolge;
     }
 
-    /**
-     * @return int
-     */
     public function getLetzteFolge(): int
     {
         return $this->letzteFolge;
     }
 
-    /**
-     * @param int $letzteFolge
-     */
     public function setLetzteFolge(int $letzteFolge): void
     {
         $this->letzteFolge = $letzteFolge;
     }
 
-    /**
-     * @return int
-     */
     public function getGesamtLaenge(): int
     {
         return $this->gesamtLaenge;
     }
 
-    /**
-     * @param int $gesamtLaenge
-     */
     public function setGesamtLaenge(int $gesamtLaenge): void
     {
         $this->gesamtLaenge = $gesamtLaenge;

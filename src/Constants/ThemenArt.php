@@ -4,16 +4,16 @@ namespace lindesbs\minkorrekt\Constants;
 
 class ThemenArt
 {
-    const TIMETABLE = "TIMETABLE";
-    const SNACKABLESCIENCE="SNACKABLESCIENCE";
-    const THEMA="THEMA";
-    const UEBERSCHRIFT="UEBERSCHRIFT";
-    const SCHWURBEL="SCHWURBEL";
-    const GADGET="GADGET";
-    const ADRESSEN="ADRESSEN";
-    const TEXT="TEXT";
-    const EXPERIMENT="EXPERIMENT";
-    const BEGRUESSUNG="BEGRUESSUNG";
-    const KOMMENTAR="KOMMENTAR";
-    const HAUSMEISTEREI="HAUSMEISTEREI";
+    final const TIMETABLE = "TIMETABLE";
+    final const SNACKABLESCIENCE="SNACKABLESCIENCE";
+    final const THEMA="THEMA";
+    final const UEBERSCHRIFT="UEBERSCHRIFT";
+    final const SCHWURBEL="SCHWURBEL";
+    final const GADGET="GADGET";
+    final const ADRESSEN="ADRESSEN";
+    final const TEXT="TEXT";
+    final const EXPERIMENT="EXPERIMENT";
+    final const BEGRUESSUNG="BEGRUESSUNG";
+    final const KOMMENTAR="KOMMENTAR";
+    final const HAUSMEISTEREI="HAUSMEISTEREI";
 }

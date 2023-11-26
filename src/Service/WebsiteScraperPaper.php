@@ -15,9 +15,8 @@ class WebsiteScraperPaper
 {
     public function __construct(
         private readonly WebscraperPaperDecoderFactory $webscraperItemdecoderFactory,
-        private array                                  $unknownMeta=[]
-    )
-    {
+        private array                                  $unknownMeta = []
+    ) {
     }
 
     public function getUnknownMeta(): array
@@ -40,7 +39,6 @@ class WebsiteScraperPaper
             $cacheItem = $cacheClient->getItem($cacheKey);
 
             if (!$cacheItem->isHit()) {
-
                 $browser = new HttpBrowser(HttpClient::create());
                 $crawler = $browser->request("GET", $paper->url, [
                     'timeout' => 45
@@ -58,7 +56,6 @@ class WebsiteScraperPaper
 
                 $cacheClient->save($cacheItem);
                 $cacheClient->commit();
-
             } else {
                 $metaTags = $cacheItem->get();
             }
@@ -81,7 +78,7 @@ class WebsiteScraperPaper
 
                 if (!$bFound) {
                     if ($meta['content']) {
-                        $arrMeta[$meta['name']][substr(md5($meta['content']), 0, 8)] = $meta['content'];
+                        $arrMeta[$meta['name']][substr(md5((string) $meta['content']), 0, 8)] = $meta['content'];
                     }
                 }
             }
@@ -89,9 +86,8 @@ class WebsiteScraperPaper
             if (count($arrMeta) > 0) {
                 $this->unknownMeta = array_merge($arrMeta, $this->unknownMeta);
                 ksort($this->unknownMeta);
-
             }
-        } catch (\Exception $ex) {
+        } catch (\Exception) {
         }
 
         return $paper;

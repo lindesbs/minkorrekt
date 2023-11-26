@@ -25,5 +25,7 @@ class MinkorrektExtension extends Extension
 
         $yamlFileLoader->load('services.yaml');
         $yamlFileLoader->load('commands.yaml');
+
+        $yamlFileLoader->load('controller.yaml');
     }
 }

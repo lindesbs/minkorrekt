@@ -202,33 +202,21 @@ class PodcastEntry
         $this->content = $content;
     }
 
-    /**
-     * @return bool
-     */
     public function isEnclosure(): bool
     {
         return $this->enclosure;
     }
 
-    /**
-     * @param bool $enclosure
-     */
     public function setEnclosure(bool $enclosure): void
     {
         $this->enclosure = $enclosure;
     }
 
-    /**
-     * @return int
-     */
     public function getPubdate(): int
     {
         return $this->pubdate;
     }
 
-    /**
-     * @param int $pubdate
-     */
     public function setPubdate(int $pubdate): void
     {
         $this->pubdate = $pubdate;

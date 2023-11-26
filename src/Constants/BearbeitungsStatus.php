@@ -4,7 +4,7 @@ namespace lindesbs\minkorrekt\Constants;
 
 class BearbeitungsStatus
 {
-    const UNBEARBEITET = "UNBEARBEITET";
-    const IN_BEARBEITEUNG = "IN_BEARBEITEUNG";
-    const ABGENOMMEN = "ABGENOMMEN";
+    final const UNBEARBEITET = "UNBEARBEITET";
+    final const IN_BEARBEITEUNG = "IN_BEARBEITEUNG";
+    final const ABGENOMMEN = "ABGENOMMEN";
 }
