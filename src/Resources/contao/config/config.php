@@ -34,7 +34,7 @@ $GLOBALS['TL_CTE']['minkorrekt']['minkorrekt_statistics'] = StatisticsContentEle
 
 
 $GLOBALS['TL_MODELS']['tl_minkorrekt_folgen'] = \lindesbs\minkorrekt\Models\MinkorrektFolgenModel::class;
-$GLOBALS['TL_MODELS']['tl_minkorrekt_folgen_inhalt'] = \lindesbs\minkorrekt\Models\LoginIMAPModel::class;
+$GLOBALS['TL_MODELS']['tl_minkorrekt_folgen_inhalt'] = \lindesbs\minkorrekt\Models\MinkorrektFolgenInhaltModel::class;
 $GLOBALS['TL_MODELS']['tl_minkorrekt_paper_creator'] = \lindesbs\minkorrekt\Models\MinkorrektPaperCreatorModel::class;
 $GLOBALS['TL_MODELS']['tl_minkorrekt_paper'] = \lindesbs\minkorrekt\Models\MinkorrektPaperModel::class;
 $GLOBALS['TL_MODELS']['tl_minkorrekt_paper_tags'] = \lindesbs\minkorrekt\Models\MinkorrektPaperTagsModel::class;

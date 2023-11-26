@@ -16,9 +16,7 @@ use DOMXPath;
 use lindesbs\minkorrekt\Classes\PodcastEntry;
 use lindesbs\minkorrekt\Constants\BearbeitungsStatus;
 use lindesbs\minkorrekt\Constants\ThemenArt;
-use lindesbs\minkorrekt\Models\LoginIMAPModel;
 use lindesbs\minkorrekt\Models\MinkorrektFolgenModel;
-use lindesbs\minkorrekt\Models\MinkorrektThemenModel;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
@@ -185,13 +183,13 @@ class ImportRSSCommand extends Command
         int|string   $key,
         mixed        $feedLine,
         PodcastEntry $entry
-    ): LoginIMAPModel {
+    ): MinkorrektFolgenModel {
         $contentAlias = sprintf("%s_%s", $entry->getEpisode(), $key);
 
-        $objContent = LoginIMAPModel::findByIdOrAlias($contentAlias);
+        $objContent = MinkorrektFolgenModel::findByIdOrAlias($contentAlias);
 
         if (!$objContent) {
-            $objContent = new LoginIMAPModel();
+            $objContent = new MinkorrektFolgenModel();
         }
 
         $objContent->alias = $contentAlias;
@@ -246,9 +244,9 @@ class ImportRSSCommand extends Command
      * @param array $matches
      * @return array
      */
-    public function setThemenArt(string $strText, $themenArt, LoginIMAPModel $objContent): void
+    public function setThemenArt(string $strText, $themenArt, MinkorrektFolgenModel $objContent): void
     {
-        $suchstring = trim(strip_tags($objContent->text));
+        $suchstring = trim(strip_tags((string) $objContent->text));
 
         $pattern= '/'.$strText.'/';
 

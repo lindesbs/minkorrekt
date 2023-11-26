@@ -34,7 +34,7 @@ class StatisticsContentElement extends ContentElement
             return $backendTemplate->parse();
         }
 
-        $objStats = \System::getContainer()->get('lindesbs.minkorrekt.generatestatistics');
+        $objStats = \Contao\System::getContainer()->get('lindesbs.minkorrekt.generatestatistics');
 
         /**
  * @var GenerateStatistics $stats

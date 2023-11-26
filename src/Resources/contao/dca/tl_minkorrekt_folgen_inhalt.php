@@ -66,19 +66,11 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen_inhalt'] = [
         'id' => [
             'sql' => "int(10) unsigned NOT NULL auto_increment"
         ],
-        'pid' => array
-        (
-            'foreignKey' => 'tl_news_archive.title',
-            'sql' => "int(10) unsigned NOT NULL default 0",
-            'relation' => array('type' => 'belongsTo', 'load' => 'lazy')
-        ),
+        'pid' => ['foreignKey' => 'tl_news_archive.title', 'sql' => "int(10) unsigned NOT NULL default 0", 'relation' => ['type' => 'belongsTo', 'load' => 'lazy']],
         'sorting' => [
             'sql'                     => "int(10) unsigned NOT NULL default 0"
         ],
-        'tstamp' => array
-        (
-            'sql' => "int(10) unsigned NOT NULL default 1"
-        ),
+        'tstamp' => ['sql' => "int(10) unsigned NOT NULL default 1"],
         'alias' => [
             'exclude' => true,
             'inputType' => 'text',
@@ -93,20 +85,9 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen_inhalt'] = [
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'published' => ['toggle' => true, 'filter' => true, 'inputType' => 'checkbox', 'eval' => ['doNotCopy' => true], 'sql' => ['type' => 'boolean', 'default' => false]],
-        'text' => array
-        (
-            'search' => true,
-            'inputType' => 'textarea',
-            'eval' => array('mandatory' => true, 'basicEntities' => true, 'rte' => 'tinyMCE', 'helpwizard' => true, 'tl_class' => 'clr'),
-            'explanation' => 'insertTags',
-            'sql' => "mediumtext NULL"
-        ),
+        'text' => ['search' => true, 'inputType' => 'textarea', 'eval' => ['mandatory' => true, 'basicEntities' => true, 'rte' => 'tinyMCE', 'helpwizard' => true, 'tl_class' => 'clr'], 'explanation' => 'insertTags', 'sql' => "mediumtext NULL"],
 
-        'thema_nr' => array
-        (
-            'inputType' => 'text',
-            'sql' => "int(10) unsigned NOT NULL default 1"
-        ),
+        'thema_nr' => ['inputType' => 'text', 'sql' => "int(10) unsigned NOT NULL default 1"],
         'thema_art' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['minkorrekt_thema_art'],
             'exclude' => true,
