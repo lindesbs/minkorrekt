@@ -7,8 +7,10 @@ declare(strict_types=1);
  *  from lindesbs
  */
 
+use Contao\System;
 use lindesbs\minkorrekt\ContentElement\ContentMinkorrektNewsElement;
 use lindesbs\minkorrekt\ContentElement\StatisticsContentElement;
+use Symfony\Component\HttpFoundation\Request;
 
 $GLOBALS['BE_MOD']['minkorrekt'] = [
     'folgen' => [
@@ -28,11 +30,6 @@ $GLOBALS['BE_MOD']['minkorrekt'] = [
     ],
 ];
 
-
-$GLOBALS['TL_CTE']['minkorrekt']['minkorrekt_thema'] = ContentMinkorrektNewsElement::class;
-$GLOBALS['TL_CTE']['minkorrekt']['minkorrekt_statistics'] = StatisticsContentElement::class;
-
-
 $GLOBALS['TL_MODELS']['tl_minkorrekt_folgen'] = \lindesbs\minkorrekt\Models\MinkorrektFolgenModel::class;
 $GLOBALS['TL_MODELS']['tl_minkorrekt_folgen_inhalt'] = \lindesbs\minkorrekt\Models\MinkorrektFolgenInhaltModel::class;
 $GLOBALS['TL_MODELS']['tl_minkorrekt_paper_creator'] = \lindesbs\minkorrekt\Models\MinkorrektPaperCreatorModel::class;
@@ -40,3 +37,5 @@ $GLOBALS['TL_MODELS']['tl_minkorrekt_paper'] = \lindesbs\minkorrekt\Models\Minko
 $GLOBALS['TL_MODELS']['tl_minkorrekt_paper_tags'] = \lindesbs\minkorrekt\Models\MinkorrektPaperTagsModel::class;
 $GLOBALS['TL_MODELS']['tl_minkorrekt_publisher'] = \lindesbs\minkorrekt\Models\MinkorrektPublisherModel::class;
 $GLOBALS['TL_MODELS']['tl_minkorrekt_themen'] = \lindesbs\minkorrekt\Models\MinkorrektThemenModel::class;
+
+

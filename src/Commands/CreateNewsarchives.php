@@ -30,6 +30,7 @@ class CreateNewsarchives extends Command
     public function __construct(
         private readonly WebsiteScraperPaper $paperScraper,
         private readonly WebsiteScraperPublisher $publisherScraper,
+        private readonly ContaoFramework $contaoFramework
     ) {
         parent::__construct();
     }
@@ -39,6 +40,7 @@ class CreateNewsarchives extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int|null
     {
+        $this->contaoFramework->initialize();
         $io = new SymfonyStyle($input, $output);
         $arrPublisher=[];
         $objThemen = MinkorrektThemenModel::findAll();

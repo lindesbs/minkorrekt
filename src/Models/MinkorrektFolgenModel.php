@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace lindesbs\minkorrekt\Models;
 
+use Contao\Date;
 use Contao\Model;
 
 class MinkorrektFolgenModel extends Model
@@ -20,6 +21,19 @@ class MinkorrektFolgenModel extends Model
      */
     protected static $strTable = 'tl_minkorrekt_folgen';
 
+
+    public static function findByPublished(array $arrOptions=[])
+    {
+        $t = static::$strTable;
+        $arrColumns = array("$t.published=?");
+
+        if (!isset($arrOptions['order']))
+        {
+            $arrOptions['order'] = "$t.pubdate";
+        }
+
+        return static::findBy($arrColumns, [true], $arrOptions);
+    }
 
     public function getWip(): ?string
     {

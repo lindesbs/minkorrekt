@@ -31,11 +31,11 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen_inhalt'] = [
             'mode' => DataContainer::MODE_PARENT,
             'fields' => ['sorting'],
             'headerFields' => ['title','published','wip'],
-            'panelLayout' => 'filter;sort,search,limit',
+            'panelLayout' => 'filter;search',
         ],
         'label' => [
-            'fields' => ['thema_art','text'],
-            'format' => '%s <code>%s</code>',
+            'fields' => ['thema_art','thema_art','text'],
+            'format' => '%s<div class="be_minkorrekt_list_%s">%s</div>',
         ],
         'global_operations' => [
             'all' => [
@@ -57,7 +57,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen_inhalt'] = [
 
     'palettes' => [
         '__selector__' => [],
-        'default' => '{title_legend},thema_art,thema_nr,text;published',
+        'default' => '{title_legend},thema_art,thema_nr,text;published,isIGNobel',
     ],
     'subpalettes' => [],
 
@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen_inhalt'] = [
         'published' => ['toggle' => true, 'filter' => true, 'inputType' => 'checkbox', 'eval' => ['doNotCopy' => true], 'sql' => ['type' => 'boolean', 'default' => false]],
         'text' => ['search' => true, 'inputType' => 'textarea', 'eval' => ['mandatory' => true, 'basicEntities' => true, 'rte' => 'tinyMCE', 'helpwizard' => true, 'tl_class' => 'clr'], 'explanation' => 'insertTags', 'sql' => "mediumtext NULL"],
 
-        'thema_nr' => ['inputType' => 'text', 'sql' => "int(10) unsigned NOT NULL default 1"],
+        'thema_nr' => ['inputType' => 'text', 'eval' => ['tl_class' => 'w50'],'sql' => "int(10) unsigned NOT NULL default 1"],
         'thema_art' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['minkorrekt_thema_art'],
             'exclude' => true,
@@ -110,6 +110,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen_inhalt'] = [
             'eval' => ['tl_class' => 'w50 wizard'],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
+        'isIGNobel' => ['toggle' => true, 'filter' => true, 'inputType' => 'checkbox', 'eval' => ['doNotCopy' => true], 'sql' => ['type' => 'boolean', 'default' => false]],
         'link' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['minkorrekt_link'],
             'exclude' => true,

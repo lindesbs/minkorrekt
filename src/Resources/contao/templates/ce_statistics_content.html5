@@ -1,4 +1,3 @@
-
 <?php
 
 $gesamt = $this->letzteFolge-$this->ersteFolge;

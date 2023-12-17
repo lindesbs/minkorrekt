@@ -17,6 +17,7 @@ use lindesbs\minkorrekt\Classes\PodcastEntry;
 use lindesbs\minkorrekt\Constants\BearbeitungsStatus;
 use lindesbs\minkorrekt\Constants\ThemenArt;
 use lindesbs\minkorrekt\Models\MinkorrektFolgenModel;
+use lindesbs\minkorrekt\Models\MinkorrektFolgenInhaltModel;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Command\Command;
@@ -164,7 +165,6 @@ class ImportRSSCommand extends Command
             $objFolge = new MinkorrektFolgenModel();
             $objFolge->alias = $alias;
             $objFolge->save();
-            $objFolge = MinkorrektFolgenModel::findByIdOrAlias($alias);
         }
 
         $objFolge->title = $entry->getTitle();
@@ -183,13 +183,13 @@ class ImportRSSCommand extends Command
         int|string   $key,
         mixed        $feedLine,
         PodcastEntry $entry
-    ): MinkorrektFolgenModel {
+    ): MinkorrektFolgenInhaltModel {
         $contentAlias = sprintf("%s_%s", $entry->getEpisode(), $key);
 
-        $objContent = MinkorrektFolgenModel::findByIdOrAlias($contentAlias);
+        $objContent = MinkorrektFolgenInhaltModel::findByIdOrAlias($contentAlias);
 
         if (!$objContent) {
-            $objContent = new MinkorrektFolgenModel();
+            $objContent = new MinkorrektFolgenInhaltModel();
         }
 
         $objContent->alias = $contentAlias;
@@ -244,7 +244,7 @@ class ImportRSSCommand extends Command
      * @param array $matches
      * @return array
      */
-    public function setThemenArt(string $strText, $themenArt, MinkorrektFolgenModel $objContent): void
+    public function setThemenArt(string $strText, $themenArt, MinkorrektFolgenInhaltModel $objContent): void
     {
         $suchstring = trim(strip_tags((string) $objContent->text));
 

@@ -1,0 +1,7 @@
+<div class="minkorrekt_lister">
+    <<?= $this->headline['unit']; ?>>
+        <?= $this->headline['value']; ?>
+    </<?= $this->headline['unit']; ?>>
+
+    <?= $this->content; ?>
+</div>
