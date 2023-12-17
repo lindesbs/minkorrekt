@@ -16,9 +16,6 @@ $GLOBALS['BE_MOD']['minkorrekt'] = [
     'folgen' => [
         'tables' => ['tl_minkorrekt_folgen','tl_minkorrekt_folgen_inhalt']
     ],
-    'themen' => [
-        'tables' => ['tl_minkorrekt_themen']
-    ],
     'publisher' => [
         'tables' => ['tl_minkorrekt_publisher', 'tl_minkorrekt_paper'],
     ],

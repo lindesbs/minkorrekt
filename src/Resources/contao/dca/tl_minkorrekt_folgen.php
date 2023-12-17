@@ -17,7 +17,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
         'dataContainer' => DC_Table::class,
         'enableVersioning' => true,
         'ctable' => ['tl_minkorrekt_folgen_inhalt'],
-        'switchToEdit'                => true,
+        'switchToEdit' => true,
         'markAsCopy' => 'title',
         'onsubmit_callback' => [],
 
@@ -35,7 +35,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
             'panelLayout' => 'filter;search,limit,sort',
         ],
         'label' => [
-            'fields' => ['wip','episode', 'title'],
+            'fields' => ['wip', 'episode', 'title'],
             'format' => '%s :: %s :: %s',
         ],
         'global_operations' => [
@@ -53,7 +53,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
     ],
     // Palettes
     'palettes' => [
-        'default' => '{title_legend},title,published,episode,wip',
+        'default' => '{title_legend},title,published,episode,wip,isIGNobel',
     ],
     'fields' => [
         'id' => ['label' => ['ID'], 'sql' => 'int(10) unsigned NOT NULL auto_increment'],
@@ -119,10 +119,10 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
                 BearbeitungsStatus::ABGENOMMEN,
 
             ],
-            'eval' => ['tl_class'=>'w50'],
+            'eval' => ['tl_class' => 'w50'],
             'sql' => sprintf("varchar(16) NOT NULL default '%s'", BearbeitungsStatus::UNBEARBEITET)
-        ]
-
+        ],
+        'isIGNobel' => ['toggle' => true, 'filter' => true, 'inputType' => 'checkbox', 'eval' => ['doNotCopy' => true], 'sql' => ['type' => 'boolean', 'default' => false]],
 
 
     ],

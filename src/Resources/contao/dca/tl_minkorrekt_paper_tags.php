@@ -87,10 +87,10 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper_tags'] = [
             'inputType' => 'text',
             'search' => true,
             'eval' => [
+                'alias' => 'name',
                 'rgxp' => 'alias',
                 'doNotCopy' => true,
                 'maxlength' => 255,
-                'tl_class' => 'w50',
                 'readonly' => true,
             ],
             'sql' => "varchar(255) NOT NULL default ''",

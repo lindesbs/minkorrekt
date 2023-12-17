@@ -57,7 +57,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen_inhalt'] = [
 
     'palettes' => [
         '__selector__' => [],
-        'default' => '{title_legend},thema_art,thema_nr,text;published,isIGNobel',
+        'default' => '{title_legend},thema_art,thema_nr,text;published',
     ],
     'subpalettes' => [],
 
@@ -110,7 +110,6 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen_inhalt'] = [
             'eval' => ['tl_class' => 'w50 wizard'],
             'sql' => "varchar(32) NOT NULL default ''",
         ],
-        'isIGNobel' => ['toggle' => true, 'filter' => true, 'inputType' => 'checkbox', 'eval' => ['doNotCopy' => true], 'sql' => ['type' => 'boolean', 'default' => false]],
         'link' => [
             'label' => &$GLOBALS['TL_LANG']['tl_content']['minkorrekt_link'],
             'exclude' => true,
