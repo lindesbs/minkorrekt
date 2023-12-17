@@ -12,6 +12,8 @@ use Contao\System;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use lindesbs\minkorrekt\Classes\PodcastEntry;
+use lindesbs\minkorrekt\Constants\ThemenArt;
+use lindesbs\minkorrekt\Models\MinkorrektFolgenInhaltModel;
 use lindesbs\minkorrekt\Models\MinkorrektFolgenModel;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
@@ -19,12 +21,13 @@ use lindesbs\minkorrekt\Models\MinkorrektThemenModel;
 use lindesbs\minkorrekt\Service\WebsiteScraperPaper;
 use lindesbs\minkorrekt\Service\WebsiteScraperPublisher;
 use Nette\Utils\Json;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[\Symfony\Component\Console\Attribute\AsCommand('minkorrekt:newsarchives', 'Fetch websites and crawl them')]
+#[AsCommand('minkorrekt:newsarchives', 'Fetch websites and crawl them')]
 class CreateNewsarchives extends Command
 {
     public function __construct(
@@ -43,13 +46,14 @@ class CreateNewsarchives extends Command
         $this->contaoFramework->initialize();
         $io = new SymfonyStyle($input, $output);
         $arrPublisher=[];
-        $objThemen = MinkorrektThemenModel::findAll();
+        $objThemen = MinkorrektFolgenInhaltModel::findBy('thema_art',ThemenArt::THEMA);
 
         if ($objThemen) {
             $prog = $io->createProgressBar($objThemen->count());
             $prog->start();
             foreach ($objThemen as $thema) {
-                if (!($thema->abgenommen) || (!isset($thema->link))) {
+
+                if ($thema->published) {
                     continue;
                 }
 
@@ -63,21 +67,22 @@ class CreateNewsarchives extends Command
                 $objPaper->url = $thema->link;
 
                 $paper = $this->paperScraper->scrape($objPaper);
-                $objPaper->save();
 
-                if ($paper->url) {
-                    $theUrl = parse_url((string) $paper->url);
-                    if (array_key_exists('host', $theUrl)) {
-                        $publisher = $this->getPublisher(StringUtil::generateAlias($theUrl['host']));
+                if ($paper) {
+                    $objPaper->save();
 
-                        $publisher->url = $theUrl['host'];
+                    if ($paper->url) {
+                        $theUrl = parse_url((string)$paper->url);
+                        if (array_key_exists('host', $theUrl)) {
+                            $publisher = $this->getPublisher(StringUtil::generateAlias($theUrl['host']));
+                            $publisher->url = $theUrl['host'];
 
-                        $this->publisherScraper->scrape($publisher);
+                            $this->publisherScraper->scrape($publisher);
 
-                        $publisher->save();
+                            $publisher->save();
+                        }
                     }
                 }
-
 
                 $prog->advance();
             }
@@ -87,6 +92,8 @@ class CreateNewsarchives extends Command
 
         file_put_contents("missingMeta-paper.json", Json::encode($this->paperScraper->getUnknownMeta()));
         file_put_contents("missingMeta-publisher.json", Json::encode($this->publisherScraper->getUnknownMeta()));
+
+        $io->newLine();
         return Command::SUCCESS;
     }
 

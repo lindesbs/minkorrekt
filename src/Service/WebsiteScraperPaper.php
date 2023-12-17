@@ -7,6 +7,7 @@ namespace lindesbs\minkorrekt\Service;
 use Contao\StringUtil;
 use lindesbs\minkorrekt\Factory\WebscraperPaperDecoderFactory;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\HttpClient\HttpClient;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpClient\HttpClient;
 class WebsiteScraperPaper
 {
     public function __construct(
+        private readonly LoggerInterface $logger,
         private readonly WebscraperPaperDecoderFactory $webscraperItemdecoderFactory,
         private array                                  $unknownMeta = []
     ) {
@@ -25,7 +27,7 @@ class WebsiteScraperPaper
     }
 
 
-    public function scrape(MinkorrektPaperModel $paper): MinkorrektPaperModel
+    public function scrape(MinkorrektPaperModel $paper): ?MinkorrektPaperModel
     {
         try {
             $cacheClient = new FilesystemAdapter(
@@ -39,19 +41,25 @@ class WebsiteScraperPaper
             $cacheItem = $cacheClient->getItem($cacheKey);
 
             if (!$cacheItem->isHit()) {
-                $browser = new HttpBrowser(HttpClient::create());
-                $crawler = $browser->request("GET", $paper->url, [
-                    'timeout' => 45
-                ]);
+                try {
+                    $browser = new HttpBrowser(HttpClient::create());
+                    $crawler = $browser->request("GET", $paper->url, [
+                        'timeout' => 45
+                    ]);
 
 
-                $metaTags = $crawler->filter('head meta')->each(
-                    static fn($node) => [
-                        'name' => $node->attr('name'),
-                        'content' => $node->attr('content'),
-                    ]
-                );
-
+                    $metaTags = $crawler->filter('head meta')->each(
+                        static fn($node) => [
+                            'name' => $node->attr('name'),
+                            'content' => $node->attr('content'),
+                        ]
+                    );
+                }
+                catch (\Exception $ex)
+                {
+                    $this->logger->warning(sprintf("%s %s", $ex->getMessage(), $paper->url));
+                    return null;
+                }
                 $cacheItem->set($metaTags);
 
                 $cacheClient->save($cacheItem);

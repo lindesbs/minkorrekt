@@ -33,14 +33,12 @@ class ContentMinkorrektFolgenListe extends AbstractContentElementController
 
         $strContent = '';
 
-        if ($model->perPage > 0)
-        {
+        if ($model->perPage > 0) {
             $id = 'page_e' . $model->id;
             $page = (int) (Input::get($id) ?? 1);
 
             // Do not index or cache the page if the page number is outside the range
-            if ($page < 1 || $page > max(ceil($total/$model->perPage), 1))
-            {
+            if ($page < 1 || $page > max(ceil($total/$model->perPage), 1)) {
                 throw new PageNotFoundException('Page not found: ' . Environment::get('uri'));
             }
 
@@ -52,11 +50,11 @@ class ContentMinkorrektFolgenListe extends AbstractContentElementController
         }
 
         $i=0;
-        foreach ($arrItems as $item)
-        {
+        foreach ($arrItems as $item) {
             $i++;
-            if (($i <= $offset) || ($i>$limit))
+            if (($i <= $offset) || ($i>$limit)) {
                 continue;
+            }
 
             $objFrontent = new FrontendTemplate($model->minkorrekt_lister_item);
             $objFrontent->setData($item->row());

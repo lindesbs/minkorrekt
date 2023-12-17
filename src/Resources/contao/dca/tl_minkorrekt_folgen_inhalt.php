@@ -57,7 +57,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen_inhalt'] = [
 
     'palettes' => [
         '__selector__' => [],
-        'default' => '{title_legend},thema_art,thema_nr,text;published',
+        'default' => '{title_legend},thema_art,thema_nr,text;published;link',
     ],
     'subpalettes' => [],
 

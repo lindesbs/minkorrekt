@@ -22,13 +22,12 @@ class MinkorrektFolgenModel extends Model
     protected static $strTable = 'tl_minkorrekt_folgen';
 
 
-    public static function findByPublished(array $arrOptions=[])
+    public static function findByPublished(array $arrOptions = [])
     {
         $t = static::$strTable;
         $arrColumns = array("$t.published=?");
 
-        if (!isset($arrOptions['order']))
-        {
+        if (!isset($arrOptions['order'])) {
             $arrOptions['order'] = "$t.pubdate";
         }
 

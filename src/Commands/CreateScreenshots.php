@@ -17,6 +17,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Process;
 use function count;
 
@@ -28,6 +29,7 @@ class CreateScreenshots extends Command
 
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
+        private readonly KernelInterface $projectDir,
         private readonly Connection      $connection,
     ) {
         parent::__construct();
@@ -163,7 +165,7 @@ class CreateScreenshots extends Command
         );
 
 
-        if (!file_exists(TL_ROOT.'/'.$filename)) {
+        if (!file_exists($this->projectDir->getProjectDir().'/'.$filename)) {
             $cmd = str_replace(
                 ['##outputname##', '##url##'],
                 [$filename, $paper['url']],

@@ -20,13 +20,14 @@ use lindesbs\minkorrekt\Models\MinkorrektFolgenModel;
 use lindesbs\minkorrekt\Models\MinkorrektFolgenInhaltModel;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\Cache\ItemInterface;
 use function count;
-#[\Symfony\Component\Console\Attribute\AsCommand('minkorrekt:importrss', 'Import RSS as Newslist')]
+#[AsCommand('minkorrekt:importrss', 'Import RSS as Newslist')]
 class ImportRSSCommand extends Command
 {
     protected static $defaultDescription = 'Aus dem Minkorrekt RSS Feed an notwendigen Infos herausziehen';
@@ -206,17 +207,18 @@ class ImportRSSCommand extends Command
             $objContent->thema_art = ThemenArt::THEMA;
             $number = $matches[1];
             $objContent->thema_nr = $number;
+        }
 
-            $pattern = '@((https?://)?([-\\w]+\\.[-\\w\\.]+)+\\w(:\\d+)?(/([-\\w/_\\.]*(\\?\\S+)?)?)*)@';
+        //$pattern = '@((https?://)?([-\\w]+\\.[-\\w\\.]+)+\\w(:\\d+)?(/([-\\w/_\\.]*(\\?\\S+)?)?)*)@';
+        $pattern = '/\bhref=["\'](https?:\/\/[^\s"\'<>]+)["\']/i';
 
-            $url = 'unknown';
-            if (preg_match(
-                $pattern, $objContent->text, $result
-            )
-            ) {
-                $url = array_shift($result);
-                $objContent->link = $url;
-            }
+        $url = 'unknown';
+        if (preg_match(
+            $pattern, $objContent->text, $result
+        )
+        ) {
+            $url = array_pop($result);
+            $objContent->link = $url;
         }
 
         $suchstring = trim(strip_tags($objContent->text));
