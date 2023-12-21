@@ -69,8 +69,6 @@ class CreateNewsarchives extends Command
                 $paper = $this->paperScraper->scrape($objPaper);
 
                 if ($paper) {
-                    $objPaper->save();
-
                     if ($paper->url) {
                         $theUrl = parse_url((string)$paper->url);
                         if (array_key_exists('host', $theUrl)) {
@@ -79,9 +77,14 @@ class CreateNewsarchives extends Command
 
                             $this->publisherScraper->scrape($publisher);
 
+                            $objPaper->thePublisher = $publisher->id;
+
+                            $objPaper->sorting = intval(str_replace("_","",$thema->alias));
                             $publisher->save();
                         }
                     }
+
+                    $objPaper->save();
                 }
 
                 $prog->advance();

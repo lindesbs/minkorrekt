@@ -10,6 +10,7 @@ declare(strict_types=1);
 use Contao\DataContainer;
 use Contao\DC_Table;
 use lindesbs\minkorrekt\Constants\BearbeitungsStatus;
+use lindesbs\minkorrekt\Constants\FolgenTyp;
 
 $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
     // Config
@@ -53,7 +54,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
     ],
     // Palettes
     'palettes' => [
-        'default' => '{title_legend},title,published,episode,wip,isIGNobel',
+        'default' => '{title_legend},title,folgenTyp;published,episode,wip',
     ],
     'fields' => [
         'id' => ['label' => ['ID'], 'sql' => 'int(10) unsigned NOT NULL auto_increment'],
@@ -122,7 +123,16 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
             'eval' => ['tl_class' => 'w50'],
             'sql' => sprintf("varchar(16) NOT NULL default '%s'", BearbeitungsStatus::UNBEARBEITET)
         ],
-        'isIGNobel' => ['toggle' => true, 'filter' => true, 'inputType' => 'checkbox', 'eval' => ['doNotCopy' => true], 'sql' => ['type' => 'boolean', 'default' => false]],
+        'folgenTyp' => [
+            'filter' => true, 'inputType' => 'radio',
+            'options' => [
+                FolgenTyp::NORMAL,
+                FolgenTyp::NOBEL,
+                FolgenTyp::IGNOBEL,
+
+            ],
+            'eval' => ['doNotCopy' => true],
+            'sql' => ['type' => 'string', 'length' => 32, 'default' => FolgenTyp::NORMAL]],
 
 
     ],

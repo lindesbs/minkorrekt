@@ -1,5 +1,37 @@
-<div class="item">
-    <?= $this->title; ?>
+<div class="shadow p-3 mb-5 bg-white rounded flex position-relative item">
+    <div class="row">
+        <div class="col-sm">
 
-    <?= $this->pubdate; ?>
+            <?= $this->title; ?>
+        </div>
+        <div class="col-sm">
+            <p class="right">
+            Veroeffentlicht am <?= date("d.m.Y",$this->pubdate); ?>
+            </p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <?= $this->duration; ?> Sek.
+                <?php if ($this->gesamtLaengeDateDiff): ?>
+                ::
+                <?= $this->gesamtLaengeDateDiff->h ?> Stunden
+                <?= $this->gesamtLaengeDateDiff->i ?> Minuten
+                <?= $this->gesamtLaengeDateDiff->s ?> Sekunden
+                <?php endif; ?>
+            </div>
+            <div class="col-sm">
+                <p class="text-right">
+
+                    <?= $this->folgenTyp; ?>
+                </p>
+            </div>
+            <div class="col-sm">
+                <p class="text-right">
+                    <a href="<?= $this->link; ?>" class="btn btn-primary stretched-link">Details</a>
+                </p>
+            </div>
+        </div>
+    </div>
 </div>

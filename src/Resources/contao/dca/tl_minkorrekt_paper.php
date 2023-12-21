@@ -30,7 +30,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
                 'id' => 'primary',
                 'alias' => 'index',
                 'published' => 'index',
-                'pid' => 'index',
+                'thePublisher' => 'index',
             ],
         ],
     ],
@@ -81,7 +81,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
     ],
     // Palettes
     'palettes' => [
-        'default' => '{title_legend},pid,title,citation_title,alias,url;copyright,rights,rightsAgent;' .
+        'default' => '{title_legend},title,citation_title,alias,url;copyright,rights,rightsAgent;' .
             'description,thePublisher,published,status;license,onlineAt,receivedAt,size,' .
             'acceptedAt,publishedAt,doi,doiurl,citation_springer_api_url,subjects,screenshotSRC,screenshotFullpageSRC;tlContentId,' .
             'tlNewsId;price;paperType,language,twitter;citation_firstpage,citation_lastpage,citation_article_type,' .
@@ -89,11 +89,6 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
     ],
     'fields' => [
         'id' => ['label' => ['ID'], 'sql' => 'int(10) unsigned NOT NULL auto_increment'],
-
-        'pid' => [
-            'foreignKey' => 'tl_minkorrekt_publisher.title',
-            'sql' => 'int(10) unsigned NOT NULL default 0',
-        ],
         'sorting' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
         'tstamp' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
         'title' => [

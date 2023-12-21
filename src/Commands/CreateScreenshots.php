@@ -29,8 +29,7 @@ class CreateScreenshots extends Command
 
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
-        private readonly KernelInterface $projectDir,
-        private readonly Connection      $connection,
+        private readonly KernelInterface $projectDir
     ) {
         parent::__construct();
     }

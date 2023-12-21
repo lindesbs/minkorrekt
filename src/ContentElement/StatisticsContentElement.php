@@ -10,6 +10,7 @@ use Contao\System;
 use Contao\Template;
 use DateTime;
 use lindesbs\minkorrekt\Service\GenerateStatistics;
+use lindesbs\minkorrekt\Service\ZeitUmrechner;
 
 class StatisticsContentElement extends ContentElement
 {
@@ -17,6 +18,13 @@ class StatisticsContentElement extends ContentElement
      * @var string Template
      */
     protected $strTemplate = 'ce_statistics_content';
+
+    public function __construct(
+        private readonly ZeitUmrechner $zeitUmrechner
+    )
+    {
+    }
+
 
     protected function compile()
     {
@@ -46,10 +54,7 @@ class StatisticsContentElement extends ContentElement
         $this->Template->letzteFolge = $objStats->getLetzteFolge();
 
 
-        $dtNow = new DateTime('@0');
-        $dtLaenge = new DateTime('@' . $objStats->getGesamtLaenge());
-        $dtDuration = $dtLaenge->diff($dtNow);
-        $this->Template->gesamtLaengeDateDiff = $dtDuration;
+        $this->Template->gesamtLaengeDateDiff = $this->zeitUmrechner->convert($objStats->getGesamtLaenge());
         $this->Template->gesamtLaenge = $objStats->getGesamtLaenge();
 
         $GLOBALS['TL_CSS']['minkorrekt'] = "bundles/minkorrekt/ribbons.css|1";
