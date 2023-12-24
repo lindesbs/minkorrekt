@@ -23,6 +23,3 @@ Insgesamt <?= sprintf("%.2f",$this->gesamtLaenge/(60*60)) ?> Stunden
 
 
 <?php endif; ?>
-
-
-<div class="ribbon ribbon-top-right"><span>kuratiert</span></div>

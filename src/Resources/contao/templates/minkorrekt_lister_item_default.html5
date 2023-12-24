@@ -1,13 +1,11 @@
-<div class="shadow p-3 mb-5 bg-white rounded flex position-relative item">
+<div class="shadow p-3 mb-5 bg-white rounded list-item">
+    <div class="ribbon-1 right">Rotated</div>
     <div class="row">
         <div class="col-sm">
-
             <?= $this->title; ?>
         </div>
         <div class="col-sm">
-            <p class="right">
-            Veroeffentlicht am <?= date("d.m.Y",$this->pubdate); ?>
-            </p>
+            <?= date("d.m.Y",$this->pubdate); ?>
         </div>
     </div>
     <div class="container">
@@ -15,21 +13,17 @@
             <div class="col-sm">
                 <?= $this->duration; ?> Sek.
                 <?php if ($this->gesamtLaengeDateDiff): ?>
-                ::
-                <?= $this->gesamtLaengeDateDiff->h ?> Stunden
-                <?= $this->gesamtLaengeDateDiff->i ?> Minuten
-                <?= $this->gesamtLaengeDateDiff->s ?> Sekunden
+                <br>
+                <small>
+                    <?= $this->gesamtLaengeDateDiff->h ?> Stunden
+                    <?= $this->gesamtLaengeDateDiff->i ?> Minuten
+                    <?= $this->gesamtLaengeDateDiff->s ?> Sekunden
+                </small>
                 <?php endif; ?>
             </div>
             <div class="col-sm">
                 <p class="text-right">
-
-                    <?= $this->folgenTyp; ?>
-                </p>
-            </div>
-            <div class="col-sm">
-                <p class="text-right">
-                    <a href="<?= $this->link; ?>" class="btn btn-primary stretched-link">Details</a>
+                    <a href="<?= $this->link; ?>" class="btn btn-primary">Details</a>
                 </p>
             </div>
         </div>

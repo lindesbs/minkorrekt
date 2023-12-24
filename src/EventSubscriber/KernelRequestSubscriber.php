@@ -27,7 +27,11 @@ class KernelRequestSubscriber implements EventSubscriberInterface
         $request = $e->getRequest();
 
         if ($this->scopeMatcher->isBackendRequest($request)) {
-            $GLOBALS['TL_CSS'][] = 'bundles/minkorrekt/be_list.css';
+            $GLOBALS['TL_CSS']['minkorrekt'] = 'bundles/minkorrekt/be_list.css';
+        }
+
+        if ($this->scopeMatcher->isFrontendRequest($request)) {
+            $GLOBALS['TL_CSS']['minkorrekt'] = 'bundles/minkorrekt/minkorrekt.css';
         }
     }
 }

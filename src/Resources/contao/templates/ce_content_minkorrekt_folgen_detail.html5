@@ -1,11 +1,21 @@
 <div class="minkorrekt_detail">
     <<?= $this->headline['unit']; ?>>
-    <?= $this->headline['value']; ?>
-</<?= $this->headline['unit']; ?>>
+        <?= $this->headline['value']; ?>
+    </<?= $this->headline['unit']; ?>>
 
+<div class="row">
+    <div class="col-sm-8">
+        <div id="list-content">
 
-<div id="list-content">
-    <?= $this->content; ?>
+        </div>
+    </div>
+    <div class="col-sm">
+        <?= $this->items[0]; ?>
+        <?= implode("<br>", $this->keys); ?>
+    </div>
+
 </div>
+
+
 
 </div>
