@@ -75,7 +75,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper_creator'] = [
             'filter' => true,
             'foreignKey' => 'tl_minkorrekt_paper.title',
             'sql'                     => "int(10) unsigned NOT NULL default 0",
-            'relation'                => array('type'=>'belongsTo', 'load'=>'lazy')
+            'relation'                => ['type'=>'belongsTo', 'load'=>'lazy']
         ],
         'name' => [
             'exclude' => true,

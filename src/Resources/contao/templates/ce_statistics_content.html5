@@ -1,0 +1,29 @@
+
+<?php
+
+$gesamt = $this->letzteFolge-$this->ersteFolge;
+?>
+
+
+<h2>Statistiken</h2>
+
+Seit dem <?= date("d.m.Y",$this->ersteFolge) ?> sind <?= $this->folgenAnzahl ?> Folgen live gegangen.<br>
+
+Letzte Folge war am <?= date("d.m.Y",$this->letzteFolge) ?><br>
+
+
+Seit: <?= floor($gesamt/(60*60*24)) ?> Tage online<br>
+
+<hr>
+<?php if ($this->gesamtLaengeDateDiff): ?>
+Hörgenuss für insgesamt <?= $this->gesamtLaengeDateDiff->days ?> Tage
+<?= $this->gesamtLaengeDateDiff->h ?> Stunden
+<?= $this->gesamtLaengeDateDiff->i ?> Minuten
+<br>
+Insgesamt <?= sprintf("%.2f",$this->gesamtLaenge/(60*60)) ?> Stunden
+
+
+<?php endif; ?>
+
+
+<div class="ribbon ribbon-top-right"><span>kuratiert</span></div>

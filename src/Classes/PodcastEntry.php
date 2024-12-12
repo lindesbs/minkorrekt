@@ -31,25 +31,28 @@ class PodcastEntry
 
     private string $author;
 
-    private int $duration;
+    private int $duration=0;
 
     private string $description;
 
-    private \DateTime $dateTime;
+    private bool $enclosure=false;
+
+    private int $pubdate;
 
     public function __construct(\DOMNode $domNode)
     {
         $values = [];
-        /** @var \DOMNodeList $nodelist */
+        /**
+ * @var \DOMNodeList $nodelist
+*/
         $nodelist = $domNode->childNodes;
 
         foreach ($nodelist as $node) {
-            if ('' !== trim($node->nodeValue)) {
                 $values[$node->nodeName] = $node->nodeValue;
-            }
         }
 
         $dateTime = new \DateTime($values['pubDate']);
+        $this->setPubDate($dateTime->getTimestamp());
 
         $this->setTitle($values['title']);
         $this->setDescription($values['description']);
@@ -71,13 +74,13 @@ class PodcastEntry
             $this->setDuration((int)$values['itunes:duration']);
         }
 
-        $this->setPubDate($dateTime);
+        if (\array_key_exists('enclosure', $values)) {
+            $this->setEnclosure(true);
+        }
+
     }
 
-    public function setPubDate(\DateTime $pubDate): void
-    {
-        $this->dateTime = $pubDate;
-    }
+
 
     public function getTitle(): string
     {
@@ -97,11 +100,6 @@ class PodcastEntry
     public function setDescription(string $description): void
     {
         $this->description = $description;
-    }
-
-    public function getPubDate(): \DateTime
-    {
-        return $this->dateTime;
     }
 
     public function getSubtitle(): string
@@ -203,4 +201,38 @@ class PodcastEntry
     {
         $this->content = $content;
     }
+
+    /**
+     * @return bool
+     */
+    public function isEnclosure(): bool
+    {
+        return $this->enclosure;
+    }
+
+    /**
+     * @param bool $enclosure
+     */
+    public function setEnclosure(bool $enclosure): void
+    {
+        $this->enclosure = $enclosure;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPubdate(): int
+    {
+        return $this->pubdate;
+    }
+
+    /**
+     * @param int $pubdate
+     */
+    public function setPubdate(int $pubdate): void
+    {
+        $this->pubdate = $pubdate;
+    }
+
+
 }

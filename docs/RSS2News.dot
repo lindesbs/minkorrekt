@@ -1,0 +1,37 @@
+digraph G {
+    fontname = "Helvetica,Arial,sans-serif"
+
+
+    subgraph system {
+
+
+    Aggregator [
+    label = "tl_news\nType: minkorrekt_thema\nExtrahiert aus Thema die URL",
+    fillcolor = "#d9e7ee",
+    shape = box
+    ]
+
+
+    tl_news_paper [
+    label = "tl_news\nPaper",
+    fillcolor = "#d9e7ee",
+    shape = ellipse
+    ]
+
+    tl_news_publisher [
+    label = "tl_news\nPublisher",
+    fillcolor = "#d9e7ee",
+    shape = ellipse
+    ]
+
+    RSS -> Aggregator
+    Aggregator -> tl_minkorrekt_paper
+    Aggregator -> tl_minkorrekt_publisher
+
+
+    tl_minkorrekt_paper -> tl_news_paper
+    tl_minkorrekt_publisher -> tl_news_publisher
+
+    }
+
+}

@@ -10,40 +10,41 @@ declare(strict_types=1);
 use Contao\DataContainer;
 use Contao\DC_Table;
 
-$GLOBALS['TL_DCA']['tl_minkorrekt_paper_tags'] = [
+$GLOBALS['TL_DCA']['tl_minkorrekt_folgen'] = [
     // Config
     'config' => [
         'dataContainer' => DC_Table::class,
         'enableVersioning' => true,
-        'markAsCopy' => 'name',
-        'onload_callback' => [],
+        'markAsCopy' => 'title',
+        'onsubmit_callback' => [],
+
         'sql' => [
             'keys' => [
                 'id' => 'primary',
-                'alias' => 'index',
+                'alias' => 'index'
             ],
         ],
     ],
     // List
     'list' => [
         'sorting' => [
-            'mode' => DataContainer::MODE_UNSORTED,
-            'panelLayout' => 'filter;search',
+            'mode' => DataContainer::MODE_SORTABLE,
+            'panelLayout' => 'filter;search,limit,sort',
         ],
         'label' => [
-            'fields' => ['alias', 'name'],
-            'format' => '%s %s',
+            'fields' => ['episode', 'title'],
+            'format' => '%s :: %s',
         ],
         'global_operations' => [
             'all' => [
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
                 'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
-            ],
-            'rebuild' => ['href' => 'key=rebuild', 'icon' => 'su.svg'],
+            ]
         ],
         'operations' => [
             'edit' => ['href' => 'act=edit', 'icon' => 'edit.svg'],
+
             'copy' => [
                 'href' => 'act=paste&amp;mode=copy',
                 'icon' => 'copy.svg',
@@ -63,37 +64,74 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper_tags'] = [
         ],
     ],
     // Palettes
-    'palettes' => ['default' => '{title_legend},name,alias'],
+    'palettes' => [
+        'default' => '{title_legend},title,newsId,episode,content',
+    ],
     'fields' => [
         'id' => ['label' => ['ID'], 'sql' => 'int(10) unsigned NOT NULL auto_increment'],
+
         'sorting' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
         'tstamp' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
-        'pid' => [
-            'sorting' => true,
-            'filter' => true,
-            'foreignKey' => 'tl_minkorrekt_paper.title',
-            'sql'                     => "int(10) unsigned NOT NULL default 0",
-            'relation'                => ['type'=>'belongsTo', 'load'=>'lazy']
-        ],
-        'name' => [
+        'title' => [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
-            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255],
+            'sorting' => true,
+            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'col1 width4'],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'alias' => [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
+            'sorting' => true,
             'eval' => [
                 'rgxp' => 'alias',
                 'doNotCopy' => true,
                 'maxlength' => 255,
-                'tl_class' => 'w50',
                 'readonly' => true,
             ],
             'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'episode' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'sorting' => true,
+            'eval' => ['rgxp' => 'natural'],
+            'sql' => 'int(11) unsigned NOT NULL default 0',
+        ],
+        'content' => [
+            'exclude' => true,
+            'inputType' => 'textarea',
+            'search' => true,
+            'eval' => ['decodeEntities' => true],
+            'sql' => "text NULL'",
+        ],
+        'newsId' => [
+            'exclude' => true,
+            'inputType' => 'select',
+            'eval' => ['rgxp' => 'natural'],
+            'sql' => 'int(11) unsigned NOT NULL default 0',
+            'foreignKey' => 'tl_news.headline',
+        ],
+        'experimentId' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'natural'],
+            'sql' => 'int(11) unsigned NOT NULL default 0',
+        ],
+        'pubdate' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'sorting' => true,
+            'eval' => ['rgxp' => 'natural'],
+            'sql' => 'int(11) unsigned NOT NULL default 0',
+        ],
+        'duration' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'natural'],
+            'sql' => 'int(11) unsigned NOT NULL default 0',
         ],
     ],
 ];
