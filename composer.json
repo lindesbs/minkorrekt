@@ -14,10 +14,12 @@
     }
   ],
   "require": {
-    "contao/core-bundle": "^4.9",
+    "contao/core-bundle": "^5.3",
     "ext-simplexml": "*",
-    "lindesbs/toolbox": "@dev",
-    "twig/intl-extra": "^3.5"
+    "twig/intl-extra": "^v3.17",
+    "symfony/browser-kit": "^v7.2",
+    "symfony/css-selector": "^6.2",
+    "lindesbs/toolbox": "@dev"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
@@ -27,17 +29,7 @@
   "autoload": {
     "psr-4": {
       "lindesbs\\minkorrekt\\": "src/"
-    },
-    "classmap": [
-      "src/Resources/contao"
-    ],
-    "exclude-from-classmap": [
-      "src/Resources/skeleton",
-      "src/Resources/contao/config",
-      "src/Resources/contao/dca",
-      "src/Resources/contao/languages",
-      "src/Resources/contao/templates"
-    ]
+    }
   },
   "autoload-dev": {
     "psr-4": {

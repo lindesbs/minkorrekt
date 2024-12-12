@@ -40,8 +40,8 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
     // List
     'list' => [
         'sorting' => [
-            'mode' => DataContainer::MODE_UNSORTED,
-            'panelLayout' => 'filter;search',
+            'mode' => DataContainer::MODE_SORTABLE,
+            'panelLayout' => 'filter;search,limit;sort',
         ],
         'label' => [
             'fields' => ['status', 'alias', 'thePublisher', 'title'],
@@ -52,8 +52,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
                 'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
-            ],
-            'rebuild' => ['href' => 'key=rebuild', 'icon' => 'su.svg'],
+            ]
         ],
         'operations' => [
             'editheader' => ['href' => 'act=edit', 'icon' => 'edit.svg'],
@@ -70,6 +69,10 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
                 'href' => 'act=paste&amp;mode=cut',
                 'icon' => 'cut.svg',
                 'attributes' => 'onclick="Backend.getScrollOffset()"',
+            ],
+            'published' => [
+                'href'                => 'act=toggle&amp;field=published',
+                'icon'                => 'visible.svg',
             ],
             'delete' => [
                 'href' => 'act=delete',
@@ -100,7 +103,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
-            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255],
+            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'col1 width4'],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'citation_title' => [
@@ -122,6 +125,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'citation_springer_api_url' => [
+
             'exclude' => true,
             'inputType' => 'text',
             'eval' => [
@@ -162,7 +166,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'inputType' => 'text',
             'search' => true,
             'eval' => ['decodeEntities' => true, 'maxlength' => 255],
-            'sql' => "varchar(255) NOT NULL default ''",
+            'sql' => "text NULL",
         ],
         'rightsagent' => [
             'exclude' => true,
@@ -184,8 +188,8 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'published' => [
-            'exclude' => true,
             'toggle' => true,
+            'exclude' => true,
             'filter' => true,
             'inputType' => 'checkbox',
             'eval' => ['doNotCopy' => true],
@@ -210,7 +214,6 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
 
         'size' => [
             'exclude' => true,
-            'filter' => true,
             'inputType' => 'text',
             'eval' => ['rgxp' => 'natural', 'tl_class' => 'w50'],
             'sql' => 'int(11) unsigned NOT NULL default 0',
@@ -228,9 +231,9 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
         'status' => [
             'exclude' => true,
             'filter' => true,
-            'inputType' => 'select',
+            'inputType' => 'radio',
             'options' => ['UNTOUCHED', 'INCHECK', 'VERIFICATION', 'VERIFIED'],
-            'eval' => ['multiple' => true, 'includeBlankOption'=>true, 'chosen'=>true],
+            'eval' => ['multiple' => false, 'includeBlankOption' => true, 'chosen' => true],
             'sql' => "varchar(255) NOT NULL default 'UNTOUCHED'",
         ],
         'url' => [
@@ -250,20 +253,35 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options' => ['Article', 'CLOSED', 'UNKNOWN'],
-            'sql' => "varchar(16) NOT NULL default 'UNKNOWN'",
+            'options' => [
+                'Analysis',
+                'Article',
+                'Articles',
+                'Brief Communication',
+                'Brief Report',
+                'Comment',
+                'Letter',
+                'Original Article',
+                'Other',
+                'proceedings',
+                'Protocol',
+                'Regular Article',
+                'Research',
+                'Research Article',
+                'UNKNOWN'
+            ],
+            'sql' => "varchar(255) NOT NULL default 'UNKNOWN'",
         ],
 
         'paperType' => [
             'exclude' => true,
             'filter' => true,
             'inputType' => 'select',
-            'options' => ['OriginalPaper', 'UNKNOWN'],
+            'options' => ['OriginalPaper', 'Text', 'research-article', 'UNKNOWN'],
             'sql' => "varchar(64) NOT NULL default 'UNKNOWN'",
         ],
         'twitter' => [
             'exclude' => true,
-            'filter' => true,
             'inputType' => 'text',
             'eval' => ['tl_class' => 'w50 clr'],
             'sql' => "varchar(64) NOT NULL default 'UNKNOWN'",
@@ -313,7 +331,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
             'exclude' => true,
             'inputType' => 'select',
             'foreignKeys' => 'tl_minkorrekt_paper_tags.name',
-            'eval' => ['multiple' => true, 'includeBlankOption'=>true, 'chosen'=>true, 'tl_class' => 'clr'],
+            'eval' => ['multiple' => true, 'includeBlankOption' => true, 'chosen' => true, 'tl_class' => 'clr'],
             'sql' => 'text NULL',
         ],
         'screenshotSRC' => [
@@ -369,14 +387,15 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper'] = [
     ],
 ];
 
-/*
- * foreach ($GLOBALS['TL_DCA']['tl_minkorrekt_paper']['fields'] as $fieldKey => $FieldValue) {
-    echo sprintf("<?php if (\$this->%s): ?>".PHP_EOL, $fieldKey);
-    echo sprintf("<?= \$this->%s ?>".PHP_EOL, $fieldKey);
-    echo "<?php endif?>".PHP_EOL;
-
-}
-
-
-die;
-*/
+//
+//foreach ($GLOBALS['TL_DCA']['tl_minkorrekt_paper']['fields'] as $fieldKey => $FieldValue) {
+//    echo sprintf('
+//    <trans-unit id="tl_minkorrekt_paper.%1$s.0">
+//                <target>%1$s</target>
+//            </trans-unit>
+//            <trans-unit id="tl_minkorrekt_paper.%1$s.1">
+//                <target>%1$s</target>
+//            </trans-unit>
+//            ', $fieldKey);
+//}
+//

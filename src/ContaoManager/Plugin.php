@@ -21,7 +21,7 @@ class Plugin implements BundlePluginInterface
     {
         return [
             BundleConfig::create(MinkorrektBundle::class)
-                ->setLoadAfter([ContaoCoreBundle::class]),
+                ->setLoadAfter([ContaoCoreBundle::class])
         ];
     }
 }

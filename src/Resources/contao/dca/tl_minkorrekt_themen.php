@@ -10,40 +10,38 @@ declare(strict_types=1);
 use Contao\DataContainer;
 use Contao\DC_Table;
 
-$GLOBALS['TL_DCA']['tl_minkorrekt_paper_tags'] = [
+$GLOBALS['TL_DCA']['tl_minkorrekt_themen'] = [
     // Config
     'config' => [
         'dataContainer' => DC_Table::class,
         'enableVersioning' => true,
-        'markAsCopy' => 'name',
-        'onload_callback' => [],
         'sql' => [
             'keys' => [
                 'id' => 'primary',
-                'alias' => 'index',
+                'alias' => 'index'
             ],
         ],
     ],
     // List
     'list' => [
         'sorting' => [
-            'mode' => DataContainer::MODE_UNSORTED,
-            'panelLayout' => 'filter;search',
+            'mode' => DataContainer::MODE_SORTABLE,
+            'panelLayout' => 'filter;search,limit;sort',
         ],
         'label' => [
-            'fields' => ['alias', 'name'],
-            'format' => '%s %s',
+            'fields' => ['alias', 'title','link','alias'],
+            'format' => '%s :: %s -> %s (%s)',
         ],
         'global_operations' => [
             'all' => [
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
                 'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"',
-            ],
-            'rebuild' => ['href' => 'key=rebuild', 'icon' => 'su.svg'],
+            ]
         ],
         'operations' => [
             'edit' => ['href' => 'act=edit', 'icon' => 'edit.svg'],
+
             'copy' => [
                 'href' => 'act=paste&amp;mode=copy',
                 'icon' => 'copy.svg',
@@ -54,6 +52,10 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper_tags'] = [
                 'icon' => 'cut.svg',
                 'attributes' => 'onclick="Backend.getScrollOffset()"',
             ],
+            'abgenommen' => [
+                'href'                => 'act=toggle&amp;field=abgenommen',
+                'icon'                => 'visible.svg',
+            ],
             'delete' => [
                 'href' => 'act=delete',
                 'icon' => 'delete.svg',
@@ -63,37 +65,50 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_paper_tags'] = [
         ],
     ],
     // Palettes
-    'palettes' => ['default' => '{title_legend},name,alias'],
+    'palettes' => [
+        'default' => '{title_legend},title,alias,abgenommen,link',
+    ],
     'fields' => [
         'id' => ['label' => ['ID'], 'sql' => 'int(10) unsigned NOT NULL auto_increment'],
+
         'sorting' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
         'tstamp' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
-        'pid' => [
-            'sorting' => true,
-            'filter' => true,
-            'foreignKey' => 'tl_minkorrekt_paper.title',
-            'sql'                     => "int(10) unsigned NOT NULL default 0",
-            'relation'                => ['type'=>'belongsTo', 'load'=>'lazy']
-        ],
-        'name' => [
+        'title' => [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
-            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255],
+            'sorting' => true,
+            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'col1 width4'],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'alias' => [
             'exclude' => true,
             'inputType' => 'text',
             'search' => true,
+            'sorting' => true,
             'eval' => [
                 'rgxp' => 'alias',
                 'doNotCopy' => true,
                 'maxlength' => 255,
-                'tl_class' => 'w50',
                 'readonly' => true,
             ],
             'sql' => "varchar(255) NOT NULL default ''",
         ],
+        'abgenommen' => [
+            'toggle' => true,
+            'exclude' => true,
+            'filter' => true,
+            'inputType' => 'checkbox',
+            'eval' => ['rgxp' => 'url'],
+            'sql' => "varchar(1) NOT NULL default ''",
+        ],
+        'link' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['rgxp' => 'url'],
+            'sql' => "varchar(512) NOT NULL default ''",
+        ]
     ],
 ];
+
+//dd(implode(",", array_keys($GLOBALS['TL_DCA']['tl_minkorrekt_themen']['fields'])));

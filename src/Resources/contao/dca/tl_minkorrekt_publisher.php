@@ -21,6 +21,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
         'sql' => [
             'keys' => [
                 'id' => 'primary',
+                'alias' => 'index',
                 'journal_id' => 'index',
             ],
         ],
@@ -29,11 +30,11 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
     'list' => [
         'sorting' => [
             'mode' => DataContainer::MODE_UNSORTED,
-            'panelLayout' => 'filter;search',
+            'panelLayout' => 'filter;search;sort,limit',
         ],
         'label' => [
-            'fields' => ['title'],
-            'format' => '%s',
+            'fields' => ['title','url','url'],
+            'format' => '%s <code><a href="http://%s">%s</a></code>',
         ],
         'global_operations' => [
             'all' => [
@@ -44,10 +45,6 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
         ],
         'operations' => [
             'editheader' => ['href' => 'act=edit', 'icon' => 'edit.svg'],
-            'edit' => [
-                'href' => 'table=tl_minkorrekt_paper',
-                'icon' => 'layout.svg',
-            ],
             'copy' => [
                 'href' => 'act=paste&amp;mode=copy',
                 'icon' => 'copy.svg',
@@ -67,7 +64,7 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
         ],
     ],
     // Palettes
-    'palettes' => ['default' => '{title_legend},title,journal_id,url,language,screenshotSRC,screenshotFullpageSRC;editor'],
+    'palettes' => ['default' => '{title_legend},title,description,journal_id,url,language,screenshotSRC,screenshotFullpageSRC;editor'],
     'fields' => [
         'id' => ['label' => ['ID'], 'search' => true, 'sql' => 'int(10) unsigned NOT NULL auto_increment'],
         'sorting' => ['sql' => 'int(10) unsigned NOT NULL default 0'],
@@ -77,6 +74,24 @@ $GLOBALS['TL_DCA']['tl_minkorrekt_publisher'] = [
             'inputType' => 'text',
             'search' => true,
             'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "varchar(255) NOT NULL default ''",
+        ],
+        'description' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'search' => true,
+            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "text NULL",
+        ],
+        'rights' => [
+            'exclude' => true,
+            'inputType' => 'text',
+            'search' => true,
+            'eval' => ['mandatory' => true, 'decodeEntities' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'sql' => "text NULL",
+        ],
+        'alias' => [
+            'inputType' => 'text',
             'sql' => "varchar(255) NOT NULL default ''",
         ],
         'journal_id' => [

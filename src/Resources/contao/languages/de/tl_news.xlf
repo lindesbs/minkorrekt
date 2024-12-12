@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.1">
+    <file target-language="de">
+        <body>
+            <trans-unit id="tl_news.minkorrektLabel">
+                <target>Minkorrekt</target>
+            </trans-unit>
+
+        </body>
+
+    </file>
+</xliff>
