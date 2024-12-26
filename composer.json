@@ -15,7 +15,6 @@
   ],
   "require": {
     "ext-simplexml": "*",
-    "lindesbs/toolbox": "@dev",
     "twig/intl-extra": "^3.5"
   },
   "require-dev": {
@@ -31,7 +30,6 @@
       "src/Resources/contao"
     ],
     "exclude-from-classmap": [
-      "src/Resources/skeleton",
       "src/Resources/contao/config",
       "src/Resources/contao/dca",
       "src/Resources/contao/languages",
