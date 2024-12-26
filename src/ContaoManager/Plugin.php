@@ -17,6 +17,7 @@ use lindesbs\minkorrekt\MinkorrektBundle;
 
 class Plugin implements BundlePluginInterface
 {
+    #[\Override]
     public function getBundles(ParserInterface $parser): array
     {
         return [

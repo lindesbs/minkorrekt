@@ -11,7 +11,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,26 +18,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
-use function count;
 
-
-#[AsCommand(
-    name: 'minkorrekt:screenshots',
-    description: 'Create screenhots of websites',
-)]
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'minkorrekt:screenshots', description: 'Create screenhots of websites')]
 class CreateScreenshots extends Command
 {
-
-    protected static $thumbnailCommand = '/usr/bin/chromium --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,1060 http://##url##';
-    protected static $fullpageCommand = '/usr/bin/chromium --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,10600  http://##url##';
+    protected static $thumbnailCommand = '/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,1060 ##url##';
+    protected static $fullpageCommand = '/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,10600  ##url##';
 
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
-        private readonly Connection      $connection,
+        private readonly Connection $connection,
     ) {
         parent::__construct();
     }
 
+
+    #[\Override]
     protected function configure(): void
     {
         $this->addOption(
@@ -53,15 +48,13 @@ class CreateScreenshots extends Command
      * @throws Exception
      * @throws \Exception
      */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();
 
         $bForce = $input->getOption('force');
-
-        $io->warning("Funktioniert nicht mehr richtig. Die Webseiten haben Checks.");
-        die;
 
         $filesystem = new Filesystem();
 
@@ -71,16 +64,19 @@ class CreateScreenshots extends Command
         $objPublisher = $objSQLPublisher->fetchAllAssociative();
 
         $io->writeln('Publisher');
-        $io->progressStart(count($objPublisher));
+        $io->progressStart(\count($objPublisher));
 
         foreach ($objPublisher as $publisher) {
+            if (isset($publisher['screenshotSRC']) && (!$bForce)) {
+                continue;
+            }
+
             $destPath = sprintf(
-                'files/media/publisher/%s/',
-                StringUtil::generateAlias($publisher['url'])
+                'files/media/paper/%s/',
+                StringUtil::generateAlias($publisher['title'])
             );
 
             $filesystem->mkdir($destPath);
-
             $destinationVar = 'screenshotSRC';
             $filename = $this->makeScreenshot($destPath, $publisher, self::$thumbnailCommand, $destinationVar);
 
@@ -102,25 +98,18 @@ class CreateScreenshots extends Command
 
         $io->progressFinish();
 
-
-        die;
         $objSQLPaper = $this->connection->executeQuery(
             'SELECT * FROM tl_minkorrekt_paper WHERE url IS NOT NULL'
         );
         $objPaper = $objSQLPaper->fetchAllAssociative();
 
-        $io->writeln('Paper');
-        $io->progressStart(count($objPaper));
+        $io->writeln('Publisher');
+        $io->progressStart(\count($objPaper));
 
         foreach ($objPaper as $paper) {
             if (isset($paper['screenshotSRC']) && (!$bForce)) {
                 continue;
             }
-
-            if (!$paper['published']) {
-                continue;
-            }
-
 
             $destPath = sprintf(
                 'files/media/paper/%s/',
@@ -151,12 +140,13 @@ class CreateScreenshots extends Command
         return Command::SUCCESS;
     }
 
+
     /**
      * @throws \Exception
      */
     public function makeScreenshot(
         string $destPath,
-        array  $paper,
+        array $paper,
         string $captureCommand,
         string $destinationVar
     ): string {
@@ -164,23 +154,21 @@ class CreateScreenshots extends Command
             '%s%s_%s_%s.png',
             $destPath,
             date('Ymd'),
-            StringUtil::generateAlias($paper['url']),
+            StringUtil::generateAlias($paper['title']),
             $destinationVar
         );
 
+        $cmd = str_replace(
+            ['##outputname##', '##url##'],
+            [$filename, $paper['url']],
+            $captureCommand
+        );
 
-        if (!file_exists(TL_ROOT.'/'.$filename)) {
-            $cmd = str_replace(
-                ['##outputname##', '##url##'],
-                [$filename, $paper['url']],
-                $captureCommand
-            );
-
-            file_put_contents('runner.sh', $cmd);
-            $process = new Process(['./runner.sh']);
-            $process->run();
-        }
+        file_put_contents('runner.sh', $cmd);
+        $process = new Process(['./runner.sh']);
+        $process->run();
 
         return $filename;
     }
+
 }
