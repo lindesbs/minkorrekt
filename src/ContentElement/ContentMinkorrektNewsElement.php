@@ -19,6 +19,7 @@ class ContentMinkorrektNewsElement extends ContentElement
      */
     protected $strTemplate = 'ce_text';
 
+    #[\Override]
     protected function compile()
     {
         $backendTemplate = new BackendTemplate('be_wildcard');

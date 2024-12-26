@@ -11,18 +11,16 @@ use lindesbs\minkorrekt\Classes\PodcastEntry;
 use lindesbs\toolbox\Service\DCATools;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Contracts\Cache\ItemInterface;
 
+#[AsCommand(name: 'minkorrekt:importrss', description: 'Import RSS as Newslist')]
 class ImportRSSCommand extends Command
 {
-    protected static $defaultName = 'minkorrekt:importrss';
-
-    protected static $defaultDescription = 'Import RSS as Newslist';
-
     protected static $defaultURL = 'https://minkorrekt.de/feed/m4a/';
 
     private int $statusCode = Command::SUCCESS;
@@ -52,20 +50,22 @@ class ImportRSSCommand extends Command
         );
     }
 
+    #[\Override]
     protected function configure(): void
     {
         $this->setDescription('Gibt einen Demotext aus.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int|null
+    #[\Override]
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);
 
-            if ('dev' === $_SERVER['APP_ENV']) {
-                $symfonyStyle->warning('DEV MODE');
-                $this->connection->executeQuery('TRUNCATE TABLE tl_news');
-                $this->connection->executeQuery('DELETE FROM tl_content WHERE ptable="tl_news"');
-            }
+        if ('dev' === $_SERVER['APP_ENV']) {
+            $symfonyStyle->warning('DEV MODE');
+            $this->connection->executeQuery('TRUNCATE TABLE tl_news');
+            $this->connection->executeQuery('DELETE FROM tl_content WHERE ptable="tl_news"');
+        }
 
         $symfonyStyle->title('Minkorrekt RSS einlesen und importieren');
 

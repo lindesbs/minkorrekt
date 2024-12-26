@@ -14,12 +14,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'minkorrekt:buildSystem', description: 'Seiten, Module und sonstiges erstellen')]
 class buildSystemStructure extends Command
 {
-    protected static $defaultName = 'minkorrekt:buildSystem';
-
-    protected static $defaultDescription = 'Seiten, Module und sonstiges erstellen';
-
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
         private readonly DCATools $DCATools,
@@ -27,7 +24,8 @@ class buildSystemStructure extends Command
         parent::__construct();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int|null
+    #[\Override]
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();

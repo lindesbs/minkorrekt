@@ -14,12 +14,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'minkorrekt:newsarchives', description: 'Fetch websites and crawl them')]
 class CreateNewsarchives extends Command
 {
-    protected static $defaultName = 'minkorrekt:newsarchives';
-
-    protected static $defaultDescription = 'Fetch websites and crawl them';
-
     public function __construct(
         private readonly ContaoFramework $contaoFramework,
         private readonly DCATools $DCATools,
@@ -31,7 +28,8 @@ class CreateNewsarchives extends Command
     /**
      * @throws Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int|null
+    #[\Override]
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();

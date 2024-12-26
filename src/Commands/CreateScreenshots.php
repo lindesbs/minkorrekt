@@ -19,12 +19,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
+#[\Symfony\Component\Console\Attribute\AsCommand(name: 'minkorrekt:screenshots', description: 'Create screenhots of websites')]
 class CreateScreenshots extends Command
 {
-    protected static $defaultName = 'minkorrekt:screenshots';
-
-    protected static $defaultDescription = 'Create screenhots of websites';
-
     protected static $thumbnailCommand = '/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,1060 ##url##';
     protected static $fullpageCommand = '/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --headless --disable-gpu --hide-scrollbars --screenshot=##outputname## --window-size=1280,10600  ##url##';
 
@@ -65,6 +62,7 @@ class CreateScreenshots extends Command
         return $filename;
     }
 
+    #[\Override]
     protected function configure(): void
     {
         $this->addOption(
@@ -79,7 +77,8 @@ class CreateScreenshots extends Command
      * @throws Exception
      * @throws \Exception
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int|null
+    #[\Override]
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $this->contaoFramework->initialize();

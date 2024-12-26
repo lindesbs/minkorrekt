@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class MinkorrektExtension extends Extension
 {
+    #[\Override]
     public function load(array $mergedConfig, ContainerBuilder $containerBuilder): void
     {
         $yamlFileLoader = new YamlFileLoader(
