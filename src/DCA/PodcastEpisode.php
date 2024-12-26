@@ -7,9 +7,9 @@ declare(strict_types=1);
  *  from lindesbs
  */
 
-namespace lindesbs\minkorrekt\Classes;
+namespace lindesbs\minkorrekt\DCA;
 
-class PodcastEntry
+class PodcastEpisode
 {
     private string $title;
 
@@ -37,7 +37,7 @@ class PodcastEntry
 
     private bool $enclosure=false;
 
-    private int $pubdate;
+    private \DateTime $pubdate;
 
     public function __construct(\DOMNode $domNode)
     {
@@ -52,7 +52,7 @@ class PodcastEntry
         }
 
         $dateTime = new \DateTime($values['pubDate']);
-        $this->setPubDate($dateTime->getTimestamp());
+        $this->setPubDate($dateTime);
 
         $this->setTitle($values['title']);
         $this->setDescription($values['description']);
@@ -62,8 +62,10 @@ class PodcastEntry
         $this->setEpisode((int)$values['itunes:episode']);
         $this->setSubtitle($values['itunes:subtitle']);
         $this->setSummary($values['itunes:summary']);
-        $this->setExplicit('yes' === $values['itunes:explicit']);
+        $this->setExplicit('yes' === strtolower($values['itunes:explicit']));
 
+
+        $this->setKeywords([]);
         if (\array_key_exists('itunes:keywords', $values) && ($values['itunes:keywords'])) {
             $this->setKeywords(explode(',', $values['itunes:keywords']));
         }
@@ -77,10 +79,7 @@ class PodcastEntry
         if (\array_key_exists('enclosure', $values)) {
             $this->setEnclosure(true);
         }
-
     }
-
-
 
     public function getTitle(): string
     {
@@ -218,18 +217,15 @@ class PodcastEntry
         $this->enclosure = $enclosure;
     }
 
-    /**
-     * @return int
-     */
-    public function getPubdate(): int
+    public function getPubdate(): \DateTime
     {
         return $this->pubdate;
     }
 
     /**
-     * @param int $pubdate
+     * @param \DateTime $pubdate
      */
-    public function setPubdate(int $pubdate): void
+    public function setPubdate(\DateTime $pubdate): void
     {
         $this->pubdate = $pubdate;
     }

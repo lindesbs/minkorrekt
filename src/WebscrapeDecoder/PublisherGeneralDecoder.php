@@ -25,8 +25,7 @@ class PublisherGeneralDecoder implements WebscraperPublisherDecoderInterface
             return true;
         }
 
-        if (strlen(trim($strContent))==0)
-        {
+        if (strlen(trim($strContent))==0) {
             return false;
         }
 
