@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace lindesbs\minkorrekt\WebscrapeDecoder;
 
-use Contao\StringUtil;
-use lindesbs\minkorrekt\Interface\WebscraperPaperDecoderInterface;
 use lindesbs\minkorrekt\Interface\WebscraperPublisherDecoderInterface;
-use lindesbs\minkorrekt\Models\MinkorrektPaperCreatorModel;
-use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
 
 class PublisherGeneralDecoder implements WebscraperPublisherDecoderInterface

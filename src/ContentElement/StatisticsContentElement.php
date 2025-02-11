@@ -4,10 +4,7 @@ namespace lindesbs\minkorrekt\ContentElement;
 
 use Contao\BackendTemplate;
 use Contao\ContentElement;
-use Contao\Controller;
-use Contao\ModuleEventMenu;
 use Contao\System;
-use Contao\Template;
 use DateTime;
 use lindesbs\minkorrekt\Service\GenerateStatistics;
 

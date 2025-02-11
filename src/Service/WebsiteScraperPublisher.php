@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace lindesbs\minkorrekt\Service;
 
 use Contao\StringUtil;
-use lindesbs\minkorrekt\Factory\WebscraperPaperDecoderFactory;
 use lindesbs\minkorrekt\Factory\WebscraperPublisherDecoderFactory;
 use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
 use Symfony\Component\BrowserKit\HttpBrowser;

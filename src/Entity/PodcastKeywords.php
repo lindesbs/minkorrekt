@@ -2,17 +2,15 @@
 
 namespace lindesbs\minkorrekt\Entity;
 
-use Ausi\SlugGenerator\SlugGenerator;
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
-use Doctrine\ORM\Mapping\JoinColumn;
-use Doctrine\ORM\Mapping\ManyToMany;
-use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\Table;
 use lindesbs\minkorrekt\Repository\PodcastKeywordsRepository;
 
-#[\Doctrine\ORM\Mapping\Entity(repositoryClass: PodcastKeywordsRepository::class)]
-#[\Doctrine\ORM\Mapping\Table(name: 'podcast_keywords')]
+#[Entity(repositoryClass: PodcastKeywordsRepository::class)]
+#[Table(name: 'mh_podcast_keywords')]
 class PodcastKeywords
 {
 
@@ -25,18 +23,18 @@ class PodcastKeywords
     #[Column(type: 'string', length: 255)]
     private string $name;
 
+
     #[Column(type: 'string', length: 255, nullable: true)]
     private ?string $alias = null;
 
-    private $slug;
+    #[Column(type: 'integer', options: ['default' => 0])]
+    private int $usageCount;
 
-    /**
-     * @param string $name
-     */
     public function __construct()
     {
-        $this->slug = new SlugGenerator();
+        $this->usageCount=0;
     }
+
 
     public function __toString(): string
     {
@@ -51,8 +49,6 @@ class PodcastKeywords
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        $this->alias = $this->slug->generate($name);
 
         return $this;
     }

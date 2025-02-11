@@ -6,7 +6,6 @@ namespace lindesbs\minkorrekt\Entity;
 use Ausi\SlugGenerator\SlugGenerator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -17,11 +16,9 @@ use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\Table;
 use lindesbs\minkorrekt\Repository\PodcastEpisodeRepository;
-use lindesbs\minkorrekt\Repository\PodcastKeywordsRepository;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Entity(repositoryClass: PodcastEpisodeRepository::class)]
-#[Table(name: 'podcast_episode')]
+#[Table(name: 'mh_podcast_episode')]
 class PodcastEpisode
 {
     #[Id]
@@ -68,11 +65,20 @@ class PodcastEpisode
      * Many Users have Many Groups.
      * @var Collection<int, PodcastKeywords>
      */
-    #[JoinTable(name: 'episode_keywords')]
+    #[JoinTable(name: 'mh_join_podcast_keywords')]
     #[JoinColumn(name: 'episode_id', referencedColumnName: 'id')]
     #[InverseJoinColumn(name: 'keyword_id', referencedColumnName: 'id')]
     #[ManyToMany(targetEntity: PodcastKeywords::class)]
     private Collection $keywords;
+
+
+    #[JoinTable(name: 'mh_join_podcast_thema')]
+    #[JoinColumn(name: 'episode_id', referencedColumnName: 'id')]
+    #[InverseJoinColumn(name: 'thema_id', referencedColumnName: 'id')]
+    #[ManyToMany(targetEntity: PodcastPassage::class)]
+    private Collection $thema;
+
+
 
 
     public function __construct()
@@ -214,24 +220,30 @@ class PodcastEpisode
         $slugger = new SlugGenerator();
 
         if (is_string($keywords)) {
-            $item = $podcastKeywordsRepository->findOneBy(['alias' => $slugger->generate($keywords)]);
+            $alias = $slugger->generate($keywords);
+            $item = $podcastKeywordsRepository->findOneBy(['alias' => $alias]);
 
             if (!$item) {
                 $keywordEntity = new PodcastKeywords();
                 $keywordEntity->setName($keywords);
+                $keywordEntity->setAlias($alias);
                 $this->keywords->add($keywordEntity);
                 $entityManager->persist($keywordEntity);
+                $entityManager->flush();
             }
         } elseif (is_array($keywords) || $keywords instanceof Collection) {
             foreach ($keywords as $keyword) {
                 if (is_string($keyword)) {
-                    $item = $podcastKeywordsRepository->findOneBy(['alias' => $slugger->generate($keyword)]);
+                    $alias = $slugger->generate($keyword);
+                    $item = $podcastKeywordsRepository->findOneBy(['alias' => $alias]);
 
                     if (!$item) {
                         $keywordEntity = new PodcastKeywords();
                         $keywordEntity->setName($keyword);
+                        $keywordEntity->setAlias($alias);
                         $this->keywords->add($keywordEntity);
                         $entityManager->persist($keywordEntity);
+                        $entityManager->flush();
                     }
                 } elseif ($keyword instanceof PodcastKeywords) {
                     $this->keywords->add($keyword);

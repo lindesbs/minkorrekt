@@ -1,0 +1,7 @@
+<div class="list-filter">
+    <?php $this->form; ?>
+</div>
+<div class="list-element">
+
+</div>
+

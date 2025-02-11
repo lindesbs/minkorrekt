@@ -31,10 +31,9 @@ class ImportRSSCommand extends Command
         private readonly ContaoFramework           $contaoFramework,
         private readonly PodcastEpisodeRepository  $podcastEntryRepository,
         private readonly PodcastKeywordsRepository $podcastKeywordsRepository,
-
+        private readonly Connection                $connection,
         private readonly EntityManagerInterface    $entityManager
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -52,8 +51,14 @@ class ImportRSSCommand extends Command
         if ('dev' === $_SERVER['APP_ENV']) {
             $symfonyStyle->warning('DEV MODE');
 
-            //  $platform = $this->connection->getDatabasePlatform();
-            //   $this->connection->executeUpdate($platform->getTruncateTableSQL('podcast_episode', true));
+            $platform = $this->connection->getDatabasePlatform();
+
+            $this->connection->query('SET FOREIGN_KEY_CHECKS=0');
+            $this->connection->executeQuery($platform->getTruncateTableSQL('mh_podcast_keywords', true));
+            $this->connection->executeQuery($platform->getTruncateTableSQL('mh_podcast_episode', true));
+            $this->connection->executeQuery($platform->getTruncateTableSQL('mh_join_podcast_keywords', true));
+            $this->connection->executeQuery($platform->getTruncateTableSQL('mh_join_podcast_thema', true));
+            $this->connection->query('SET FOREIGN_KEY_CHECKS=1');
         }
 
         $symfonyStyle->title('Minkorrekt RSS einlesen und importieren');

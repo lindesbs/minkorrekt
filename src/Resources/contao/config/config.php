@@ -7,7 +7,7 @@ declare(strict_types=1);
  *  from lindesbs
  */
 
-use lindesbs\minkorrekt\ContentElement\ContentMinkorrektNewsElement;
+use lindesbs\minkorrekt\ContentElement\ListElementController;
 use lindesbs\minkorrekt\ContentElement\StatisticsContentElement;
 
 $GLOBALS['BE_MOD']['minkorrekt'] = [
@@ -29,7 +29,7 @@ $GLOBALS['BE_MOD']['minkorrekt'] = [
 ];
 
 
-$GLOBALS['TL_CTE']['minkorrekt']['minkorrekt_thema'] = ContentMinkorrektNewsElement::class;
+$GLOBALS['TL_CTE']['minkorrekt']['minkorrekt_thema'] = ListElementController::class;
 $GLOBALS['TL_CTE']['minkorrekt']['minkorrekt_statistics'] = StatisticsContentElement::class;
 
 
