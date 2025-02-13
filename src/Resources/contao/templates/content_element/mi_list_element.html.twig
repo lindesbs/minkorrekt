@@ -1,10 +1,29 @@
 <section class="product">
+    {{ form(form) }}
 
-        {{ form(form) }}
+
+    {{ pagination|raw }}
 
     {% block details %}
-        <ul class="product--details">
+        <div class="container">
+            {% for item in data %}
+                <div class="row mt-5 ">
+                    <div class="col-md-5">
+                        <blockquote class="blockquote">
+                            <h3>{{ item.title }}</h3>
+                            <footer class="blockquote-footer">{{ item.subtitle }}</footer>
+                        </blockquote>
+                    </div>
+                    <div class="col-md-5">
+                        <p>{{ item.description[:100] ~ '...' }}</p>
+                    </div>
+                    <div class="col-md-2 text-right">
+                        {{ item.pubdate|date('d.m.Y') }}
+                        {{ item.status }}
+                    </div>
 
-        </ul>
+                </div>
+            {% endfor %}
+        </div>
     {% endblock %}
 </section>

@@ -17,7 +17,11 @@
     "ext-simplexml": "*",
     "symfony/browser-kit": "^7.2",
     "symfony/form": "^7.2",
-    "twig/intl-extra": "*"
+    "twig/intl-extra": "*",
+    "pagerfanta/pagerfanta": "^4.7",
+    "pagerfanta/doctrine-collections-adapter": "^4.7",
+    "pagerfanta/doctrine-orm-adapter": "^4.7",
+    "pagerfanta/twig": "^4.7"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",

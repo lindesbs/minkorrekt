@@ -15,6 +15,8 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\Table;
+use lindesbs\minkorrekt\Constants\BearbeitungsStatus;
+use lindesbs\minkorrekt\Constants\FolgenTyp;
 use lindesbs\minkorrekt\Repository\PodcastEpisodeRepository;
 
 #[Entity(repositoryClass: PodcastEpisodeRepository::class)]
@@ -60,6 +62,11 @@ class PodcastEpisode
     #[Column(type: 'datetime')]
     private \DateTime $pubdate;
 
+    #[Column(type: 'string', length: 16, options: ["default" => BearbeitungsStatus::UNBEARBEITET])]
+    private string $status = BearbeitungsStatus::UNBEARBEITET;
+
+    #[Column(type: 'string', length: 16, options: ["default" => FolgenTyp::STANDARD])]
+    private string $folgentyp = FolgenTyp::STANDARD;
 
     /**
      * Many Users have Many Groups.
@@ -253,6 +260,41 @@ class PodcastEpisode
 
 
     }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
+    }
+
+    public function getFolgentyp(): string
+    {
+        return $this->folgentyp;
+    }
+
+    public function setFolgentyp(string $folgentyp): void
+    {
+        $this->folgentyp = $folgentyp;
+    }
+
+
+
+
+    public function getThema(): Collection
+    {
+        return $this->thema;
+    }
+
+    public function setThema(Collection $thema): void
+    {
+        $this->thema = $thema;
+    }
+
+
 
 
 }
