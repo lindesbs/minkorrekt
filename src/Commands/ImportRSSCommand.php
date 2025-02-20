@@ -1,10 +1,9 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace lindesbs\minkorrekt\Commands;
 
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\System;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use lindesbs\minkorrekt\DCA\PodcastEpisode as DCAPodcastEpisode;
@@ -32,7 +31,7 @@ class ImportRSSCommand extends Command
         private readonly PodcastEpisodeRepository  $podcastEntryRepository,
         private readonly PodcastKeywordsRepository $podcastKeywordsRepository,
         private readonly Connection                $connection,
-        private readonly EntityManagerInterface    $entityManager
+        private readonly EntityManagerInterface    $entityManager,
     ) {
         parent::__construct();
     }
@@ -89,6 +88,7 @@ class ImportRSSCommand extends Command
             $existingEpisode = $this->podcastEntryRepository->findOneBy(['episode' => (string)$entry->getEpisode()]);
 
             if (!$existingEpisode) {
+
                 $existingEpisode = new PodcastEpisode();
             }
 
@@ -106,6 +106,8 @@ class ImportRSSCommand extends Command
             $existingEpisode->setDuration($entry->getDuration() ?? null);
             $existingEpisode->addKeywords($entry->getKeywords() ?? [], $this->entityManager, $this->podcastKeywordsRepository);
             $existingEpisode->setExplicit($entry->isExplicit() ?? null);
+
+            $existingEpisode->setSlug( System::getContainer()->get('contao.slug')->generate($existingEpisode->getTitle()));
 
             $this->entityManager->persist($existingEpisode);
         }

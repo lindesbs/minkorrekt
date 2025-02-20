@@ -1,0 +1,51 @@
+<section class="product">
+
+    {% if item %}
+    {% block details %}
+    <div class="container">
+        <div class="row mt-5 ">
+            <div class="col-md-5">
+                <blockquote class="blockquote">
+                    <h3>{{ item.title }}</h3>
+                    <div class="blockquote-footer">{{ item.subtitle }}</div>
+                </blockquote>
+            </div>
+
+
+        </div>
+
+        <div class="row mt-5 ">
+            <div class="col-8">
+                <p>{{ item.description }}</p>
+            </div>
+            <div class="col-4">
+                <div class="ribbon folge_{{ item.folgentyp }}">
+                    {{ item.folgentyp }}
+                </div>
+
+                <div class="text-left">
+                    {{ item.pubdate|date('d.m.Y') }}
+
+                </div>
+
+
+                <div class="text-left">
+                    <a href="{{ item.link }}"><i class="bi bi-box-arrow-up-right"></i> Minkorrekt</a>
+                </div>
+
+                <div class="text-left">
+                    {{ item.author }}
+                </div>
+
+                <div class="text-left">
+                    {{ item.duration }}
+                </div>
+
+                <div class="text-left">
+                    {{ item.enclosure }}
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+        {% endif %}
+</section>

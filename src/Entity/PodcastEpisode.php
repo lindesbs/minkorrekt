@@ -49,9 +49,11 @@ class PodcastEpisode
     #[Column(type: 'boolean', nullable: true)]
     private bool $explicit;
 
-
     #[Column(type: 'string', length: 255, nullable: true)]
     private string $author;
+
+    #[Column(type: 'string', length: 255, nullable: true)]
+    private string $slug;
 
     #[Column(type: 'integer', options: ["default" => 0])]
     private int $duration = 0;
@@ -292,6 +294,16 @@ class PodcastEpisode
     public function setThema(Collection $thema): void
     {
         $this->thema = $thema;
+    }
+
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): void
+    {
+        $this->slug = $slug;
     }
 
 

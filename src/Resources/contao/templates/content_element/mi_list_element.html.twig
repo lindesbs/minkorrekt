@@ -10,7 +10,8 @@
                 <div class="row mt-5 ">
                     <div class="col-md-5">
                         <blockquote class="blockquote">
-                            <h3>{{ item.title }}</h3>
+                            <h3>
+                                <a href="{{ jumpTo }}/{{ item.slug }}">{{ item.title }}</a></h3>
                             <footer class="blockquote-footer">{{ item.subtitle }}</footer>
                         </blockquote>
                     </div>
