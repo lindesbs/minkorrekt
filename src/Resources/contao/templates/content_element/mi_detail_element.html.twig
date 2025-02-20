@@ -19,30 +19,30 @@
                 <p>{{ item.description }}</p>
             </div>
             <div class="col-4">
-                <div class="ribbon folge_{{ item.folgentyp }}">
-                    {{ item.folgentyp }}
-                </div>
-
-                <div class="text-left">
-                    {{ item.pubdate|date('d.m.Y') }}
-
-                </div>
+                <div class="ribbon-container">
+                    <div class="label">{{ item.folgentyp }}</div>
 
 
                 <div class="text-left">
+                    Vom: {{ item.pubdate|date('d.m.Y') }}<br>
+                    <small>{{ zeit_vergangen }}</small>
+                </div>
+
+
+                <div class="text-left link-minkorrekt">
                     <a href="{{ item.link }}"><i class="bi bi-box-arrow-up-right"></i> Minkorrekt</a>
                 </div>
 
                 <div class="text-left">
-                    {{ item.author }}
-                </div>
-
-                <div class="text-left">
-                    {{ item.duration }}
+                    <strong>Dauer</strong>
+                    {{ (item.duration // 3600) ~ 'h ' ~ ((item.duration % 3600) // 60) ~ 'm' }}
+                    <br>
+                    {{ item.duration }} Sekunden
                 </div>
 
                 <div class="text-left">
                     {{ item.enclosure }}
+                </div>
                 </div>
             </div>
         </div>

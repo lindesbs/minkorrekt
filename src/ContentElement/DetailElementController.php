@@ -32,6 +32,8 @@ class DetailElementController extends AbstractContentElementController
             return new Response();
         }
 
+        $template->zeit_vergangen = $objItem->getPubDate()->diff(new \DateTime())->format('%y Jahre, %m Monate und %d Tage');
+
         $template->item= $objItem;
         return $template->getResponse();
     }
