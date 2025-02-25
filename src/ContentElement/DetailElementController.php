@@ -11,6 +11,7 @@ use Contao\CoreBundle\Controller\ContentElement\AbstractContentElementController
 use Contao\CoreBundle\DependencyInjection\Attribute\AsContentElement;
 use Contao\CoreBundle\Twig\FragmentTemplate;
 use Contao\Input;
+use Contao\System;
 use lindesbs\minkorrekt\Repository\PodcastEpisodeRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,13 +37,14 @@ class DetailElementController extends AbstractContentElementController
         $template->zeit_vergangen = $objItem->getPubDate()->diff(new \DateTime())->format('%y Jahre, %m Monate und %d Tage');
 
 
-        if (!$this->container->get('security.token_storage')->getToken()?->getUser()) {
+        $container = System::getContainer();
+        $request = $container->get('request_stack')->getCurrentRequest();
+        $security = $container->get('security.helper');
+        $user = $security->getUser();
 
-
-            $template->welcome_message = sprintf('Welcome %s!', $this->container->get('security.token_storage')
-                ->getToken()
-                ->getUser()
-                ->getUsername());
+        $template->welcome_message='';
+        if ($user) {
+            $template->welcome_message = sprintf('Welcome %s!', $user->getUserIdentifier());
         }
 
         $template->item= $objItem;
