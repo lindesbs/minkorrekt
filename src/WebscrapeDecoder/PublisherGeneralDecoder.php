@@ -10,6 +10,7 @@ use lindesbs\minkorrekt\Models\MinkorrektPublisherModel;
 class PublisherGeneralDecoder implements WebscraperPublisherDecoderInterface
 {
 
+    #[\Override]
     public function decode(string $strKey, string $strContent, MinkorrektPublisherModel $publisherModel): bool
     {
         $arrNotYetImplemented = [

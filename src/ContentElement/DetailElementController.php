@@ -23,6 +23,7 @@ class DetailElementController extends AbstractContentElementController
         private readonly PodcastEpisodeRepository $podcastEpisodeRepository,
     ) {
     }
+    #[\Override]
     protected function getResponse(FragmentTemplate $template, ContentModel $model, Request $request): Response
     {
         $item = $request->attributes->get('auto_item');
@@ -33,6 +34,16 @@ class DetailElementController extends AbstractContentElementController
         }
 
         $template->zeit_vergangen = $objItem->getPubDate()->diff(new \DateTime())->format('%y Jahre, %m Monate und %d Tage');
+
+
+        if (!$this->container->get('security.token_storage')->getToken()?->getUser()) {
+
+
+            $template->welcome_message = sprintf('Welcome %s!', $this->container->get('security.token_storage')
+                ->getToken()
+                ->getUser()
+                ->getUsername());
+        }
 
         $template->item= $objItem;
         return $template->getResponse();

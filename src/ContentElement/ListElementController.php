@@ -36,6 +36,7 @@ class ListElementController extends AbstractContentElementController
     ) {
     }
 
+    #[\Override]
     protected function getResponse(Template $template, ContentModel $model, Request $request): Response
     {
         $task = new PodcastEpisode();

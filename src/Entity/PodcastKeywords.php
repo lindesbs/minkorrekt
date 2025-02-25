@@ -11,7 +11,7 @@ use lindesbs\minkorrekt\Repository\PodcastKeywordsRepository;
 
 #[Entity(repositoryClass: PodcastKeywordsRepository::class)]
 #[Table(name: 'mh_podcast_keywords')]
-class PodcastKeywords
+class PodcastKeywords implements \Stringable
 {
 
     #[Id]
@@ -28,14 +28,14 @@ class PodcastKeywords
     private ?string $alias = null;
 
     #[Column(type: 'integer', options: ['default' => 0])]
-    private int $usageCount;
+    private int $usageCount = 0;
 
     public function __construct()
     {
-        $this->usageCount=0;
     }
 
 
+    #[\Override]
     public function __toString(): string
     {
         return $this->name ?? 'Undefined Keyword';

@@ -14,33 +14,29 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ListeFilterForm extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('title', TextType::class, [
                 'required' => false,
                 'label' => false,
-                'attr' => array(
-                    'placeholder' => 'Titel'
-                )
+                'attr' => ['placeholder' => 'Titel']
             ])
             ->add('description', TextType::class, [
                 'required' => false,
                 'label' => false,
-                'attr' => array(
-                    'placeholder' => 'Beschreibung'
-                )
+                'attr' => ['placeholder' => 'Beschreibung']
             ])
             ->add('episode', IntegerType::class, [
                 'required' => false,
                 'label' => false,
-                'attr' => array(
-                    'placeholder' => 'Episodennummer'
-                )
+                'attr' => ['placeholder' => 'Episodennummer']
             ])
             ->add('Suchen', SubmitType::class);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

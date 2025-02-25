@@ -6,6 +6,7 @@ namespace lindesbs\minkorrekt\Entity;
 use Ausi\SlugGenerator\SlugGenerator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -14,6 +15,7 @@ use Doctrine\ORM\Mapping\InverseJoinColumn;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\Table;
 use lindesbs\minkorrekt\Constants\BearbeitungsStatus;
 use lindesbs\minkorrekt\Constants\FolgenTyp;
@@ -21,7 +23,7 @@ use lindesbs\minkorrekt\Repository\PodcastEpisodeRepository;
 
 #[Entity(repositoryClass: PodcastEpisodeRepository::class)]
 #[Table(name: 'mh_podcast_episode')]
-class PodcastEpisode
+class PodcastEpisode implements \Stringable
 {
     #[Id]
     #[GeneratedValue]
@@ -81,20 +83,17 @@ class PodcastEpisode
     private Collection $keywords;
 
 
-    #[JoinTable(name: 'mh_join_podcast_thema')]
-    #[JoinColumn(name: 'episode_id', referencedColumnName: 'id')]
-    #[InverseJoinColumn(name: 'thema_id', referencedColumnName: 'id')]
-    #[ManyToMany(targetEntity: PodcastPassage::class)]
-    private Collection $thema;
-
-
+    #[ORM\OneToMany(targetEntity: PodcastPassage::class, mappedBy: 'episode')]
+    private Collection|array $passages;
 
 
     public function __construct()
     {
         $this->keywords = new ArrayCollection();
+        $this->passages = new ArrayCollection();
     }
 
+    #[\Override]
     public function __toString(): string
     {
         return $this->title ?? 'Undefined Keyword';
@@ -283,19 +282,6 @@ class PodcastEpisode
         $this->folgentyp = $folgentyp;
     }
 
-
-
-
-    public function getThema(): Collection
-    {
-        return $this->thema;
-    }
-
-    public function setThema(Collection $thema): void
-    {
-        $this->thema = $thema;
-    }
-
     public function getSlug(): string
     {
         return $this->slug;
@@ -306,7 +292,40 @@ class PodcastEpisode
         $this->slug = $slug;
     }
 
+    /**
+     * @return Collection|PodcastPassage[]
+     */
+    public function getPassages(): Collection
+    {
+        return $this->passages;
+    }
+    public function addPassage(PodcastPassage $passages): self
+    {
+        if (!$this->passages->contains($passages)) {
+            $this->passages[] = $passages;
+            $passages->setEpisode($this);
+        }
+        return $this;
+    }
+    public function removePassage(PodcastPassage $passage): self
+    {
+        if ($this->passages->removeElement($passage)) {
+            if ($passage->getEpisode() === $this) {
+                $passage->setEpisode(null);
+            }
+        }
+        return $this;
+    }
 
+    public function getLastChange(): \DateTime
+    {
+        return $this->lastChange;
+    }
+
+    public function setLastChange(\DateTime $lastChange): void
+    {
+        $this->lastChange = $lastChange;
+    }
 
 
 }

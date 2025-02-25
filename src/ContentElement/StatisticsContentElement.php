@@ -15,6 +15,7 @@ class StatisticsContentElement extends ContentElement
      */
     protected $strTemplate = 'ce_statistics_content';
 
+    #[\Override]
     protected function compile()
     {
         $request = System::getContainer()->get('request_stack')->getCurrentRequest();

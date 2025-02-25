@@ -12,6 +12,7 @@ use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 class CitationDecoder implements WebscraperPaperDecoderInterface
 {
 
+    #[\Override]
     public function decode(string $strKey, string $strContent, MinkorrektPaperModel $paperModel): bool
     {
         $arrNotYetImplemented = [

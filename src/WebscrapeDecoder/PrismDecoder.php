@@ -10,6 +10,7 @@ use lindesbs\minkorrekt\Models\MinkorrektPaperModel;
 class PrismDecoder implements WebscraperPaperDecoderInterface
 {
 
+    #[\Override]
     public function decode(string $strKey, string $strContent, MinkorrektPaperModel $paperModel): bool
     {
         $arrNotYetImplemented = [

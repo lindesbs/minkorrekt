@@ -6,10 +6,13 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\System;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use lindesbs\minkorrekt\Constants\ThemenArt;
 use lindesbs\minkorrekt\DCA\PodcastEpisode as DCAPodcastEpisode;
 use lindesbs\minkorrekt\Entity\PodcastEpisode;
+use lindesbs\minkorrekt\Entity\PodcastPassage;
 use lindesbs\minkorrekt\Repository\PodcastEpisodeRepository;
 use lindesbs\minkorrekt\Repository\PodcastKeywordsRepository;
+use lindesbs\minkorrekt\Repository\PodcastPassageRepository;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -29,6 +32,7 @@ class ImportRSSCommand extends Command
     public function __construct(
         private readonly ContaoFramework           $contaoFramework,
         private readonly PodcastEpisodeRepository  $podcastEntryRepository,
+        private readonly PodcastPassageRepository  $podcastPassageRepository,
         private readonly PodcastKeywordsRepository $podcastKeywordsRepository,
         private readonly Connection                $connection,
         private readonly EntityManagerInterface    $entityManager,
@@ -55,8 +59,9 @@ class ImportRSSCommand extends Command
             $this->connection->query('SET FOREIGN_KEY_CHECKS=0');
             $this->connection->executeQuery($platform->getTruncateTableSQL('mh_podcast_keywords', true));
             $this->connection->executeQuery($platform->getTruncateTableSQL('mh_podcast_episode', true));
+            $this->connection->executeQuery($platform->getTruncateTableSQL('mh_podcast_passage', true));
             $this->connection->executeQuery($platform->getTruncateTableSQL('mh_join_podcast_keywords', true));
-            $this->connection->executeQuery($platform->getTruncateTableSQL('mh_join_podcast_thema', true));
+
             $this->connection->query('SET FOREIGN_KEY_CHECKS=1');
         }
 
@@ -85,10 +90,10 @@ class ImportRSSCommand extends Command
         foreach ($path as $element) {
             $entry = new DCAPodcastEpisode($element);
 
+            /** @var PodcastEpisode $existingEpisode */
             $existingEpisode = $this->podcastEntryRepository->findOneBy(['episode' => (string)$entry->getEpisode()]);
 
             if (!$existingEpisode) {
-
                 $existingEpisode = new PodcastEpisode();
             }
 
@@ -109,10 +114,64 @@ class ImportRSSCommand extends Command
 
             $existingEpisode->setSlug( System::getContainer()->get('contao.slug')->generate($existingEpisode->getTitle()));
 
+
+            $workingData = explode("\n", $entry->getContent());
+            $workingData = array_map('trim', $workingData);
+
+            $sorting=1;
+
+            foreach ($workingData as $key => $value) {
+                if ('' === strip_tags(trim($value))) {
+                    continue;
+                }
+
+                if (str_starts_with($value, '<!--')) {
+                    continue;
+                }
+
+                $contentAlias = md5($value).'_'.$sorting;
+
+                /** @var PodcastPassage $objContent */
+                $objContent = $this->podcastPassageRepository->findOneBy([
+                    'thema_alias'=>$contentAlias
+                ]);
+
+                if (!$objContent) {
+                    $objContent = new PodcastPassage();
+                    $objContent->setThemaAlias($contentAlias);
+                }
+
+                $objContent->setThemaArt(ThemenArt::TEXT);
+
+                //$value = preg_replace(['/^<p>/', '/<\/p>$/'], '', $value);
+                $objContent->setContent(trim($value));
+                
+                $objContent->setThemaNr(0);
+
+                $pattern = '/^Thema\s+(\d+)/';
+
+                if (preg_match($pattern, trim(strip_tags((string) $objContent->getContent())), $matches)) {
+                    $objContent->setThemaArt(ThemenArt::THEMA);
+
+                    $number = $matches[1];
+                    if (is_numeric($number)) {
+                        $objContent->setThemaNr((int) $number);
+                    }
+                }
+
+                $existingEpisode->addPassage($objContent);
+
+                $objContent->setSorting($sorting++);
+                $objContent->setPaper(null);
+
+                $this->entityManager->persist($objContent);
+            }
+
             $this->entityManager->persist($existingEpisode);
+            $this->entityManager->flush();
         }
 
-        $this->entityManager->flush();
+
 
         return $this->statusCode;
     }

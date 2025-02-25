@@ -62,7 +62,7 @@ class PodcastEpisode
         $this->setEpisode((int)$values['itunes:episode']);
         $this->setSubtitle($values['itunes:subtitle']);
         $this->setSummary($values['itunes:summary']);
-        $this->setExplicit('yes' === strtolower($values['itunes:explicit']));
+        $this->setExplicit('yes' === strtolower((string) $values['itunes:explicit']));
 
 
         $this->setKeywords([]);
